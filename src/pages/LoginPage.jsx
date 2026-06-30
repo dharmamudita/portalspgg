@@ -99,9 +99,9 @@ export default function LoginPage() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-            className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-2xl shadow-primary/30 mb-4"
+            className="w-24 h-24 mx-auto flex items-center justify-center mb-2"
           >
-            <UtensilsCrossed className="w-8 h-8 text-white" />
+            <img src="/logo-bgn.png" alt="Logo BGN" className="w-full h-full object-contain drop-shadow-xl" />
           </motion.div>
           <h1 className="text-2xl font-bold gradient-text">Portal SPPG</h1>
           <p className="text-sm text-text-muted mt-1">Sistem Pengelolaan Pangan Gratis</p>

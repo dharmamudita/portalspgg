@@ -68,11 +68,9 @@ export default function Navbar() {
     <header className={`header ${scrolled ? 'scrolled' : ''}`}>
       <div className="inner">
         {/* Logo */}
-        <Link to={isAdmin ? '/admin' : '/dashboard'} className="logo">
-          <span className="logoMark">
-            <UtensilsCrossed size={16} className="logoIcon" />
-          </span>
-          <span className="logoText">
+        <Link to={isAdmin ? '/admin' : '/dashboard'} className="logo" style={{ textDecoration: 'none' }}>
+          <img src="/logo-bgn.png" alt="BGN Logo" className="h-10 w-auto drop-shadow-md transition-transform hover:scale-105" />
+          <span className="logoText ml-2">
             Portal<span className="logoAccent">SPPG</span>
           </span>
         </Link>
