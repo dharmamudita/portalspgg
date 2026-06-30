@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+/* ============================================================
+   PORTAL SPPG — DESIGN SYSTEM (SCOPED)
+   XATRA WORKS: ULTRA PREMIUM FOREST GREEN + WHITE
+   ============================================================ */
+
+/* ─── 1. DESIGN TOKENS ─────────────────────────────────── */
+@theme {
+  --color-primary: #417030;
+  --color-primary-light: #5a8f45;
+  --color-primary-dark: #2d5020;
+  --color-secondary: #059669;
+  --color-accent: #10b981;
+  --color-accent-light: #34d399;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-bg-dark: #ffffff;
+  --color-bg-darker: #f1f7ee;
+  --color-surface: #fafcfa;
+  --color-surface-light: #e0edda;
+  --color-text-primary: #0f1712;
+  --color-text-secondary: #4b5e50;
+  --color-text-muted: #8b9d90;
+  --color-border: rgba(65, 112, 48, 0.15);
+  --color-glass: rgba(241, 247, 238, 0.6);
+  --color-glass-border: rgba(65, 112, 48, 0.2);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Outfit', sans-serif;
+  --font-accent: 'Space Grotesk', sans-serif;
+}
+
+/* ─── 2. BASE LAYER ────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background-color: #ffffff;
+    color: #0f1712;
+    min-height: 100vh;
+  }
+
+  /* Texture Overlay (noise) */
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.025'/%3E%3C/svg%3E");
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #c2dbb5;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #417030;
+  }
+  ::selection {
+    background: #c2dbb5;
+    color: #1a2f12;
+  }
+}
+
+/* ─── 3. COMPONENT LAYER ───────────────────────────────── */
+@layer components {
+
+  .page-base {
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    color: var(--color-text-primary);
+    background: var(--color-bg-dark);
+  }
+
+  /* Page Mesh - Green version from Xatra Works */
+  .page-mesh {
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    color: var(--color-text-primary);
+    background: 
+      radial-gradient(at 0% 0%, rgba(65, 112, 48, 0.12) 0px, transparent 60%),
+      radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 60%),
+      radial-gradient(at 100% 100%, rgba(65, 112, 48, 0.12) 0px, transparent 60%),
+      radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 60%),
+      #ffffff;
+  }
+
+  /* Glass Card - Updated to Xatra Light Glass */
+  .glass {
+    background: var(--color-glass);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 24px -4px rgba(65, 112, 48, 0.08), 0 2px 8px -2px rgba(65, 112, 48, 0.04), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(65, 112, 48, 0.15);
+    border-top-color: rgba(255, 255, 255, 0.9);
+    border-left-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(65, 112, 48, 0.1);
+  }
+
+  .nutri-fact {
+    border: 2px solid #111827;
+    font-family: 'Inter', sans-serif;
+    color: #111827;
+    background: white;
+  }
+  .nutri-fact .thick-line { border-top: 8px solid #111827; }
+  .nutri-fact .medium-line { border-top: 3px solid #111827; }
+  .nutri-fact .thin-line { border-top: 1px solid #D1D5DB; }
+
+  .skeleton {
+    background: linear-gradient(90deg, #f1f7ee 25%, #e0edda 50%, #f1f7ee 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+  }
+}
+
+/* ─── 4. UTILITY LAYER ─────────────────────────────────── */
+@layer utilities {
+  .gradient-text {
+    background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 30%, var(--color-accent) 60%, var(--color-primary-light) 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient-flow 6s ease infinite;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-accent {
+    font-family: var(--font-accent);
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(65, 112, 48, 0.2), 0 0 60px rgba(65, 112, 48, 0.1);
+  }
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2), 0 0 60px rgba(16, 185, 129, 0.1);
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+}
+
+/* ─── 5. KEYFRAMES ─────────────── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes gradient-flow { 
+  0% { background-position: 0% 50%; } 
+  50% { background-position: 100% 50%; } 
+  100% { background-position: 0% 50%; } 
+}
