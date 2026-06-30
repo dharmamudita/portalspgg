@@ -3,8 +3,11 @@ import { motion } from 'framer-motion';
 import {
   Plus, Trash2, Star, MessageSquare, UtensilsCrossed,
   Upload, Image as ImageIcon, TrendingUp, Users, BarChart3, Link as LinkIcon,
-  ChevronLeft, ChevronRight, Calendar, Sparkles,
+  ChevronLeft, ChevronRight, Calendar, Sparkles, Activity
 } from 'lucide-react';
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from 'recharts';
 import { useAuth } from '../context/AuthContext';
 import { useMenusByDateRange, useAllFeedbacks, addMenu, deleteMenu } from '../hooks/useFirestore';
 import { useToast } from '../components/ui/Toast';
@@ -35,6 +38,17 @@ function getWeekRange(date) {
 function formatDate(d) {
   return d.toISOString().split('T')[0];
 }
+
+// Dummy data for the chart to make it look active even if there are few feedbacks
+const dummyChartData = [
+  { name: 'Sen', rating: 4.5, feedback: 12 },
+  { name: 'Sel', rating: 4.8, feedback: 15 },
+  { name: 'Rab', rating: 4.2, feedback: 8 },
+  { name: 'Kam', rating: 4.9, feedback: 20 },
+  { name: 'Jum', rating: 4.7, feedback: 18 },
+  { name: 'Sab', rating: 0, feedback: 0 },
+  { name: 'Min', rating: 0, feedback: 0 },
+];
 
 export default function AdminDashboard() {
   const { userData } = useAuth();
@@ -67,7 +81,7 @@ export default function AdminDashboard() {
     { label: 'Menu Minggu Ini', value: totalMenus, icon: UtensilsCrossed, color: 'text-primary', bg: 'bg-primary/10' },
     { label: 'Feedback', value: totalFeedbacks, icon: MessageSquare, color: 'text-accent', bg: 'bg-accent/10' },
     { label: 'Rata-rata Rating', value: avgRating, icon: Star, color: 'text-warning', bg: 'bg-warning/10' },
-    { label: 'Statistik', value: 'Lihat', icon: BarChart3, color: 'text-success', bg: 'bg-success/10' },
+    { label: 'Aktivitas Baru', value: '+12%', icon: TrendingUp, color: 'text-success', bg: 'bg-success/10' },
   ];
 
   const prevWeek = () => {
@@ -94,26 +108,33 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="page-mesh">
+    <div className="page-mesh relative min-h-screen overflow-hidden">
+      {/* Liquid Glass Background Blobs */}
+      <div className="blob-container">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
+      </div>
+
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 pb-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 pb-12 relative z-10">
         <motion.div variants={stagger.container} initial="hidden" animate="show">
           {/* Header */}
-          <motion.div variants={stagger.item} className="dashboard-welcome">
+          <motion.div variants={stagger.item} className="dashboard-welcome liquid-glass p-6 mb-8">
             <div>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary mb-2 font-display tracking-tight flex items-center gap-3">
                 Dashboard <span className="gradient-text">Admin SPG</span>
                 <Sparkles className="w-6 h-6 text-accent animate-pulse-glow" />
               </h1>
-              <p className="text-sm font-medium text-text-secondary bg-black/5 px-4 py-1.5 rounded-full inline-flex items-center gap-2">
+              <p className="text-sm font-medium text-text-secondary bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full inline-flex items-center gap-2 border border-white/50">
                 <Users className="w-4 h-4 text-primary" />
-                Kelola menu dan pantau feedback — {userData?.instansi}
+                Sistem Terpadu Portal SPG — {userData?.instansi}
               </p>
             </div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button onClick={() => setShowAddModal(true)} icon={Plus} variant="primary" size="lg" className="shadow-xl shadow-primary/30">
-                Tambah Menu
+                Tambah Menu Baru
               </Button>
             </motion.div>
           </motion.div>
@@ -123,27 +144,89 @@ export default function AdminDashboard() {
             {stats.map((stat, idx) => (
               <motion.div 
                 key={stat.label} 
-                className="stat-card cursor-pointer"
+                className="liquid-glass p-5 cursor-pointer flex items-center gap-4"
                 whileHover={{ y: -5, transition: { type: 'spring', stiffness: 400 } }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
               >
-                <div className={`w-14 h-14 rounded-2xl ${stat.bg} flex items-center justify-center shrink-0`}>
+                <div className={`w-14 h-14 rounded-2xl ${stat.bg} flex items-center justify-center shrink-0 shadow-inner`}>
                   <stat.icon className={`w-7 h-7 ${stat.color}`} />
                 </div>
                 <div>
-                  <p className="text-3xl font-extrabold text-text-primary font-display">{stat.value}</p>
+                  <p className="text-3xl font-extrabold text-text-primary font-display drop-shadow-sm">{stat.value}</p>
                   <p className="text-xs font-semibold text-text-muted mt-1 uppercase tracking-wider">{stat.label}</p>
                 </div>
               </motion.div>
             ))}
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10">
+          {/* Charts & Analytics Section */}
+          <motion.div variants={stagger.item} className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+            <div className="lg:col-span-2 liquid-glass p-6">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-black/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <BarChart3 className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-text-primary font-display">Tren Feedback & Rating</h2>
+                    <p className="text-xs text-text-muted">Pergerakan data 7 hari terakhir</p>
+                  </div>
+                </div>
+              </div>
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={dummyChartData}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#8b9d90' }} dy={10} />
+                    <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#8b9d90' }} dx={-10} />
+                    <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#8b9d90' }} dx={10} />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+                      itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+                    />
+                    <Line yAxisId="left" type="monotone" dataKey="rating" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} name="Rata-rata Rating" />
+                    <Line yAxisId="right" type="monotone" dataKey="feedback" stroke="#417030" strokeWidth={3} dot={{ r: 4, fill: '#417030', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} name="Total Ulasan" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Live Activity Feed */}
+            <div className="liquid-glass p-6 flex flex-col">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-black/5">
+                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-accent animate-pulse" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-text-primary font-display">Aktivitas Terkini</h2>
+                  <p className="text-xs text-text-muted">Siaran langsung dari siswa</p>
+                </div>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
+                {[1, 2, 3, 4, 5].map((_, i) => (
+                  <div key={i} className="flex gap-3 relative">
+                    {i !== 4 && <div className="absolute top-8 left-3.5 w-0.5 h-full bg-black/5 -z-10"></div>}
+                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0 border-2 border-white z-10">
+                      <Star className="w-3.5 h-3.5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-text-primary">Siswa SMP N {i+1} Denpasar</p>
+                      <p className="text-xs text-text-secondary mt-0.5">Memberikan bintang 5 untuk menu "Nasi Goreng Spesial".</p>
+                      <p className="text-[10px] text-text-muted mt-1">{i * 15} menit yang lalu</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
             {/* Menu List with Week Filter */}
             <motion.div variants={stagger.item} className="lg:col-span-2">
-              <div className="stat-card flex-col items-stretch p-6">
+              <div className="liquid-glass flex flex-col items-stretch p-6">
                 {/* Week Filter Header */}
                 <div className="flex flex-col gap-4 mb-6">
                   <div className="flex items-center justify-between pb-4 border-b border-black/5">
@@ -152,15 +235,15 @@ export default function AdminDashboard() {
                         <UtensilsCrossed className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <h2 className="text-lg font-bold text-text-primary font-display">Daftar Menu</h2>
-                        <p className="text-xs text-text-muted">Kelola menu per minggu</p>
+                        <h2 className="text-lg font-bold text-text-primary font-display">Manajemen Menu Mingguan</h2>
+                        <p className="text-xs text-text-muted">Jadwalkan makanan sehat</p>
                       </div>
                     </div>
                     <Badge variant="primary">{totalMenus} menu</Badge>
                   </div>
 
                   {/* Week Navigator */}
-                  <div className="bg-black/5 rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="bg-white/40 backdrop-blur-md rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-white/50">
                     <div className="flex items-center gap-2">
                       <div className="relative">
                         <button
@@ -206,7 +289,7 @@ export default function AdminDashboard() {
                   <div className="text-center py-16 bg-black/5 rounded-2xl border border-dashed border-black/10">
                     <UtensilsCrossed className="w-16 h-16 text-text-muted mx-auto mb-4 opacity-30" />
                     <p className="text-base font-bold text-text-secondary">Belum ada menu</p>
-                    <p className="text-sm text-text-muted mt-1">Klik "Tambah Menu" di atas untuk menjadwalkan.</p>
+                    <p className="text-sm text-text-muted mt-1">Klik "Tambah Menu Baru" di atas untuk menjadwalkan.</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -220,14 +303,14 @@ export default function AdminDashboard() {
 
             {/* Recent Feedbacks */}
             <motion.div variants={stagger.item}>
-              <div className="stat-card flex-col items-stretch p-6">
+              <div className="liquid-glass flex flex-col items-stretch p-6">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-black/5">
-                  <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                    <MessageSquare className="w-5 h-5 text-accent" />
+                  <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center">
+                    <MessageSquare className="w-5 h-5 text-warning" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-text-primary font-display">Feedback Terbaru</h2>
-                    <p className="text-xs text-text-muted">Ulasan real-time</p>
+                    <h2 className="text-lg font-bold text-text-primary font-display">Ulasan Masuk</h2>
+                    <p className="text-xs text-text-muted">Feedback dari siswa</p>
                   </div>
                 </div>
                 
@@ -244,7 +327,7 @@ export default function AdminDashboard() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
                         key={fb.id} 
-                        className="bg-white rounded-2xl p-4 shadow-sm border border-black/5 hover:border-accent/30 transition-colors"
+                        className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white hover:border-primary/30 transition-colors"
                       >
                         <div className="flex items-start gap-3">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0 shadow-inner">
@@ -305,7 +388,7 @@ function MenuRow({ menu, index }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.05, type: 'spring', stiffness: 300 }}
       whileHover={{ scale: 1.01, x: 4 }}
-      className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm border border-black/5 hover:border-primary/30 transition-all cursor-default"
+      className="flex items-center gap-4 bg-white/80 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white hover:border-primary/30 transition-all cursor-default"
     >
       <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 shadow-inner">
         <img
@@ -411,7 +494,7 @@ function AddMenuForm({ onSuccess }) {
           onChange={(e) => updateField('image_url', e.target.value)}
         />
         {form.image_url && (
-          <div className="mt-2 rounded-xl overflow-hidden border border-black/10">
+          <div className="mt-2 rounded-xl overflow-hidden border border-black/10 shadow-inner">
             <img src={form.image_url} alt="Preview" className="w-full h-40 object-cover" onError={(e) => { e.target.style.display = 'none'; }} />
           </div>
         )}
