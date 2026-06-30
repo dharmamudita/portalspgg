@@ -128,7 +128,17 @@ export function AuthProvider({ children }) {
 
     const userDoc = await getDoc(doc(db, 'users', result.user.uid));
     if (userDoc.exists()) {
-      setUserData(userDoc.data());
+      const data = userDoc.data();
+      
+      // Block unapproved SPPG accounts
+      if (data.role === 'spg' && data.status === 'pending_approval') {
+        await signOut(auth).catch(() => {});
+        setCurrentUser(null);
+        setUserData(null);
+        throw new Error('Akun SPPG Anda sedang menunggu persetujuan dari Super Admin.');
+      }
+
+      setUserData(data);
     } else {
       // Orphaned account detection during login
       // Delete the Auth account so the user can re-register properly

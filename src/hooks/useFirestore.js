@@ -531,3 +531,60 @@ export function useAllSpgUsers() {
 
   return { spgUsers, loading, error };
 }
+
+// ============================================
+// SPPG APPROVAL HOOKS
+// ============================================
+
+export function usePendingSpgUsers() {
+  const [pendingUsers, setPendingUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const q = query(
+      collection(db, 'users'),
+      where('role', '==', 'spg'),
+      where('status', '==', 'pending_approval')
+    );
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        setPendingUsers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        setLoading(false);
+      },
+      (err) => {
+        console.error('Error fetching pending SPG users:', err);
+        setError(err.message);
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  return { pendingUsers, loading, error };
+}
+
+export async function approveSpgUser(uid) {
+  try {
+    await updateDoc(doc(db, 'users', uid), {
+      status: 'active'
+    });
+  } catch (error) {
+    console.error('Error approving SPG user:', error);
+    throw error;
+  }
+}
+
+export async function rejectSpgUser(uid) {
+  try {
+    await updateDoc(doc(db, 'users', uid), {
+      status: 'rejected'
+    });
+  } catch (error) {
+    console.error('Error rejecting SPG user:', error);
+    throw error;
+  }
+}
