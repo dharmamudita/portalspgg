@@ -96,22 +96,27 @@
 /* Dropdown */
 .dropdown { 
   position: absolute; top: calc(100% + 0.75rem); right: 0; width: 240px; 
-  background: rgba(255,255,255,0.95); backdrop-filter: blur(24px) saturate(180%); 
-  border: 1px solid rgba(255,255,255,0.8); border-radius: 2rem; padding: 0.5rem; 
-  box-shadow: 0 24px 48px -12px rgba(28, 79, 135, 0.25); transform-origin: top right; z-index: 100;
+  background: rgba(17, 51, 89, 0.95); backdrop-filter: blur(24px) saturate(180%); 
+  border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 1.5rem; padding: 0.5rem; 
+  box-shadow: 0 24px 48px -12px rgba(9, 30, 54, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.1); 
+  transform-origin: top right; z-index: 100;
 }
-.dropdownHeader { padding: 1rem; border-bottom: 1px solid rgba(28, 79, 135, 0.06); margin-bottom: 0.5rem; }
-.dropdownName { font-weight: 700; font-size: 0.875rem; color: #0f172a; margin: 0; }
-.dropdownEmail { font-size: 0.75rem; color: #64748b; margin-top: 2px; }
+.dropdownHeader { 
+  padding: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 0.5rem; 
+  background: linear-gradient(to right, rgba(255,255,255,0.05), transparent);
+  border-radius: 1rem 1rem 0 0;
+}
+.dropdownName { font-weight: 800; font-size: 1rem; color: #ffffff; margin: 0; font-family: 'Outfit', sans-serif;}
+.dropdownEmail { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 2px; }
 .dropdownItem { 
   display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; 
-  border-radius: 1.5rem; font-size: 0.875rem; font-weight: 500; color: #334155; 
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; width: 100%; 
+  border-radius: 1rem; font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,0.8); 
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; width: 100%; 
   text-align: left; text-decoration: none; border: none; background: transparent;
 }
-.dropdownItem:hover { color: #113359; background: #e6eff7; transform: translateX(4px); }
-.dropdownLogout { color: #dc2626 !important; margin-top: 0.25rem; border-top: 1px solid rgba(220,38,38,0.06); border-radius: 0 0 1.5rem 1.5rem; }
-.dropdownLogout:hover { background: rgba(220,38,38,0.05) !important; transform: none; }
+.dropdownItem:hover { color: #ffffff; background: rgba(59, 130, 246, 0.2); transform: translateX(6px); box-shadow: inset 2px 0 0 #3B82F6;}
+.dropdownLogout { color: #f87171 !important; margin-top: 0.25rem; border-top: 1px solid rgba(255,255,255,0.05); border-radius: 0 0 1rem 1rem; }
+.dropdownLogout:hover { color: #ef4444 !important; background: rgba(239, 68, 68, 0.1) !important; box-shadow: inset 2px 0 0 #ef4444; }
 
 /* Mobile */
 .mobileToggle { display: none; width: 40px; height: 40px; border-radius: 9999px; align-items: center; justify-content: center; color: #0f172a; border: 1px solid rgba(255,255,255,0.8); background: rgba(255,255,255,0.5); pointer-events: auto; }
