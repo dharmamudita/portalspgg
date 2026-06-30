@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileText, Calendar, TrendingUp, Star, Flame, Droplets, Wheat,
-  UtensilsCrossed, MessageSquare, DollarSign, ArrowUpRight, ArrowDownRight, Trophy, Building2
+  UtensilsCrossed, MessageSquare, DollarSign, ArrowUpRight, ArrowDownRight, Trophy, Building2,
+  Wallet, AlertTriangle, TrendingDown, CheckCircle2
 } from 'lucide-react';
 import { useMenusByDateRange, useFeedbacksByDateRange } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
@@ -45,8 +46,29 @@ export default function ReportsPage() {
     const totalLemak = menus.reduce((s, m) => s + (m.lemak || 0), 0);
     const avgLemak = totalMenus > 0 ? Math.round(totalLemak / totalMenus) : 0;
 
-    const totalBiaya = menus.reduce((s, m) => s + (m.harga_porsi || 0), 0);
-    const avgBiaya = totalMenus > 0 ? Math.round(totalBiaya / totalMenus) : 0;
+    // Kalkulasi Anggaran & Food Waste
+    const menuPrices = {};
+    menus.forEach(m => { menuPrices[m.id] = m.harga_porsi || 0; });
+
+    let totalSpent = 0;
+    let totalWasted = 0;
+
+    feedbacks.forEach(f => {
+      const price = menuPrices[f.menu_id] || 0;
+      totalSpent += price;
+      
+      let wasteRatio = 0;
+      if (f.rating === 1) wasteRatio = 1.0;
+      else if (f.rating === 2) wasteRatio = 0.75;
+      else if (f.rating === 3) wasteRatio = 0.50;
+      else if (f.rating === 4) wasteRatio = 0.25;
+      else wasteRatio = 0; // 5 stars
+      
+      totalWasted += price * wasteRatio;
+    });
+
+    const totalSaved = totalSpent - totalWasted;
+    const efficiencyRate = totalSpent > 0 ? (totalSaved / totalSpent) * 100 : 0;
 
     // Rating distribution
     const ratingDist = [5, 4, 3, 2, 1].map((r) => ({
@@ -85,7 +107,7 @@ export default function ReportsPage() {
     return {
       totalMenus, totalFeedbacks, avgRating,
       avgKalori, avgProtein, avgKarbo, avgLemak,
-      totalBiaya, avgBiaya,
+      totalSpent, totalWasted, totalSaved, efficiencyRate,
       ratingDist, topMenu, topMenuId, menuRatings,
       mostFbMenu, mostFbId,
       instansiBreakdown,
@@ -185,9 +207,11 @@ export default function ReportsPage() {
                   <p className="text-[10px] text-text-muted">Rata-rata Rating</p>
                 </Card>
                 <Card hover={false} className="text-center">
-                  <DollarSign className="w-5 h-5 text-success mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-text-primary">Rp {stats.avgBiaya.toLocaleString('id-ID')}</p>
-                  <p className="text-[10px] text-text-muted">Rata-rata Biaya/Porsi</p>
+                  <Wallet className="w-5 h-5 text-success mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-text-primary">
+                    <span className="text-sm text-text-secondary">Rp</span>{stats.totalSpent > 1000000 ? (stats.totalSpent / 1000000).toFixed(1) + 'M' : (stats.totalSpent / 1000).toFixed(0) + 'K'}
+                  </p>
+                  <p className="text-[10px] text-text-muted">Total Anggaran</p>
                 </Card>
               </motion.div>
 
@@ -283,23 +307,76 @@ export default function ReportsPage() {
                 </motion.div>
               </div>
 
-              {/* Total Cost */}
+              {/* Financial Impact Board */}
               <motion.div variants={stagger.item} className="mt-6">
-                <Card>
-                  <h3 className="text-base font-bold text-text-primary mb-3 flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-success" /> Ringkasan Biaya
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-black/5 rounded-xl p-4 text-center">
-                      <p className="text-[10px] text-text-muted mb-1">Total Biaya Semua Menu</p>
-                      <p className="text-xl font-bold text-success">Rp {stats.totalBiaya.toLocaleString('id-ID')}</p>
+                <div className="liquid-glass p-6 rounded-3xl relative overflow-hidden">
+                  {/* Subtle Glow Background */}
+                  <div className={`absolute top-0 right-0 w-64 h-64 opacity-20 blur-[80px] rounded-full mix-blend-screen pointer-events-none ${stats.efficiencyRate >= 70 ? 'bg-success' : 'bg-danger'}`} />
+                  
+                  <div className="flex items-center gap-3 mb-8">
+                    <div className="p-3 rounded-2xl bg-black/5 backdrop-blur-md">
+                      <TrendingUp className="w-6 h-6 text-primary" />
                     </div>
-                    <div className="bg-black/5 rounded-xl p-4 text-center">
-                      <p className="text-[10px] text-text-muted mb-1">Rata-rata per Porsi</p>
-                      <p className="text-xl font-bold text-text-primary">Rp {stats.avgBiaya.toLocaleString('id-ID')}</p>
+                    <div>
+                      <h2 className="text-xl font-bold font-display text-text-primary">Dampak Finansial & Food Waste</h2>
+                      <p className="text-sm text-text-muted">Analisis berbasis rating kepuasan (1 bintang = 100% terbuang)</p>
                     </div>
                   </div>
-                </Card>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Efficiency Rate Card */}
+                    <div className="bg-black/5 rounded-2xl p-6 border border-black/5 relative overflow-hidden group">
+                      <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
+                        {stats.efficiencyRate >= 70 ? <CheckCircle2 className="w-32 h-32 text-success" /> : <AlertTriangle className="w-32 h-32 text-danger" />}
+                      </div>
+                      <p className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
+                        {stats.efficiencyRate >= 70 ? <CheckCircle2 className="w-4 h-4 text-success" /> : <AlertTriangle className="w-4 h-4 text-danger" />}
+                        Tingkat Efisiensi
+                      </p>
+                      <p className="text-4xl font-bold font-display text-text-primary">
+                        {stats.efficiencyRate.toFixed(1)}<span className="text-2xl text-text-muted">%</span>
+                      </p>
+                      <div className="mt-4 w-full h-2 bg-black/10 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: \`\${stats.efficiencyRate}%\` }}
+                          transition={{ duration: 1, delay: 0.2 }}
+                          className={\`h-full rounded-full \${stats.efficiencyRate >= 70 ? 'bg-success' : 'bg-danger'}\`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Total Saved Card */}
+                    <div className="bg-black/5 rounded-2xl p-6 border border-black/5 relative overflow-hidden group">
+                      <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
+                        <Wallet className="w-32 h-32 text-success" />
+                      </div>
+                      <p className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-success" />
+                        Anggaran Tepat Sasaran
+                      </p>
+                      <p className="text-3xl font-bold font-display text-success">
+                        <span className="text-lg opacity-70">Rp</span> {stats.totalSaved.toLocaleString('id-ID')}
+                      </p>
+                      <p className="text-xs text-text-muted mt-2">Porsi yang dihabiskan siswa</p>
+                    </div>
+
+                    {/* Total Wasted Card */}
+                    <div className="bg-black/5 rounded-2xl p-6 border border-black/5 relative overflow-hidden group">
+                      <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
+                        <TrendingDown className="w-32 h-32 text-danger" />
+                      </div>
+                      <p className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-danger" />
+                        Estimasi Kerugian (Waste)
+                      </p>
+                      <p className="text-3xl font-bold font-display text-danger">
+                        <span className="text-lg opacity-70">Rp</span> {stats.totalWasted.toLocaleString('id-ID')}
+                      </p>
+                      <p className="text-xs text-text-muted mt-2">Akibat rating rendah (makanan sisa)</p>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             </>
           )}
