@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
   Plus, Trash2, Star, MessageSquare, UtensilsCrossed,
   Upload, Image as ImageIcon, TrendingUp, Users, BarChart3, Link as LinkIcon,
-  ChevronLeft, ChevronRight, Calendar,
+  ChevronLeft, ChevronRight, Calendar, Sparkles,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useMenusByDateRange, useAllFeedbacks, addMenu, deleteMenu } from '../hooks/useFirestore';
@@ -18,6 +18,7 @@ import Modal from '../components/ui/Modal';
 import Badge from '../components/ui/Badge';
 import StarRating from '../components/ui/StarRating';
 import { MonthYearPicker } from './WeeklyMenuPage';
+import './Dashboard.css';
 
 const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 
@@ -89,140 +90,183 @@ export default function AdminDashboard() {
 
   const stagger = {
     container: { hidden: {}, show: { transition: { staggerChildren: 0.08 } } },
-    item: { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } },
+    item: { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } },
   };
 
   return (
     <div className="page-mesh">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 pb-12">
         <motion.div variants={stagger.container} initial="hidden" animate="show">
           {/* Header */}
-          <motion.div variants={stagger.item} className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+          <motion.div variants={stagger.item} className="dashboard-welcome">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-text-primary">
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary mb-2 font-display tracking-tight flex items-center gap-3">
                 Dashboard <span className="gradient-text">Admin SPG</span>
+                <Sparkles className="w-6 h-6 text-accent animate-pulse-glow" />
               </h1>
-              <p className="text-sm text-text-muted mt-1">Kelola menu dan pantau feedback — {userData?.instansi}</p>
+              <p className="text-sm font-medium text-text-secondary bg-black/5 px-4 py-1.5 rounded-full inline-flex items-center gap-2">
+                <Users className="w-4 h-4 text-primary" />
+                Kelola menu dan pantau feedback — {userData?.instansi}
+              </p>
             </div>
-            <Button onClick={() => setShowAddModal(true)} icon={Plus} variant="primary" size="lg">
-              Tambah Menu
-            </Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button onClick={() => setShowAddModal(true)} icon={Plus} variant="primary" size="lg" className="shadow-xl shadow-primary/30">
+                Tambah Menu
+              </Button>
+            </motion.div>
           </motion.div>
 
-          {/* Stats Grid */}
-          <motion.div variants={stagger.item} className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {stats.map((stat) => (
-              <Card key={stat.label} className="flex items-center gap-4" hover={false}>
-                <div className={`w-12 h-12 rounded-2xl ${stat.bg} flex items-center justify-center`}>
-                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
+          {/* Premium Stats Grid */}
+          <motion.div variants={stagger.item} className="stats-grid">
+            {stats.map((stat, idx) => (
+              <motion.div 
+                key={stat.label} 
+                className="stat-card cursor-pointer"
+                whileHover={{ y: -5, transition: { type: 'spring', stiffness: 400 } }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.1 }}
+              >
+                <div className={`w-14 h-14 rounded-2xl ${stat.bg} flex items-center justify-center shrink-0`}>
+                  <stat.icon className={`w-7 h-7 ${stat.color}`} />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-text-primary">{stat.value}</p>
-                  <p className="text-xs text-text-muted">{stat.label}</p>
+                  <p className="text-3xl font-extrabold text-text-primary font-display">{stat.value}</p>
+                  <p className="text-xs font-semibold text-text-muted mt-1 uppercase tracking-wider">{stat.label}</p>
                 </div>
-              </Card>
+              </motion.div>
             ))}
           </motion.div>
 
-          {/* Menu List with Week Filter */}
-          <motion.div variants={stagger.item}>
-            <Card>
-              {/* Week Filter Header */}
-              <div className="flex flex-col gap-3 mb-6">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-bold text-text-primary">Daftar Menu</h2>
-                  <Badge variant="neutral">{totalMenus} menu</Badge>
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-10">
+            {/* Menu List with Week Filter */}
+            <motion.div variants={stagger.item} className="lg:col-span-2">
+              <div className="stat-card flex-col items-stretch p-6">
+                {/* Week Filter Header */}
+                <div className="flex flex-col gap-4 mb-6">
+                  <div className="flex items-center justify-between pb-4 border-b border-black/5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <UtensilsCrossed className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-bold text-text-primary font-display">Daftar Menu</h2>
+                        <p className="text-xs text-text-muted">Kelola menu per minggu</p>
+                      </div>
+                    </div>
+                    <Badge variant="primary">{totalMenus} menu</Badge>
+                  </div>
 
-                {/* Week Navigator */}
-                <div className="glass rounded-xl p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="relative">
+                  {/* Week Navigator */}
+                  <div className="bg-black/5 rounded-2xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowDatePicker(!showDatePicker)}
+                          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white shadow-sm hover:shadow-md text-sm font-bold text-text-primary transition-all cursor-pointer"
+                        >
+                          <Calendar className="w-4 h-4 text-primary" />
+                          {MONTHS[weekStart.getMonth()]} {weekStart.getFullYear()}
+                        </button>
+                        {showDatePicker && (
+                          <MonthYearPicker
+                            currentMonth={weekStart.getMonth()}
+                            currentYear={weekStart.getFullYear()}
+                            onSelect={jumpToDate}
+                            onClose={() => setShowDatePicker(false)}
+                          />
+                        )}
+                      </div>
                       <button
-                        onClick={() => setShowDatePicker(!showDatePicker)}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/5 hover:bg-black/10 text-xs font-medium text-text-secondary transition-colors cursor-pointer"
+                        onClick={goToThisWeek}
+                        className="px-3 py-2 rounded-xl bg-primary/10 text-xs font-bold text-primary hover:bg-primary/20 transition-colors cursor-pointer"
                       >
-                        <Calendar className="w-3.5 h-3.5" />
-                        {MONTHS[weekStart.getMonth()]} {weekStart.getFullYear()}
+                        Minggu Ini
                       </button>
-                      {showDatePicker && (
-                        <MonthYearPicker
-                          currentMonth={weekStart.getMonth()}
-                          currentYear={weekStart.getFullYear()}
-                          onSelect={jumpToDate}
-                          onClose={() => setShowDatePicker(false)}
-                        />
-                      )}
                     </div>
-                    <button
-                      onClick={goToThisWeek}
-                      className="px-3 py-1.5 rounded-xl bg-primary/20 text-[10px] font-semibold text-primary-light hover:bg-primary/30 transition-colors cursor-pointer"
-                    >
-                      Minggu Ini
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <button onClick={prevWeek} className="p-1.5 rounded-lg hover:bg-black/10 transition-colors cursor-pointer">
-                      <ChevronLeft className="w-4 h-4 text-text-secondary" />
-                    </button>
-                    <p className="text-xs font-bold text-text-primary">{weekLabel}</p>
-                    <button onClick={nextWeek} className="p-1.5 rounded-lg hover:bg-black/10 transition-colors cursor-pointer">
-                      <ChevronRight className="w-4 h-4 text-text-secondary" />
-                    </button>
+                    <div className="flex items-center justify-center gap-3 bg-white px-3 py-1.5 rounded-xl shadow-sm">
+                      <button onClick={prevWeek} className="p-1.5 rounded-lg hover:bg-black/5 transition-colors cursor-pointer">
+                        <ChevronLeft className="w-4 h-4 text-text-secondary" />
+                      </button>
+                      <p className="text-xs font-bold text-text-primary whitespace-nowrap">{weekLabel}</p>
+                      <button onClick={nextWeek} className="p-1.5 rounded-lg hover:bg-black/5 transition-colors cursor-pointer">
+                        <ChevronRight className="w-4 h-4 text-text-secondary" />
+                      </button>
+                    </div>
                   </div>
                 </div>
+
+                {menusLoading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => <div key={i} className="skeleton h-24 rounded-2xl" />)}
+                  </div>
+                ) : menus.length === 0 ? (
+                  <div className="text-center py-16 bg-black/5 rounded-2xl border border-dashed border-black/10">
+                    <UtensilsCrossed className="w-16 h-16 text-text-muted mx-auto mb-4 opacity-30" />
+                    <p className="text-base font-bold text-text-secondary">Belum ada menu</p>
+                    <p className="text-sm text-text-muted mt-1">Klik "Tambah Menu" di atas untuk menjadwalkan.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {menus.map((menu, idx) => (
+                      <MenuRow key={menu.id} menu={menu} index={idx} />
+                    ))}
+                  </div>
+                )}
               </div>
+            </motion.div>
 
-              {menusLoading ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => <div key={i} className="skeleton h-20 rounded-2xl" />)}
+            {/* Recent Feedbacks */}
+            <motion.div variants={stagger.item}>
+              <div className="stat-card flex-col items-stretch p-6">
+                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-black/5">
+                  <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
+                    <MessageSquare className="w-5 h-5 text-accent" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-text-primary font-display">Feedback Terbaru</h2>
+                    <p className="text-xs text-text-muted">Ulasan real-time</p>
+                  </div>
                 </div>
-              ) : menus.length === 0 ? (
-                <div className="text-center py-12">
-                  <UtensilsCrossed className="w-12 h-12 text-text-muted mx-auto mb-3 opacity-40" />
-                  <p className="text-text-muted">Belum ada menu untuk minggu ini.</p>
-                  <p className="text-xs text-text-muted mt-1">Klik "Tambah Menu" untuk menambahkan.</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {menus.map((menu, idx) => (
-                    <MenuRow key={menu.id} menu={menu} index={idx} />
-                  ))}
-                </div>
-              )}
-            </Card>
-          </motion.div>
-
-          {/* Recent Feedbacks */}
-          <motion.div variants={stagger.item} className="mt-6">
-            <Card>
-              <h2 className="text-lg font-bold text-text-primary mb-4">Feedback Terbaru</h2>
-              {feedbacks.length === 0 ? (
-                <p className="text-sm text-text-muted text-center py-6">Belum ada feedback</p>
-              ) : (
-                <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
-                  {feedbacks.slice(0, 20).map((fb) => (
-                    <div key={fb.id} className="bg-black/5 rounded-xl p-3 flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                        <span className="text-[10px] font-bold text-primary-light">
-                          {(fb.user_nip || '?').substring(0, 2)}
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs font-semibold text-text-primary truncate">{fb.user_instansi || 'Instansi'}</p>
-                          <StarRating value={fb.rating} readonly size={10} />
+                
+                {feedbacks.length === 0 ? (
+                  <div className="text-center py-12">
+                    <MessageSquare className="w-12 h-12 text-text-muted mx-auto mb-3 opacity-30" />
+                    <p className="text-sm text-text-muted text-center">Belum ada feedback</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                    {feedbacks.slice(0, 20).map((fb, idx) => (
+                      <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        key={fb.id} 
+                        className="bg-white rounded-2xl p-4 shadow-sm border border-black/5 hover:border-accent/30 transition-colors"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0 shadow-inner">
+                            <span className="text-xs font-bold text-white">
+                              {(fb.user_nip || '?').substring(0, 2)}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-sm font-bold text-text-primary truncate">{fb.user_instansi || 'Instansi'}</p>
+                              <StarRating value={fb.rating} readonly size={12} />
+                            </div>
+                            <p className="text-xs text-text-secondary line-clamp-3 leading-relaxed">{fb.komentar}</p>
+                          </div>
                         </div>
-                        <p className="text-xs text-text-secondary mt-1 line-clamp-2">{fb.komentar}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Card>
-          </motion.div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
         </motion.div>
       </main>
 
@@ -257,12 +301,13 @@ function MenuRow({ menu, index }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="flex items-center gap-4 bg-black/5 rounded-2xl p-4 hover:bg-white/8 transition-colors"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: index * 0.05, type: 'spring', stiffness: 300 }}
+      whileHover={{ scale: 1.01, x: 4 }}
+      className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm border border-black/5 hover:border-primary/30 transition-all cursor-default"
     >
-      <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0">
+      <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 shadow-inner">
         <img
           src={menu.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&h=100&fit=crop'}
           alt={menu.nama_menu}
@@ -270,18 +315,25 @@ function MenuRow({ menu, index }) {
         />
       </div>
       <div className="flex-1 min-w-0">
-        <h3 className="text-sm font-bold text-text-primary truncate">{menu.nama_menu}</h3>
-        <div className="flex items-center gap-3 text-[10px] text-text-muted mt-1">
-          <span>{dateStr}</span>
+        <h3 className="text-base font-bold text-text-primary truncate font-display">{menu.nama_menu}</h3>
+        <div className="flex items-center gap-3 text-xs text-text-muted mt-1.5 font-medium">
+          <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {dateStr}</span>
+          <span className="w-1 h-1 rounded-full bg-black/20"></span>
           <span>{menu.kalori || 0} kkal</span>
-          <span>{menu.protein || 0}g protein</span>
+          <span className="w-1 h-1 rounded-full bg-black/20"></span>
+          <span>{menu.protein || 0}g pro</span>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        {menu.is_voting_option && <Badge variant="secondary">Voting</Badge>}
-        <Button variant="danger" size="sm" onClick={handleDelete} loading={deleting} icon={Trash2}>
-          Hapus
-        </Button>
+      <div className="flex items-center gap-3">
+        {menu.is_voting_option && <Badge variant="accent">Opsi Voting</Badge>}
+        <button 
+          onClick={handleDelete} 
+          disabled={deleting}
+          className="w-10 h-10 rounded-xl bg-danger/10 text-danger hover:bg-danger hover:text-white flex items-center justify-center transition-colors shadow-sm disabled:opacity-50 cursor-pointer"
+          title="Hapus Menu"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </div>
     </motion.div>
   );
@@ -381,10 +433,10 @@ function AddMenuForm({ onSuccess }) {
 
       <label className="flex items-center gap-3 cursor-pointer">
         <input type="checkbox" checked={form.is_voting_option} onChange={(e) => updateField('is_voting_option', e.target.checked)} className="w-4 h-4 rounded accent-primary" />
-        <span className="text-sm text-text-secondary">Jadikan opsi voting minggu depan</span>
+        <span className="text-sm font-bold text-text-primary">Jadikan opsi voting minggu depan</span>
       </label>
 
-      <Button type="submit" loading={loading} icon={Plus} className="w-full" size="lg">
+      <Button type="submit" loading={loading} icon={Plus} className="w-full shadow-lg shadow-primary/20" size="lg">
         Simpan Menu
       </Button>
     </form>
