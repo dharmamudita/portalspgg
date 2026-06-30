@@ -47,20 +47,26 @@ export default function Navbar() {
     }
   };
 
-  const navLinks = isAdmin
+  const navLinks = userData?.role === 'superadmin'
     ? [
-        { to: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-        { to: '/admin/menus', label: 'Kelola Menu', icon: UtensilsCrossed },
-        { to: '/admin/voting', label: 'Hasil Voting', icon: BarChart3 },
-        { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare },
-        { to: '/admin/laporan', label: 'Laporan', icon: FileText },
+        { to: '/superadmin', label: 'Ringkasan Global', icon: LayoutDashboard },
+        { to: '/superadmin/kinerja', label: 'Kinerja SPPG', icon: BarChart3 },
+        { to: '/superadmin/feedback', label: 'Pusat Ulasan', icon: MessageSquare },
+        { to: '/superadmin/laporan', label: 'Laporan Nasional', icon: FileText },
       ]
-    : [
-        { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { to: '/menu-mingguan', label: 'Menu Mingguan', icon: CalendarDays },
-        { to: '/voting', label: 'Voting', icon: Vote },
-        { to: '/riwayat', label: 'Riwayat', icon: History },
-      ];
+    : isAdmin
+      ? [
+          { to: '/admin', label: 'Kelola Menu', icon: UtensilsCrossed },
+          { to: '/admin/voting', label: 'Hasil Voting', icon: BarChart3 },
+          { to: '/admin/feedback', label: 'Feedback', icon: MessageSquare },
+          { to: '/admin/laporan', label: 'Laporan', icon: FileText },
+        ]
+      : [
+          { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+          { to: '/menu-mingguan', label: 'Menu Mingguan', icon: CalendarDays },
+          { to: '/voting', label: 'Voting', icon: Vote },
+          { to: '/riwayat', label: 'Riwayat', icon: History },
+        ];
 
   const isActive = (path) => location.pathname === path;
 
@@ -68,7 +74,7 @@ export default function Navbar() {
     <header className={`header ${scrolled ? 'scrolled' : ''}`}>
       <div className="inner">
         {/* Logo */}
-        <Link to={isAdmin ? '/admin' : '/dashboard'} className="logo" style={{ textDecoration: 'none' }}>
+        <Link to={userData?.role === 'superadmin' ? '/superadmin' : isAdmin ? '/admin' : '/dashboard'} className="logo" style={{ textDecoration: 'none' }}>
           <img src="/logo-bgn.png" alt="BGN Logo" className="h-10 w-auto drop-shadow-md transition-transform hover:scale-105" />
           <span className="logoText ml-2">
             Portal<span className="logoAccent">SPPG</span>
@@ -95,8 +101,12 @@ export default function Navbar() {
           {userData ? (
             <div className="userMenu">
               <button className="userBtn" onClick={() => setUserMenuOpen(!userMenuOpen)}>
-                <div className="userAvatar">
-                  <span>{(userData.nama || 'U')[0].toUpperCase()}</span>
+                <div className="userAvatar bg-black/5 border border-black/10 flex items-center justify-center overflow-hidden">
+                  {userData.photoURL ? (
+                    <img src={userData.photoURL} alt="User avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <User className="w-6 h-6 text-text-muted mt-1" />
+                  )}
                   <span className="onlineDot" />
                 </div>
                 <ChevronDown size={14} className={`chevron ${userMenuOpen ? 'chevronOpen' : ''}`} />
@@ -116,7 +126,7 @@ export default function Navbar() {
                       <p className="dropdownEmail">{userData.nip}</p>
                     </div>
                     <div className="dropdownDivider" />
-                    <Link to={isAdmin ? '/admin' : '/dashboard'} className="dropdownItem">
+                    <Link to={userData?.role === 'superadmin' ? '/superadmin' : isAdmin ? '/admin' : '/dashboard'} className="dropdownItem">
                       <LayoutDashboard size={16} /> Dashboard
                     </Link>
                     <Link to="/profil" className="dropdownItem">

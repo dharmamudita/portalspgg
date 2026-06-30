@@ -26,6 +26,14 @@ export default function ProtectedRoute({ children, requiredRole }) {
 
   // Role check — prevent students from accessing admin and vice versa
   if (requiredRole && userData.role !== requiredRole) {
+    if (requiredRole === 'spg' && userData.role === 'superadmin') {
+      // Superadmin can access SPG routes
+      return children;
+    }
+    
+    if (userData.role === 'superadmin') {
+      return <Navigate to="/superadmin" replace />;
+    }
     if (userData.role === 'spg') {
       return <Navigate to="/admin" replace />;
     }

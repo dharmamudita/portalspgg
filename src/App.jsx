@@ -12,7 +12,10 @@ import HistoryPage from './pages/HistoryPage';
 import VotingResultsPage from './pages/VotingResultsPage';
 import FeedbackPage from './pages/FeedbackPage';
 import ReportsPage from './pages/ReportsPage';
+import ProfilePage from './pages/ProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import KinerjaSPPGPage from './pages/KinerjaSPPGPage';
 
 export default function App() {
   useEffect(() => {
@@ -38,6 +41,16 @@ export default function App() {
           <Routes>
             {/* Public */}
             <Route path="/login" element={<LoginPage />} />
+
+            {/* ── Authenticated Routes ── */}
+            <Route
+              path="/profil"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
 
             {/* ── Student Routes ── */}
             <Route
@@ -83,14 +96,6 @@ export default function App() {
               }
             />
             <Route
-              path="/admin/menus"
-              element={
-                <ProtectedRoute requiredRole="spg">
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/admin/voting"
               element={
                 <ProtectedRoute requiredRole="spg">
@@ -110,6 +115,40 @@ export default function App() {
               path="/admin/laporan"
               element={
                 <ProtectedRoute requiredRole="spg">
+                  <ReportsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ── Super Admin Routes ── */}
+            <Route
+              path="/superadmin"
+              element={
+                <ProtectedRoute requiredRole="superadmin">
+                  <SuperAdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/superadmin/kinerja"
+              element={
+                <ProtectedRoute requiredRole="superadmin">
+                  <KinerjaSPPGPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/superadmin/feedback"
+              element={
+                <ProtectedRoute requiredRole="superadmin">
+                  <FeedbackPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/superadmin/laporan"
+              element={
+                <ProtectedRoute requiredRole="superadmin">
                   <ReportsPage />
                 </ProtectedRoute>
               }
