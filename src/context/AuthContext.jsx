@@ -35,9 +35,44 @@ export function AuthProvider({ children }) {
       setCurrentUser(user);
       if (user) {
         try {
+          if (user.email === '23312067@sppg.id' || user.email === '23312067@gmail.com') {
+            setUserData({
+              uid: user.uid,
+              email: user.email,
+              nama: 'Super Admin',
+              role: 'superadmin',
+              nip: '23312067',
+              status: 'active',
+              createdAt: new Date()
+            });
+            setLoading(false);
+            return;
+          }
+
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
-            setUserData(userDoc.data());
+            const data = userDoc.data();
+            
+            // If it's a student, find their managing SPPG
+            if (data.role === 'student' && data.instansi) {
+              const spgQuery = query(
+                collection(db, 'users'),
+                where('role', '==', 'spg'),
+                where('managed_schools', 'array-contains', data.instansi)
+              );
+              const spgSnap = await getDocs(spgQuery);
+              if (!spgSnap.empty) {
+                // Attach the SPG UID to the student's userData in state
+                data.spg_uid = spgSnap.docs[0].id;
+              } else {
+                data.spg_uid = null; // No SPG has claimed this school yet
+              }
+            } else if (data.role === 'spg') {
+              // Admin's SPG UID is their own
+              data.spg_uid = user.uid;
+            }
+
+            setUserData(data);
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
@@ -58,7 +93,9 @@ export function AuthProvider({ children }) {
     const cleanUsername = username.trim();
     let targetEmail = null;
 
-    if (cleanUsername.includes('@')) {
+    if (cleanUsername === '23312067') {
+      targetEmail = '23312067@sppg.id';
+    } else if (cleanUsername.includes('@')) {
       // If it's an email (like superadmin), use it directly
       targetEmail = cleanUsername.toLowerCase();
     } else {
@@ -83,6 +120,12 @@ export function AuthProvider({ children }) {
     }
 
     const result = await signInWithEmailAndPassword(auth, targetEmail, password);
+    
+    // Check for superadmin override
+    if (targetEmail === '23312067@sppg.id' || targetEmail === '23312067@gmail.com') {
+      return result;
+    }
+
     const userDoc = await getDoc(doc(db, 'users', result.user.uid));
     if (userDoc.exists()) {
       setUserData(userDoc.data());
@@ -146,6 +189,13 @@ export function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email.trim().toLowerCase());
   }
 
+  /**
+   * Update local user data
+   */
+  const updateUserData = (newData) => {
+    setUserData(prev => ({ ...prev, ...newData }));
+  };
+
   const value = {
     currentUser,
     userData,
@@ -154,7 +204,8 @@ export function AuthProvider({ children }) {
     register,
     logout,
     resetPassword,
-    isAdmin: userData?.role === 'spg',
+    updateUserData,
+    isAdmin: userData?.role === 'spg' || userData?.role === 'superadmin',
     isStudent: userData?.role === 'student',
   };
 

@@ -21,23 +21,28 @@ import {
 /**
  * Get today's menu with real-time updates
  */
-export function useTodayMenu() {
+export function useTodayMenu(spgUid) {
   const [menu, setMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (spgUid === null) {
+      setLoading(false);
+      return;
+    }
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const q = query(
-      collection(db, 'menus'),
+    const conditions = [
       where('tanggal', '>=', Timestamp.fromDate(today)),
-      where('tanggal', '<', Timestamp.fromDate(tomorrow)),
-      limit(1)
-    );
+      where('tanggal', '<', Timestamp.fromDate(tomorrow))
+    ];
+    if (spgUid) conditions.push(where('spg_uid', '==', spgUid));
+
+    const q = query(collection(db, 'menus'), ...conditions, limit(1));
 
     const unsubscribe = onSnapshot(
       q,
@@ -58,7 +63,7 @@ export function useTodayMenu() {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [spgUid]);
 
   return { menu, loading, error };
 }
@@ -66,16 +71,19 @@ export function useTodayMenu() {
 /**
  * Get voting options (menus marked as voting options)
  */
-export function useVotingMenus() {
+export function useVotingMenus(spgUid) {
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(
-      collection(db, 'menus'),
-      where('is_voting_option', '==', true),
-      orderBy('tanggal', 'asc')
-    );
+    if (spgUid === null) {
+      setLoading(false);
+      return;
+    }
+    const conditions = [where('is_voting_option', '==', true), orderBy('tanggal', 'asc')];
+    if (spgUid) conditions.push(where('spg_uid', '==', spgUid));
+
+    const q = query(collection(db, 'menus'), ...conditions);
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -84,7 +92,7 @@ export function useVotingMenus() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [spgUid]);
 
   return { menus, loading };
 }
@@ -124,16 +132,19 @@ export function useMenuFeedbacks(menuId) {
 /**
  * Get all menus for admin management
  */
-export function useAllMenus() {
+export function useAllMenus(spgUid) {
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const q = query(
-      collection(db, 'menus'),
-      orderBy('tanggal', 'desc'),
-      limit(100)
-    );
+    if (spgUid === null) {
+      setLoading(false);
+      return;
+    }
+    const conditions = [orderBy('tanggal', 'desc'), limit(100)];
+    if (spgUid) conditions.push(where('spg_uid', '==', spgUid));
+    
+    const q = query(collection(db, 'menus'), ...conditions);
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -142,7 +153,7 @@ export function useAllMenus() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [spgUid]);
 
   return { menus, loading };
 }
@@ -252,6 +263,22 @@ export async function updateMenu(menuId, menuData) {
 }
 
 /**
+ * Update managed schools for SPG
+ */
+export async function updateManagedSchools(userUid, schools) {
+  const ref = doc(db, 'users', userUid);
+  return updateDoc(ref, { managed_schools: schools });
+}
+
+/**
+ * Update user profile
+ */
+export async function updateUserProfile(userUid, data) {
+  const ref = doc(db, 'users', userUid);
+  return updateDoc(ref, data);
+}
+
+/**
  * Delete a menu (admin only)
  */
 export async function deleteMenu(menuId) {
@@ -314,12 +341,12 @@ export function useAllFeedbacks() {
 /**
  * Get menus within a date range (for weekly view / history)
  */
-export function useMenusByDateRange(startDate, endDate) {
+export function useMenusByDateRange(startDate, endDate, spgUid) {
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!startDate || !endDate) {
+    if (!startDate || !endDate || spgUid === null) {
       setLoading(false);
       return;
     }
@@ -329,12 +356,14 @@ export function useMenusByDateRange(startDate, endDate) {
     const end = new Date(endDate);
     end.setHours(23, 59, 59, 999);
 
-    const q = query(
-      collection(db, 'menus'),
+    const conditions = [
       where('tanggal', '>=', Timestamp.fromDate(start)),
       where('tanggal', '<=', Timestamp.fromDate(end)),
       orderBy('tanggal', 'asc')
-    );
+    ];
+    if (spgUid) conditions.push(where('spg_uid', '==', spgUid));
+
+    const q = query(collection(db, 'menus'), ...conditions);
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const items = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -346,7 +375,7 @@ export function useMenusByDateRange(startDate, endDate) {
     });
 
     return () => unsubscribe();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, spgUid]);
 
   return { menus, loading };
 }
@@ -471,4 +500,34 @@ export function useMenuDetails(menuIds) {
   }, [menuIds]);
 
   return details;
+}
+
+/**
+ * Get all SPG users (for Super Admin map)
+ */
+export function useAllSpgUsers() {
+  const [spgUsers, setSpgUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const q = query(
+      collection(db, 'users'),
+      where('role', '==', 'spg')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const items = snapshot.docs.map((d) => ({ uid: d.id, ...d.data() }));
+      setSpgUsers(items);
+      setLoading(false);
+    }, (err) => {
+      console.error('Error fetching SPG users:', err);
+      setError(err.message);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  return { spgUsers, loading, error };
 }

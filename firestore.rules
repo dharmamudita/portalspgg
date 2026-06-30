@@ -26,15 +26,26 @@ service cloud.firestore {
       return isAuthenticated() && getUserData().role == 'student';
     }
 
+    // Check if the user is super admin
+    function isSuperAdmin() {
+      return isAuthenticated() && (request.auth.token.email == '23312067@sppg.id' || request.auth.token.email == '23312067@gmail.com');
+    }
+
     // ============================================
     // USERS COLLECTION
     // ============================================
     match /users/{userId} {
+      // Super Admin can do everything
+      allow read, write: if isSuperAdmin();
+
       // Users can read their own profile
       allow read: if isAuthenticated() && request.auth.uid == userId;
       
       // Admin can read all users
       allow read: if isAdmin();
+
+      // Anyone authenticated can read SPG profiles (to map schools)
+      allow read: if isAuthenticated() && resource.data.role == 'spg';
       
       // Only allow creation during registration (validated by Auth)
       allow create: if isAuthenticated() && request.auth.uid == userId
@@ -56,6 +67,8 @@ service cloud.firestore {
     // MENUS COLLECTION
     // ============================================
     match /menus/{menuId} {
+      allow read, write: if isSuperAdmin();
+
       // All authenticated users can read menus
       allow read: if isAuthenticated();
       
@@ -78,6 +91,8 @@ service cloud.firestore {
     // FEEDBACKS COLLECTION
     // ============================================
     match /feedbacks/{feedbackId} {
+      allow read, write: if isSuperAdmin();
+
       // All authenticated users can read feedbacks
       allow read: if isAuthenticated();
       
@@ -100,6 +115,8 @@ service cloud.firestore {
     // VOTES COLLECTION
     // ============================================
     match /votes/{voteId} {
+      allow read, write: if isSuperAdmin();
+
       // All authenticated users can read votes
       allow read: if isAuthenticated();
       
