@@ -54,6 +54,31 @@
   transform: translateY(-4px) scale(1.01);
 }
 
+/* =========================================================
+   DANGER GLASS (For Allergy Alerts)
+   ========================================================= */
+.liquid-glass-danger {
+  background: rgba(254, 242, 242, 0.9); /* Red 50 tint */
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 
+    0 12px 32px -8px rgba(220, 38, 38, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 1);
+  border-radius: 1.25rem;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass-danger:hover {
+  border-color: #EF4444;
+  box-shadow: 
+    0 0 0 1px #EF4444,
+    0 20px 50px -10px rgba(220, 38, 38, 0.25),
+    0 10px 30px -5px rgba(239, 68, 68, 0.3);
+  transform: translateY(-3px) scale(1.01);
+}
+
 /* Specific hover effect for the welcome banner to make text pop */
 .dashboard-welcome:hover h1 {
   text-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);

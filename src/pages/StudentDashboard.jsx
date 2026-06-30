@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { CalendarDays, MessageSquare, UtensilsCrossed, Sparkles, Flame, Droplets, Wheat } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CalendarDays, MessageSquare, UtensilsCrossed, Sparkles, Flame, Droplets, Wheat, TriangleAlert } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTodayMenu, useVotingMenus, useMenuFeedbacks } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
@@ -19,6 +19,13 @@ export default function StudentDashboard() {
   const { menus: votingMenus } = useVotingMenus();
   const { feedbacks, loading: feedbackLoading } = useMenuFeedbacks(todayMenu?.id);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+
+  // MOCK DATA FOR ALLERGY SYSTEM DEMONSTRATION
+  // Normally userData.alergi would be set from Firestore
+  const userAllergies = userData?.alergi || ['Kacang', 'Seafood']; 
+  const menuAllergens = todayMenu?.alergen || ['Susu', 'Kacang', 'Kedelai'];
+  const dangerousAllergens = userAllergies.filter(a => menuAllergens.includes(a));
+  const hasAllergyWarning = dangerousAllergens.length > 0;
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -51,6 +58,35 @@ export default function StudentDashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 pb-12 relative z-10">
         <motion.div variants={stagger.container} initial="hidden" animate="show">
           
+          {/* ALLERGY WARNING BANNER (Shows only if there's a match) */}
+          <AnimatePresence>
+            {hasAllergyWarning && (
+              <motion.div
+                initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                animate={{ opacity: 1, height: 'auto', marginBottom: '2rem' }}
+                className="liquid-glass-danger p-5 flex flex-col sm:flex-row items-center gap-4 border-red-500/50"
+              >
+                <div className="absolute inset-0 bg-red-500/5 pointer-events-none"></div>
+                <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center flex-shrink-0 relative z-10 border border-red-500/20 shadow-inner">
+                  <TriangleAlert className="w-6 h-6 text-red-600 animate-pulse" />
+                </div>
+                <div className="relative z-10 flex-1 text-center sm:text-left">
+                  <h3 className="text-lg font-bold text-red-600 font-display flex items-center justify-center sm:justify-start gap-2">
+                    Peringatan Alergi Kritis!
+                  </h3>
+                  <p className="text-sm text-red-900/80 mt-1">
+                    Menu hari ini mengandung <strong className="text-red-700 bg-red-100 px-1 rounded">{dangerousAllergens.join(', ')}</strong> yang berbahaya bagi Anda. Harap berhati-hati atau minta opsi pengganti.
+                  </p>
+                </div>
+                <div className="relative z-10 mt-3 sm:mt-0">
+                  <button className="px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-red-500/30 transition-all hover:-translate-y-0.5">
+                    Minta Pengganti
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Premium Welcome Banner */}
           <motion.div variants={stagger.item} className="dashboard-welcome liquid-glass p-6 mb-8">
             <div>
