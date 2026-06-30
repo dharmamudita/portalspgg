@@ -19,9 +19,9 @@ export default function ProtectedRoute({ children, requiredRole }) {
     return <Navigate to="/login" replace />;
   }
 
-  // Waiting for user data to load
-  if (!userData) {
-    return <LoadingSpinner fullScreen text="Memuat data pengguna..." />;
+  // Waiting for user data to load (should not happen if loading is false, but as a fallback)
+  if (!userData && !loading) {
+    return <Navigate to="/login" replace />;
   }
 
   // Role check — prevent students from accessing admin and vice versa

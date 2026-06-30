@@ -38,9 +38,17 @@ export function AuthProvider({ children }) {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
             setUserData(userDoc.data());
+          } else {
+            console.warn('User document missing. Orphaned account. Logging out.');
+            await signOut(auth);
+            setCurrentUser(null);
+            setUserData(null);
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
+          await signOut(auth);
+          setCurrentUser(null);
+          setUserData(null);
         }
       } else {
         setUserData(null);
