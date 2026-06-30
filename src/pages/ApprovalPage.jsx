@@ -162,11 +162,11 @@ export default function ApprovalPage() {
                     const isApproved = user.status === 'active';
                     return (
                       <motion.div key={user.uid || user.id} variants={stagger.item}>
-                        <Card className={`p-5 md:p-7 border ${isApproved ? 'border-emerald-200 shadow-[0_8px_30px_rgb(16,185,129,0.08)]' : 'border-red-200 shadow-[0_8px_30px_rgb(239,68,68,0.08)]'} bg-white rounded-3xl relative overflow-hidden transition-all duration-300`}>
+                        <Card className={`p-5 md:p-7 border ${isApproved ? 'border-primary/20 shadow-[0_8px_30px_rgba(28,79,135,0.08)]' : 'border-red-200 shadow-[0_8px_30px_rgb(239,68,68,0.08)]'} bg-white rounded-3xl relative overflow-hidden transition-all duration-300`}>
                           <div className="flex flex-col md:flex-row gap-6 relative z-10 items-start md:items-center">
                             {/* Left Icon */}
-                            <div className={`hidden md:flex w-16 h-16 rounded-2xl ${isApproved ? 'bg-emerald-50' : 'bg-red-50'} items-center justify-center shrink-0`}>
-                              <Building2 className={`w-8 h-8 ${isApproved ? 'text-emerald-600' : 'text-red-600'}`} />
+                            <div className={`hidden md:flex w-16 h-16 rounded-2xl ${isApproved ? 'bg-primary/10' : 'bg-red-50'} items-center justify-center shrink-0`}>
+                              <Building2 className={`w-8 h-8 ${isApproved ? 'text-primary' : 'text-red-600'}`} />
                             </div>
 
                             <div className="flex-1 w-full">
@@ -174,13 +174,13 @@ export default function ApprovalPage() {
                                 <h3 className="text-xl md:text-2xl font-bold text-text-primary tracking-tight">
                                   {user.instansi}
                                 </h3>
-                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider hidden sm:block ${isApproved ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+                                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider hidden sm:block ${isApproved ? 'bg-primary/10 text-primary-dark' : 'bg-red-50 text-red-700'}`}>
                                   {isApproved ? 'Disetujui' : 'Ditolak'}
                                 </span>
                               </div>
                               
                               <div className="flex items-center gap-1.5 text-text-secondary mb-5 font-medium text-sm">
-                                <MapPin className={`w-4 h-4 ${isApproved ? 'text-emerald-500' : 'text-red-500'}`} />
+                                <MapPin className={`w-4 h-4 ${isApproved ? 'text-primary-light' : 'text-red-500'}`} />
                                 {user.kecamatan}, {user.kabupaten}, {user.provinsi}
                               </div>
                               
@@ -198,7 +198,7 @@ export default function ApprovalPage() {
                             
                             <div className="flex justify-center md:justify-end shrink-0 w-full md:w-auto mt-4 md:mt-0">
                               {isApproved ? (
-                                <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-5 py-2.5 rounded-full font-bold">
+                                <div className="flex items-center gap-2 text-primary bg-primary/10 px-5 py-2.5 rounded-full font-bold">
                                   <CheckCircle className="w-5 h-5" />
                                   <span>Aktif</span>
                                 </div>
