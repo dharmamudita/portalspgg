@@ -204,7 +204,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex bg-surface">
       {/* LEFT SIDE: Premium Branding Split Screen (Hidden on mobile) */}
-      <div className="hidden lg:flex w-[45%] relative bg-primary overflow-hidden flex-col justify-center items-center p-12 text-center text-white">
+      <div className="hidden lg:flex w-[45%] relative bg-primary-dark overflow-hidden flex-col justify-center items-center p-12 text-center text-white">
         {/* Animated Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -left-40 w-96 h-96 bg-accent/40 rounded-full blur-[100px] animate-pulse-glow" />
@@ -217,8 +217,8 @@ export default function LoginPage() {
 
         {/* Neumorphic Shapes on Blue */}
         <div className="absolute inset-0 pointer-events-none opacity-50 flex items-center justify-center">
-          <div className="absolute w-[600px] h-[600px] rounded-full border border-white/5 bg-primary shadow-[inset_10px_10px_30px_rgba(0,0,0,0.2),inset_-10px_-10px_30px_rgba(255,255,255,0.05),20px_20px_40px_rgba(0,0,0,0.2)]" />
-          <div className="absolute w-[300px] h-[300px] rounded-[60px] border border-white/5 bg-primary shadow-[inset_10px_10px_20px_rgba(0,0,0,0.2),inset_-10px_-10px_20px_rgba(255,255,255,0.05),15px_15px_30px_rgba(0,0,0,0.15)] rotate-12" />
+          <div className="absolute w-[600px] h-[600px] rounded-full border border-white/5 bg-primary-dark shadow-[inset_10px_10px_30px_rgba(0,0,0,0.3),inset_-10px_-10px_30px_rgba(255,255,255,0.03),20px_20px_40px_rgba(0,0,0,0.3)]" />
+          <div className="absolute w-[300px] h-[300px] rounded-[60px] border border-white/5 bg-primary-dark shadow-[inset_10px_10px_20px_rgba(0,0,0,0.3),inset_-10px_-10px_20px_rgba(255,255,255,0.03),15px_15px_30px_rgba(0,0,0,0.2)] rotate-12" />
         </div>
 
         <div className="relative z-10 max-w-md mx-auto">
