@@ -56,8 +56,8 @@ export default function ApprovalPage() {
                 onClick={() => setActiveTab('pending')}
                 className={`flex-1 md:flex-none px-3 sm:px-6 py-2 md:py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 ${
                   activeTab === 'pending'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-blue-600 hover:bg-white/60'
+                    ? 'bg-primary text-white shadow-md'
+                    : 'text-text-secondary hover:text-primary hover:bg-white/60'
                 }`}
               >
                 <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Menunggu</span> <span className="sm:hidden">({pendingUsers.length})</span><span className="hidden sm:inline">({pendingUsers.length})</span>
@@ -66,8 +66,8 @@ export default function ApprovalPage() {
                 onClick={() => setActiveTab('history')}
                 className={`flex-1 md:flex-none px-3 sm:px-6 py-2 md:py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 ${
                   activeTab === 'history'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-blue-600 hover:bg-white/60'
+                    ? 'bg-primary text-white shadow-md'
+                    : 'text-text-secondary hover:text-primary hover:bg-white/60'
                 }`}
               >
                 <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Riwayat</span> <span className="sm:hidden">({historyUsers.length})</span><span className="hidden sm:inline">({historyUsers.length})</span>
@@ -83,44 +83,44 @@ export default function ApprovalPage() {
                     <div className="w-20 h-20 mx-auto rounded-full bg-success/10 flex items-center justify-center mb-6">
                       <CheckCircle className="w-10 h-10 text-success" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Semua Bersih!</h2>
-                    <p className="text-gray-500 text-lg">Tidak ada pendaftaran Dapur SPPG yang menunggu persetujuan saat ini.</p>
+                    <h2 className="text-2xl font-bold text-text-primary mb-2">Semua Bersih!</h2>
+                    <p className="text-text-secondary text-lg">Tidak ada pendaftaran Dapur SPPG yang menunggu persetujuan saat ini.</p>
                   </Card>
                 </motion.div>
               ) : (
                 <div className="space-y-6">
                   {pendingUsers.map(user => (
                     <motion.div key={user.uid || user.id} variants={stagger.item}>
-                      <Card className="p-5 md:p-7 border border-blue-200/60 shadow-[0_8px_30px_rgb(59,130,246,0.08)] hover:shadow-[0_8px_40px_rgb(59,130,246,0.15)] bg-white rounded-3xl relative overflow-hidden transition-all duration-300">
+                      <Card className="p-5 md:p-7 border border-primary/20 shadow-[0_8px_30px_rgba(28,79,135,0.08)] hover:shadow-[0_8px_40px_rgba(28,79,135,0.15)] bg-white rounded-3xl relative overflow-hidden transition-all duration-300">
                         <div className="flex flex-col md:flex-row gap-6 relative z-10 items-start md:items-center">
                           {/* Left Icon */}
-                          <div className="hidden md:flex w-16 h-16 rounded-2xl bg-blue-50 items-center justify-center shrink-0">
-                            <Building2 className="w-8 h-8 text-blue-600" />
+                          <div className="hidden md:flex w-16 h-16 rounded-2xl bg-primary/10 items-center justify-center shrink-0">
+                            <Building2 className="w-8 h-8 text-primary" />
                           </div>
 
                           <div className="flex-1 w-full">
                             <div className="flex items-center gap-3 mb-2">
-                              <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
+                              <h3 className="text-xl md:text-2xl font-bold text-text-primary tracking-tight">
                                 {user.instansi}
                               </h3>
-                              <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider hidden sm:block">
+                              <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary-dark text-[10px] font-bold uppercase tracking-wider hidden sm:block">
                                 Baru
                               </span>
                             </div>
                             
-                            <div className="flex items-center gap-1.5 text-gray-500 mb-5 font-medium text-sm">
-                              <MapPin className="w-4 h-4 text-blue-500" />
+                            <div className="flex items-center gap-1.5 text-text-secondary mb-5 font-medium text-sm">
+                              <MapPin className="w-4 h-4 text-primary-light" />
                               {user.kecamatan}, {user.kabupaten}, {user.provinsi}
                             </div>
                             
                             <div className="flex flex-wrap gap-3">
-                              <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                                <User className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm font-semibold text-gray-700">{user.nama}</span>
+                              <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-black/5">
+                                <User className="w-4 h-4 text-text-muted" />
+                                <span className="text-sm font-semibold text-text-primary">{user.nama}</span>
                               </div>
-                              <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                                <Mail className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm font-medium text-gray-600">{user.email}</span>
+                              <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-black/5">
+                                <Mail className="w-4 h-4 text-text-muted" />
+                                <span className="text-sm font-medium text-text-secondary">{user.email}</span>
                               </div>
                             </div>
                           </div>
@@ -128,7 +128,7 @@ export default function ApprovalPage() {
                           <div className="flex flex-row md:flex-col gap-3 w-full md:w-auto shrink-0 mt-4 md:mt-0">
                             <button 
                               onClick={() => approveSpgUser(user.uid || user.id)}
-                              className="flex-1 md:flex-none py-2.5 px-6 rounded-full bg-blue-600 text-white font-semibold text-sm shadow-md shadow-blue-600/20 hover:bg-blue-700 hover:-translate-y-0.5 transition-all duration-300 text-center"
+                              className="flex-1 md:flex-none py-2.5 px-6 rounded-full bg-primary text-white font-semibold text-sm shadow-md shadow-primary/30 hover:bg-primary-dark hover:-translate-y-0.5 transition-all duration-300 text-center"
                             >
                               Setujui
                             </button>
@@ -149,11 +149,11 @@ export default function ApprovalPage() {
               historyUsers.length === 0 ? (
                 <motion.div variants={stagger.item}>
                   <Card className="p-12 border-none shadow-xl shadow-black/5 bg-white/90 backdrop-blur-xl text-center">
-                    <div className="w-20 h-20 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-6">
-                      <History className="w-10 h-10 text-gray-400" />
+                    <div className="w-20 h-20 mx-auto rounded-full bg-black/5 flex items-center justify-center mb-6">
+                      <History className="w-10 h-10 text-text-muted" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Belum Ada Riwayat</h2>
-                    <p className="text-gray-500 text-lg">Anda belum melakukan verifikasi pada akun manapun.</p>
+                    <h2 className="text-2xl font-bold text-text-primary mb-2">Belum Ada Riwayat</h2>
+                    <p className="text-text-secondary text-lg">Anda belum melakukan verifikasi pada akun manapun.</p>
                   </Card>
                 </motion.div>
               ) : (
@@ -171,7 +171,7 @@ export default function ApprovalPage() {
 
                             <div className="flex-1 w-full">
                               <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
+                                <h3 className="text-xl md:text-2xl font-bold text-text-primary tracking-tight">
                                   {user.instansi}
                                 </h3>
                                 <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider hidden sm:block ${isApproved ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
@@ -179,19 +179,19 @@ export default function ApprovalPage() {
                                 </span>
                               </div>
                               
-                              <div className="flex items-center gap-1.5 text-gray-500 mb-5 font-medium text-sm">
+                              <div className="flex items-center gap-1.5 text-text-secondary mb-5 font-medium text-sm">
                                 <MapPin className={`w-4 h-4 ${isApproved ? 'text-emerald-500' : 'text-red-500'}`} />
                                 {user.kecamatan}, {user.kabupaten}, {user.provinsi}
                               </div>
                               
                               <div className="flex flex-wrap gap-3">
-                                <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                                  <User className="w-4 h-4 text-gray-400" />
-                                  <span className="text-sm font-semibold text-gray-700">{user.nama}</span>
+                                <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-black/5">
+                                  <User className="w-4 h-4 text-text-muted" />
+                                  <span className="text-sm font-semibold text-text-primary">{user.nama}</span>
                                 </div>
-                                <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                                  <Mail className="w-4 h-4 text-gray-400" />
-                                  <span className="text-sm font-medium text-gray-600">{user.email}</span>
+                                <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-black/5">
+                                  <Mail className="w-4 h-4 text-text-muted" />
+                                  <span className="text-sm font-medium text-text-secondary">{user.email}</span>
                                 </div>
                               </div>
                             </div>
