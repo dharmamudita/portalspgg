@@ -136,9 +136,10 @@ export default function VotingPage() {
               </h1>
               
               {/* Impact Banner */}
-              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 max-w-xl mx-auto mb-4">
-                <p className="text-sm font-medium text-white/90 leading-relaxed">
-                  <strong className="text-white font-bold">Suara Anda menentukan kebijakan!</strong> Menu yang menang akan diprioritaskan untuk dihidangkan bulan depan dan direkomendasikan kepada Pemerintah Daerah.
+              <div className="bg-primary/40 backdrop-blur-xl border border-blue-400/30 rounded-2xl p-4 max-w-xl mx-auto mb-4 shadow-[0_0_30px_rgba(59,130,246,0.3)]">
+                <p className="text-sm font-medium text-white leading-relaxed">
+                  <strong className="text-yellow-300 font-bold tracking-wide uppercase text-xs block mb-1">Dampak Suara Anda</strong> 
+                  Menu yang menang akan diprioritaskan untuk dihidangkan bulan depan dan direkomendasikan kepada Pemerintah Daerah.
                 </p>
               </div>
 
