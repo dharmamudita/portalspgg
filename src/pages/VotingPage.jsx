@@ -121,9 +121,9 @@ export default function VotingPage() {
                     <span className="text-xs font-bold text-white">Pemungutan Suara Ditutup</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-success/20 border border-success/30 backdrop-blur-md">
-                    <Radio className="w-4 h-4 text-white animate-pulse" />
-                    <span className="text-xs font-bold text-white">Live Polling Aktif</span>
+                  <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 border border-primary/30 backdrop-blur-md">
+                    <CheckCircle2 className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-bold text-primary">Hak Suara Aktif</span>
                   </div>
                 )}
               </div>
@@ -218,7 +218,7 @@ export default function VotingPage() {
                     }`}
                   >
                     {DAYS_SHORT[dayNum]} {day.getDate()}/{day.getMonth() + 1}
-                    {hasMenu && <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full bg-success" />}
+                    {hasMenu && <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full bg-primary" />}
                   </button>
                 );
               })}
@@ -333,8 +333,8 @@ export default function VotingPage() {
                               : isClosed
                                 ? 'bg-black/5 text-text-muted border border-black/5 cursor-not-allowed'
                                 : isVoted
-                                  ? 'bg-success/10 text-success border border-success/20 ring-1 ring-success/30'
-                                  : isLoading
+                                ? 'bg-primary/10 text-primary border border-primary/20 ring-1 ring-primary/30'
+                                : isLoading
                                     ? 'bg-black/5 text-text-muted'
                                     : 'bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30 hover:shadow-primary/40'
                           }`}

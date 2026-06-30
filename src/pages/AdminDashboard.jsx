@@ -91,7 +91,7 @@ export default function AdminDashboard() {
     { label: 'Menu Minggu Ini', value: totalMenus, icon: UtensilsCrossed, color: 'text-primary', bg: 'bg-primary/10' },
     { label: 'Feedback', value: totalFeedbacks, icon: MessageSquare, color: 'text-accent', bg: 'bg-accent/10' },
     { label: 'Rata-rata Rating', value: avgRating, icon: Star, color: 'text-warning', bg: 'bg-warning/10' },
-    { label: 'Aktivitas Baru', value: '+12%', icon: TrendingUp, color: 'text-success', bg: 'bg-success/10' },
+    { label: 'Aktivitas Baru', value: '+12%', icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10' },
   ];
 
   const prevWeek = () => {

@@ -225,8 +225,8 @@ export default function HistoryPage() {
                 
                 // Color code sentiment
                 let sentimentClass = 'border-black/5';
-                if (fb.rating >= 4) sentimentClass = 'border-l-4 border-l-success bg-success/5';
-                else if (fb.rating <= 2) sentimentClass = 'border-l-4 border-l-danger bg-danger/5';
+                if (fb.rating >= 4) sentimentClass = 'border-l-4 border-l-primary bg-primary/5';
+                if (fb.rating <= 2) sentimentClass = 'border-l-4 border-l-danger bg-danger/5';
                 
                 return (
                   <motion.div

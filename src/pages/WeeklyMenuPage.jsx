@@ -172,7 +172,7 @@ export default function WeeklyMenuPage() {
                     <span className="block">{DAYS_SHORT[dayNum]}</span>
                     <span className="block text-[10px] opacity-60">{day.getDate()}</span>
                     {hasMenu && (
-                      <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-success" />
+                      <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-primary" />
                     )}
                   </button>
                 );
