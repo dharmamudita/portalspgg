@@ -187,7 +187,7 @@ export default function VotingPage() {
             </div>
 
             {/* Day filter pills */}
-            <div className="flex gap-1.5 overflow-x-auto pb-1">
+            <div className="flex gap-2 overflow-x-auto sm:justify-center pb-2 px-1 custom-scrollbar w-full">
               <button
                 onClick={() => setSelectedDay(-1)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${

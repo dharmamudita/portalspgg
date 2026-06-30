@@ -141,10 +141,10 @@ export default function WeeklyMenuPage() {
             </div>
 
             {/* Day Selector */}
-            <div className="grid grid-cols-8 gap-1.5">
+            <div className="flex gap-2 overflow-x-auto sm:justify-center pb-2 px-1 custom-scrollbar w-full">
               <button
                 onClick={() => setSelectedDay(-1)}
-                className={`py-2 px-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                   selectedDay === -1
                     ? 'bg-primary/10 text-primary-dark border border-primary/30'
                     : 'bg-black/5 text-text-muted hover:bg-black/10'
@@ -163,7 +163,7 @@ export default function WeeklyMenuPage() {
                   <button
                     key={i}
                     onClick={() => setSelectedDay(dayNum)}
-                    className={`py-2 px-1 rounded-xl text-xs font-semibold transition-all cursor-pointer relative ${
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer relative ${
                       selectedDay === dayNum
                         ? 'bg-primary/10 text-primary-dark border border-primary/30'
                         : isToday
