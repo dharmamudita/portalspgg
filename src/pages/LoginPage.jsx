@@ -253,29 +253,22 @@ export default function LoginPage() {
       <div className="w-full lg:w-[55%] flex items-center justify-center p-6 sm:p-12 relative bg-surface overflow-hidden">
         
         {/* --- Neumorphic Background Elements --- */}
-        {/* Main Center-Right Object */}
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 pointer-events-none opacity-60 flex items-center justify-center translate-x-1/4 lg:translate-x-0">
-          {/* Outer Squircle */}
-          <div className="absolute w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] rounded-[100px] sm:rounded-[150px] bg-surface shadow-[inset_10px_10px_30px_rgba(0,0,0,0.03),inset_-10px_-10px_30px_rgba(255,255,255,1),20px_20px_40px_rgba(0,0,0,0.03)] border border-white/50 rotate-45" />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-80 flex items-center justify-center">
+          {/* Base large circle layer */}
+          <div className="absolute w-[800px] h-[800px] rounded-full border border-white/60 bg-surface shadow-[inset_10px_10px_40px_rgba(0,0,0,0.02),inset_-10px_-10px_40px_rgba(255,255,255,1),20px_20px_50px_rgba(0,0,0,0.03)]" />
           
-          {/* Inner Circle */}
-          <div className="absolute w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full bg-surface shadow-[inset_15px_15px_40px_rgba(0,0,0,0.04),inset_-15px_-15px_40px_rgba(255,255,255,1),15px_15px_30px_rgba(0,0,0,0.02)] border border-white/60" />
-        </div>
-
-        {/* Top Left Floating Object */}
-        <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 pointer-events-none opacity-50 flex items-center justify-center">
-          <div className="absolute w-[300px] h-[300px] rounded-full bg-surface shadow-[inset_10px_10px_20px_rgba(0,0,0,0.03),inset_-10px_-10px_20px_rgba(255,255,255,1),15px_15px_30px_rgba(0,0,0,0.02)] border border-white/50" />
-          <div className="absolute w-[150px] h-[150px] rounded-[30px] bg-surface shadow-[inset_5px_5px_15px_rgba(0,0,0,0.04),inset_-5px_-5px_15px_rgba(255,255,255,1),10px_10px_20px_rgba(0,0,0,0.02)] border border-white/60 rotate-12" />
-        </div>
-
-        {/* Bottom Left Floating Object */}
-        <div className="absolute bottom-0 left-20 translate-y-1/3 pointer-events-none opacity-40 flex items-center justify-center">
-          <div className="absolute w-[200px] h-[200px] rounded-[50px] bg-surface shadow-[inset_8px_8px_16px_rgba(0,0,0,0.03),inset_-8px_-8px_16px_rgba(255,255,255,1),12px_12px_24px_rgba(0,0,0,0.02)] border border-white/50 -rotate-12" />
-        </div>
-
-        {/* Top Right Floating Object (mobile only) */}
-        <div className="lg:hidden absolute top-10 right-[-50px] pointer-events-none opacity-40 flex items-center justify-center">
-          <div className="absolute w-[150px] h-[150px] rounded-full bg-surface shadow-[inset_5px_5px_15px_rgba(0,0,0,0.03),inset_-5px_-5px_15px_rgba(255,255,255,1),10px_10px_20px_rgba(0,0,0,0.02)] border border-white/50" />
+          {/* Overlapping top shape */}
+          <div className="absolute -top-[300px] w-[900px] h-[600px] rounded-[200px] border border-white/80 bg-surface shadow-[inset_15px_15px_40px_rgba(0,0,0,0.02),inset_-15px_-15px_40px_rgba(255,255,255,1),0_20px_40px_rgba(0,0,0,0.015)]" />
+          
+          {/* Overlapping bottom shape to create the central intersection arc */}
+          <div className="absolute -bottom-[300px] w-[900px] h-[600px] rounded-[200px] border border-white/80 bg-surface shadow-[inset_15px_15px_40px_rgba(0,0,0,0.02),inset_-15px_-15px_40px_rgba(255,255,255,1),0_-20px_40px_rgba(0,0,0,0.015)]" />
+          
+          {/* Central prominent circle */}
+          <div className="absolute w-[400px] h-[400px] rounded-full border border-white bg-surface shadow-[inset_8px_8px_20px_rgba(0,0,0,0.03),inset_-8px_-8px_20px_rgba(255,255,255,1),10px_10px_20px_rgba(0,0,0,0.02)]" />
+          
+          {/* Corner subtle objects */}
+          <div className="absolute -top-20 -left-20 w-[300px] h-[300px] rounded-full border border-white bg-surface shadow-[inset_5px_5px_15px_rgba(0,0,0,0.02),inset_-5px_-5px_15px_rgba(255,255,255,1),5px_5px_15px_rgba(0,0,0,0.01)]" />
+          <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-[100px] border border-white bg-surface shadow-[inset_10px_10px_30px_rgba(0,0,0,0.02),inset_-10px_-10px_30px_rgba(255,255,255,1),15px_15px_30px_rgba(0,0,0,0.01)] rotate-45" />
         </div>
 
         <motion.div
@@ -558,56 +551,16 @@ export default function LoginPage() {
 
             </form>
 
-            {/* Toggle Modes - Premium Aesthetic Design */}
-            {mode === 'login' ? (
-              <div className="mt-8">
-                <div className="relative flex items-center py-4 mb-4">
-                  <div className="flex-grow border-t border-black/5"></div>
-                  <span className="flex-shrink-0 mx-4 text-xs font-bold text-text-muted tracking-widest">ATAU</span>
-                  <div className="flex-grow border-t border-black/5"></div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <button 
-                    type="button"
-                    onClick={() => { setMode('register'); setErrors({}); setRegStep(1); }} 
-                    className="flex items-center gap-3 p-4 rounded-xl border border-black/10 hover:border-primary/30 hover:bg-primary/5 transition-all group text-left cursor-pointer"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-black/5 group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
-                      <UserPlus className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-text-primary group-hover:text-primary transition-colors">Pengguna Baru?</h4>
-                      <p className="text-[11px] text-text-muted mt-0.5">Daftar akun di sini</p>
-                    </div>
-                  </button>
-
-                  <button 
-                    type="button"
-                    onClick={() => { setMode('forgot'); setErrors({}); }} 
-                    className="flex items-center gap-3 p-4 rounded-xl border border-black/10 hover:border-primary/30 hover:bg-primary/5 transition-all group text-left cursor-pointer"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-black/5 group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
-                      <KeyRound className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-text-primary group-hover:text-primary transition-colors">Lupa Sandi?</h4>
-                      <p className="text-[11px] text-text-muted mt-0.5">Reset akses Anda</p>
-                    </div>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-8 text-center border-t border-black/5 pt-6">
-                <button
-                  type="button"
-                  onClick={() => { setMode('login'); setErrors({}); setRegStep(1); }}
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-text-muted hover:text-primary transition-colors cursor-pointer"
-                >
-                  <ArrowLeft className="w-4 h-4" /> Kembali ke Halaman Login
-                </button>
-              </div>
-            )}
+            {/* Toggle Modes */}
+            <div className="mt-8 text-center border-t border-black/5 pt-6">
+              <button
+                type="button"
+                onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setErrors({}); setRegStep(1); }}
+                className="text-sm font-semibold text-text-muted hover:text-primary transition-colors cursor-pointer"
+              >
+                {mode === 'login' ? 'Belum punya akun? Daftar Sekarang' : 'Sudah punya akun? Masuk'}
+              </button>
+            </div>
           </div>
 
           <p className="flex items-center justify-center gap-1.5 text-center text-xs text-text-muted mt-6 font-medium">
