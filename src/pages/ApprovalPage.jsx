@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ShieldCheck, MapPin, CheckCircle, XCircle } from 'lucide-react';
+import { ShieldCheck, MapPin, CheckCircle, XCircle, Building2, User, Mail } from 'lucide-react';
 import { usePendingSpgUsers, approveSpgUser, rejectSpgUser } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
 import PageHeaderBg from '../components/ui/PageHeaderBg';
@@ -64,51 +64,53 @@ export default function ApprovalPage() {
                 
                 {pendingUsers.map(user => (
                   <motion.div key={user.id} variants={stagger.item}>
-                    <Card className="p-6 border border-amber-200/60 shadow-xl shadow-amber-500/5 bg-white/90 backdrop-blur-xl relative overflow-hidden group hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500">
-                      <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all"></div>
+                    <Card className="p-5 md:p-7 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:shadow-[0_8px_40px_rgb(59,130,246,0.12)] bg-white rounded-3xl relative overflow-hidden transition-all duration-300">
                       
-                      <div className="flex flex-col md:flex-row gap-6 relative z-10">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-3">
-                            <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-inner">
-                              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                              Menunggu Verifikasi
+                      <div className="flex flex-col md:flex-row gap-6 relative z-10 items-start md:items-center">
+                        {/* Left Icon */}
+                        <div className="hidden md:flex w-16 h-16 rounded-2xl bg-blue-50 items-center justify-center shrink-0">
+                          <Building2 className="w-8 h-8 text-blue-600" />
+                        </div>
+
+                        <div className="flex-1 w-full">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-xl md:text-2xl font-bold text-gray-900 tracking-tight">
+                              {user.instansi}
+                            </h3>
+                            <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold uppercase tracking-wider hidden sm:block">
+                              Baru
                             </span>
                           </div>
                           
-                          <h3 className="text-2xl md:text-3xl font-black text-slate-800 mb-2 tracking-tight">
-                            {user.instansi}
-                          </h3>
-                          <div className="flex items-center gap-2 text-slate-500 mb-6 font-medium">
-                            <MapPin className="w-4 h-4 text-primary" />
+                          <div className="flex items-center gap-1.5 text-gray-500 mb-5 font-medium text-sm">
+                            <MapPin className="w-4 h-4 text-blue-500" />
                             {user.kecamatan}, {user.kabupaten}, {user.provinsi}
                           </div>
                           
-                          <div className="flex flex-wrap sm:flex-nowrap gap-4 sm:gap-6 bg-slate-50/80 rounded-2xl p-4 border border-slate-100/80 shadow-sm">
-                            <div className="flex-1">
-                              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Penanggung Jawab</p>
-                              <p className="font-bold text-slate-700">{user.nama}</p>
+                          <div className="flex flex-wrap gap-3">
+                            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                              <User className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm font-semibold text-gray-700">{user.nama}</span>
                             </div>
-                            <div className="w-full sm:w-px h-px sm:h-auto bg-slate-200"></div>
-                            <div className="flex-1">
-                              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Kontak & Identitas</p>
-                              <p className="font-bold text-slate-700">{user.email} <span className="text-slate-400 font-normal mx-1">•</span> {user.nip}</p>
+                            <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+                              <Mail className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm font-medium text-gray-600">{user.email}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex flex-row md:flex-col gap-3 justify-center md:justify-center md:w-44 shrink-0 pt-2">
+                        <div className="flex flex-row md:flex-col gap-3 w-full md:w-auto shrink-0 mt-4 md:mt-0">
                           <button 
                             onClick={() => approveSpgUser(user.id)}
-                            className="flex-1 md:flex-none py-3 px-4 rounded-xl bg-gradient-to-r from-success to-emerald-400 text-white font-bold text-sm shadow-lg shadow-success/30 hover:shadow-success/50 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
+                            className="flex-1 md:flex-none py-2.5 px-6 rounded-full bg-blue-600 text-white font-semibold text-sm shadow-md shadow-blue-600/20 hover:bg-blue-700 hover:-translate-y-0.5 transition-all duration-300 text-center"
                           >
-                            <CheckCircle className="w-5 h-5" /> Setujui
+                            Setujui
                           </button>
                           <button 
                             onClick={() => rejectSpgUser(user.id)}
-                            className="flex-1 md:flex-none py-3 px-4 rounded-xl bg-white border-2 border-danger/20 text-danger font-bold text-sm hover:bg-danger/5 hover:border-danger transition-all duration-300 flex items-center justify-center gap-2"
+                            className="flex-1 md:flex-none py-2.5 px-6 rounded-full bg-red-50 text-red-600 font-semibold text-sm hover:bg-red-100 transition-all duration-300 text-center"
                           >
-                            <XCircle className="w-5 h-5" /> Tolak
+                            Tolak
                           </button>
                         </div>
                       </div>
