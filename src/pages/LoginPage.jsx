@@ -261,12 +261,10 @@ export default function LoginPage() {
               <h2 className="text-2xl font-black text-text-primary mb-2 font-display">
                 {mode === 'login' ? 'Selamat Datang Kembali' : mode === 'forgot' ? 'Reset Password' : 'Buat Akun Baru'}
               </h2>
-              <p className="text-sm text-text-muted font-medium">
-                {mode === 'login' 
-                  ? 'Masuk menggunakan email terdaftar Anda' 
-                  : mode === 'forgot'
-                  ? 'Masukkan email untuk menerima tautan reset password'
-                  : `Langkah ${regStep} dari 3 — Selesaikan pendaftaran`}
+              <p className="text-sm text-text-muted">
+                {mode === 'login' ? 'Masuk untuk melanjutkan ke Portal SPPG' : 
+                 mode === 'forgot' ? 'Kami akan mengirimkan instruksi reset ke email Anda' : 
+                 `Langkah ${regStep} dari ${form.role === 'student' ? 4 : 3} — Selesaikan pendaftaran`}
               </p>
             </div>
 

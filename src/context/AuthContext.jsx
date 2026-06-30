@@ -4,12 +4,13 @@
  */
 import { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../lib/firebase';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
+import { 
+  onAuthStateChanged, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
   signOut,
-  onAuthStateChanged,
   sendPasswordResetEmail,
+  deleteUser
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
@@ -107,8 +108,14 @@ export function AuthProvider({ children }) {
       ...extraData,
     };
 
-    // Create user document in Firestore
-    await setDoc(doc(db, 'users', result.user.uid), newUserData);
+    try {
+      // Create user document in Firestore
+      await setDoc(doc(db, 'users', result.user.uid), newUserData);
+    } catch (error) {
+      // Rollback Auth if Firestore creation fails (e.g. timeout)
+      await deleteUser(result.user).catch(() => {});
+      throw error;
+    }
 
     setUserData(newUserData);
 
