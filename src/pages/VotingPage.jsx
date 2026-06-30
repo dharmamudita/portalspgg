@@ -12,7 +12,7 @@ import { MonthYearPicker } from './WeeklyMenuPage';
 import { DAYS, DAYS_SHORT, MONTHS } from '../lib/dateUtils';
 
 export default function VotingPage() {
-  const { currentUser } = useAuth();
+  const { currentUser, userData } = useAuth();
   const { addToast } = useToast();
 
   const [baseDate, setBaseDate] = useState(new Date());
