@@ -12,16 +12,44 @@ import { sanitizeInput } from '../lib/sanitize';
 import { validatePassword } from '../lib/validators';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import SearchableSelect from '../components/ui/SearchableSelect';
 
-const getMockSchools = (tingkat, kecamatan) => {
-  if (!kecamatan || !tingkat) return [];
+const getMockSchools = (tingkat) => {
+  if (!tingkat) return [];
   const tk = tingkat.toUpperCase();
-  return [
-    `${tk}N 1 ${kecamatan}`,
-    `${tk}N 2 ${kecamatan}`,
-    `${tk} IT ${kecamatan}`,
-    `${tk} Swasta ${kecamatan}`
-  ];
+  if (tk === 'SD') {
+    return [
+      'SDN 1 Kedaton, Bandar Lampung', 'SDN 2 Kedaton, Bandar Lampung', 'SDN 1 Rajabasa, Bandar Lampung', 
+      'SDN 2 Rajabasa, Bandar Lampung', 'SDN 1 Tanjung Karang, Bandar Lampung', 'SDN 2 Way Halim, Bandar Lampung',
+      'SD IT Permata Bunda, Bandar Lampung', 'SD Al Kautsar, Bandar Lampung', 'SD Global Madani, Bandar Lampung',
+      'SD Xaverius 1, Bandar Lampung', 'SD BPK Penabur, Bandar Lampung', 'SD IT Fitrah Insani, Bandar Lampung',
+      'SD Muhammadiyah 1, Bandar Lampung', 'SD Pelita Bangsa, Bandar Lampung'
+    ];
+  }
+  if (tk === 'SMP') {
+    return [
+      'SMPN 1 Bandar Lampung', 'SMPN 2 Bandar Lampung', 'SMPN 4 Bandar Lampung', 'SMPN 9 Bandar Lampung',
+      'SMPN 21 Bandar Lampung', 'SMPN 25 Bandar Lampung', 'SMP Al Kautsar Bandar Lampung',
+      'SMP Xaverius 1 Bandar Lampung', 'SMP Global Madani Bandar Lampung', 'SMP IT Fitrah Insani Bandar Lampung',
+      'SMP BPK Penabur Bandar Lampung', 'SMP Muhammadiyah 3 Bandar Lampung'
+    ];
+  }
+  if (tk === 'SMA') {
+    return [
+      'SMAN 1 Bandar Lampung', 'SMAN 2 Bandar Lampung', 'SMAN 3 Bandar Lampung', 'SMAN 5 Bandar Lampung',
+      'SMAN 9 Bandar Lampung', 'SMA Al Kautsar Bandar Lampung', 'SMA YP Unila Bandar Lampung',
+      'SMA Xaverius Pahoman Bandar Lampung', 'SMA Global Madani Bandar Lampung', 'SMA IT Ar Raihan Bandar Lampung',
+      'SMA Perintis 1 Bandar Lampung', 'SMA Muhammadiyah 2 Bandar Lampung'
+    ];
+  }
+  if (tk === 'SMK') {
+    return [
+      'SMKN 1 Bandar Lampung', 'SMKN 2 Bandar Lampung', 'SMKN 3 Bandar Lampung', 'SMKN 4 Bandar Lampung',
+      'SMKN 5 Bandar Lampung', 'SMK SMTI Bandar Lampung', 'SMK 2 Mei Bandar Lampung', 'SMK Pelita Bandar Lampung',
+      'SMK BPK Penabur Bandar Lampung', 'SMK Yadika Bandar Lampung', 'SMK Arjuna Bandar Lampung'
+    ];
+  }
+  return [];
 };
 
 const MOCK_WILAYAH = {
@@ -507,19 +535,17 @@ export default function LoginPage() {
                         </div>
 
                         {form.tingkat && (
-                          <div>
-                            <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Pilih Sekolah</label>
-                            <select 
-                              className="w-full bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
+                          <div className="pt-2">
+                            <SearchableSelect 
+                              id="reg-instansi"
+                              label="Pilih Sekolah"
+                              icon={Building2}
+                              options={getMockSchools(form.tingkat)}
                               value={form.instansi}
-                              onChange={(e) => updateField('instansi', e.target.value)}
-                            >
-                              <option value="">Pilih Sekolah...</option>
-                              {getMockSchools(form.tingkat, form.kecamatan).map(school => (
-                                <option key={school} value={school}>{school}</option>
-                              ))}
-                            </select>
-                            {errors.instansi && <p className="text-xs text-danger font-semibold mt-1 ml-1">{errors.instansi}</p>}
+                              onChange={(val) => updateField('instansi', val)}
+                              placeholder="Ketik untuk mencari sekolah..."
+                              error={errors.instansi}
+                            />
                           </div>
                         )}
 
