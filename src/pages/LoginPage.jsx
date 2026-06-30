@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -31,6 +31,12 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [lastRole, setLastRole] = useState('student');
+
+  useEffect(() => {
+    const savedRole = localStorage.getItem('sppg_last_role');
+    if (savedRole) setLastRole(savedRole);
+  }, []);
   
   const [form, setForm] = useState({ 
     email: '', 
@@ -73,7 +79,7 @@ export default function LoginPage() {
     const newErrors = {};
 
     if (mode === 'login') {
-      if (!form.email.trim()) newErrors.email = 'Email wajib diisi';
+      if (!form.email.trim()) newErrors.email = 'Identitas wajib diisi';
       if (!form.password) newErrors.password = 'Password wajib diisi';
     } else if (mode === 'forgot') {
       if (!form.email.trim()) newErrors.email = 'Email wajib diisi';
@@ -83,7 +89,7 @@ export default function LoginPage() {
         if (!form.tingkat) newErrors.tingkat = 'Pilih tingkat pendidikan';
         if (!form.instansi) newErrors.instansi = 'Pilih sekolah';
       } else {
-        if (!form.nisn.trim()) newErrors.nisn = 'NIP wajib diisi';
+        if (!form.nama.trim()) newErrors.nama = 'Nama wajib diisi';
         if (!form.instansi.trim()) newErrors.instansi = 'Instansi wajib diisi';
       }
     }
@@ -112,10 +118,19 @@ export default function LoginPage() {
           { 
             tingkat: form.tingkat, 
             instansi: cleanInstansi,
-            alergi: allergiesArray
+            alergi: allergiesArray,
+            status: form.role === 'spg' ? 'pending_approval' : 'active'
           }
         );
-        addToast('Registrasi berhasil!', 'success');
+        
+        localStorage.setItem('sppg_last_role', form.role);
+        setLastRole(form.role);
+
+        if (form.role === 'spg') {
+          addToast('Registrasi berhasil! Menunggu persetujuan Super Admin.', 'success');
+        } else {
+          addToast('Registrasi berhasil!', 'success');
+        }
         navigate(form.role === 'student' ? '/dashboard' : '/admin');
         
       } else if (mode === 'login') {
@@ -136,7 +151,7 @@ export default function LoginPage() {
     } catch (err) {
       let msg = 'Terjadi kesalahan';
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-        msg = 'Email atau password salah';
+        msg = 'Kredensial salah atau tidak ditemukan';
       } else if (err.code === 'auth/email-already-in-use') {
         msg = 'Email sudah terdaftar';
       } else if (err.code === 'auth/too-many-requests') {
@@ -226,7 +241,16 @@ export default function LoginPage() {
               {mode === 'login' && (
                 <AnimatePresence mode="wait">
                   <motion.div key="login" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
-                    <Input id="login-email" label="Alamat Email" icon={Mail} placeholder="nama@email.com" type="email" value={form.email} onChange={(e) => updateField('email', e.target.value)} error={errors.email} />
+                    <Input 
+                      id="login-email" 
+                      label={lastRole === 'student' ? 'NISN' : lastRole === 'spg' ? 'Nama Lengkap' : 'NISN / Nama / Email Admin'} 
+                      icon={User} 
+                      placeholder={lastRole === 'student' ? 'Masukkan 10 digit NISN' : 'Masukkan nama Anda'} 
+                      type="text" 
+                      value={form.email} 
+                      onChange={(e) => updateField('email', e.target.value)} 
+                      error={errors.email} 
+                    />
                     <div className="relative">
                       <Input id="login-password" label="Password" icon={Lock} type={showPassword ? 'text' : 'password'} placeholder="Masukkan password" value={form.password} onChange={(e) => updateField('password', e.target.value)} error={errors.password} />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-9 text-text-muted hover:text-primary cursor-pointer">
@@ -291,17 +315,7 @@ export default function LoginPage() {
                             <div className={`p-2 rounded-xl ${form.role === 'spg' ? 'bg-secondary text-white' : 'bg-black/5 text-text-secondary'}`}><ChefHat className="w-5 h-5" /></div>
                             <div>
                               <h4 className={`font-bold ${form.role === 'spg' ? 'text-secondary-dark' : 'text-text-primary'}`}>Admin SPPG (Operator)</h4>
-                              <p className="text-xs text-text-muted mt-0.5">Mengelola menu & data sekolah wilayah</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div onClick={() => updateField('role', 'superadmin')} className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${form.role === 'superadmin' ? 'border-accent bg-accent/5' : 'border-black/5 hover:border-black/20'}`}>
-                          <div className="flex items-center gap-3">
-                            <div className={`p-2 rounded-xl ${form.role === 'superadmin' ? 'bg-accent text-white' : 'bg-black/5 text-text-secondary'}`}><Crown className="w-5 h-5" /></div>
-                            <div>
-                              <h4 className={`font-bold ${form.role === 'superadmin' ? 'text-accent-dark' : 'text-text-primary'}`}>Super Admin (Pusat)</h4>
-                              <p className="text-xs text-text-muted mt-0.5">Pengawas metrik nasional</p>
+                              <p className="text-xs text-text-muted mt-0.5">Mendaftar dengan Nama Lengkap (Butuh ACC)</p>
                             </div>
                           </div>
                         </div>
@@ -372,8 +386,11 @@ export default function LoginPage() {
 
                     {regStep === 3 && form.role !== 'student' && (
                       <motion.div key="step3-admin" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-4">
-                        <Input id="reg-nip" label="NIP / ID Pegawai" icon={User} placeholder="Nomor Induk Pegawai" value={form.nisn} onChange={(e) => updateField('nisn', e.target.value)} error={errors.nisn} />
                         <Input id="reg-instansi-admin" label="Instansi / Wilayah SPPG" icon={Building2} placeholder="Misal: SPPG Wilayah Jakarta Selatan" value={form.instansi} onChange={(e) => updateField('instansi', e.target.value)} error={errors.instansi} />
+                        <div className="bg-warning/10 border border-warning/20 rounded-xl p-3 flex gap-2 text-xs text-warning-dark mt-2">
+                          <AlertCircle className="w-4 h-4 shrink-0" />
+                          <p>Pendaftaran akun SPPG memerlukan persetujuan Super Admin sebelum bisa digunakan secara penuh.</p>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>

@@ -11,7 +11,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 const AuthContext = createContext(null);
 
@@ -51,10 +51,37 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * Login with Email and password
+   * Login with NISN (Siswa), Nama (SPPG), or Email (Admin)
    */
-  async function login(email, password) {
-    const result = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
+  async function login(username, password) {
+    const cleanUsername = username.trim();
+    let targetEmail = null;
+
+    if (cleanUsername.includes('@')) {
+      // If it's an email (like superadmin), use it directly
+      targetEmail = cleanUsername.toLowerCase();
+    } else {
+      // Lookup by NISN or Nama
+      const usersRef = collection(db, 'users');
+      const qNisn = query(usersRef, where('nisn', '==', cleanUsername));
+      const qNama = query(usersRef, where('nama', '==', cleanUsername));
+
+      const snapNisn = await getDocs(qNisn);
+      if (!snapNisn.empty) {
+        targetEmail = snapNisn.docs[0].data().email;
+      } else {
+        const snapNama = await getDocs(qNama);
+        if (!snapNama.empty) {
+          targetEmail = snapNama.docs[0].data().email;
+        }
+      }
+
+      if (!targetEmail) {
+        throw { code: 'auth/user-not-found' };
+      }
+    }
+
+    const result = await signInWithEmailAndPassword(auth, targetEmail, password);
     const userDoc = await getDoc(doc(db, 'users', result.user.uid));
     if (userDoc.exists()) {
       setUserData(userDoc.data());
