@@ -1,0 +1,104 @@
+============================================================
+PROJEK: SISTEM MANAJEMEN MAKAN BERGIZI GRATIS (MBG) - PREMIUM
+DEVELOPER STRATEGY & ARCHITECTURE
+============================================================
+
+1. TECH STACK (REKOMENDASI SPESIFIK)
+------------------------------------------------------------
+- Framework: React.js (Vite) / Next.js
+- Styling: Tailwind CSS
+- Animations: Framer Motion (untuk efek smooth/premium)
+- Icons: Lucide React
+- Database: Firebase Firestore (NoSQL, gratis tier awal)
+- Auth: Firebase Authentication (Login via NIP & Password)
+- Image Hosting: Cloudinary (Gratis hingga ribuan gambar)
+
+2. STRUKTUR DATABASE (FIRESTORE)
+------------------------------------------------------------
+A. Collection: users
+   - uid (String)
+   - nip (String) - Primary Key
+   - nama (String)
+   - instansi (String)
+   - role (String: "student" | "spg")
+
+B. Collection: menus (Master Menu)
+   - id (String)
+   - tanggal (Timestamp)
+   - nama_menu (String)
+   - kalori (Number)
+   - protein (Number)
+   - lemak (Number)
+   - karbo (Number)
+   - bahan_baku (Array)
+   - harga_porsi (Number)
+   - image_url (String)
+   - is_voting_option (Boolean)
+
+C. Collection: feedbacks (Rating & Komentar)
+   - id (String)
+   - menu_id (Reference)
+   - user_nip (String)
+   - user_instansi (String)
+   - rating (Number: 1-5)
+   - komentar (String)
+   - timestamp (Timestamp)
+
+3. FITUR UTAMA & LOGIKA TAMPILAN
+------------------------------------------------------------
+A. Dashboard Siswa (Premium & Friendly)
+   - Header: Menampilkan Nama, NIP, dan Nama Instansi.
+   - Menu Today Card: Kartu utama dengan efek Glassmorphism. Menampilkan foto makanan HD, progress bar gizi (protein, lemak, karbo), dan tombol "Beri Rating".
+   - Weekly Voting: Slider horizontal berisi 2-3 pilihan menu untuk minggu depan. Siswa klik "Vote" dan tombol berubah jadi "Voted" (State-locked).
+
+B. Transparansi Gizi (Filterable)
+   - Komponen "Nutri-Fact" yang rapi seperti di belakang kemasan produk susu/makanan.
+   - Label sumber bahan baku (Traceability).
+
+C. Rating & Komentar Section
+   - List komentar yang terfilter berdasarkan "Hari Ini".
+   - Identitas pemberi komentar disamarkan (hanya NIP & Instansi) untuk privasi, tapi tetap akuntabel.
+
+4. CARA MENDAPATKAN GAMBAR GRATISAN (RESOURCES)
+------------------------------------------------------------
+- Unsplash API / Pexels: Untuk foto makanan estetik kualitas HD secara gratis.
+- FoodiesFeed: Sumber foto makanan spesifik yang terlihat sangat profesional.
+- Cloudinary: Gunakan library "cloudinary-react" untuk auto-resize gambar agar loading web sangat cepat (Penting untuk UI Premium).
+
+5. SNIPPET KODE STRUKTUR UI (TAILWIND + REACT)
+------------------------------------------------------------
+// Contoh Struktur Card Menu Premium
+const MenuCard = ({ data }) => {
+  return (
+    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl">
+      <img src={data.image} className="w-full h-48 object-cover rounded-2xl mb-4" />
+      <div className="flex justify-between items-center mb-2">
+         <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">{data.instansi}</span>
+         <div className="flex items-center text-yellow-400">
+            <Star size={14} fill="currentColor" /> <span className="ml-1 text-white">{data.avgRating}</span>
+         </div>
+      </div>
+      <h2 className="text-2xl font-bold text-white mb-4">{data.nama_menu}</h2>
+      
+      {/* Grid Gizi */}
+      <div className="grid grid-cols-3 gap-2 bg-black/20 rounded-xl p-3 text-center">
+         <div><p className="text-gray-400 text-[10px]">Protein</p><p className="text-white font-bold">{data.protein}g</p></div>
+         <div><p className="text-gray-400 text-[10px]">Energi</p><p className="text-white font-bold">{data.kalori}kkal</p></div>
+         <div><p className="text-gray-400 text-[10px]">Lemak</p><p className="text-white font-bold">{data.lemak}g</p></div>
+      </div>
+    </div>
+  );
+}
+
+6. TAHAPAN DEVELOPER (STEP-BY-STEP)
+------------------------------------------------------------
+Step 1: Setup Firebase Project & Auth (NIP Based).
+Step 2: Buat Admin Page (SPG) untuk Input Menu Harian + Gambar.
+Step 3: Buat Logic Global Menu (Menu yang sama untuk seluruh instansi).
+Step 4: Integrasi Cloudinary untuk upload gambar makanan dari HP.
+Step 5: Implementasi fitur Rating & Comment dengan Filter Real-time.
+Step 6: Finishing UI dengan Framer Motion (Staggered List Animation).
+
+============================================================
+SISTEM INI DIRANCANG UNTUK SKALABILITAS TINGGI & TRANSPARANSI PENUH
+============================================================
