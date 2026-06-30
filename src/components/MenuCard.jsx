@@ -17,14 +17,14 @@ export default function MenuCard({ menu, onRate, showRateButton = true }) {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="glass rounded-3xl overflow-hidden shadow-2xl"
+      className="liquid-glass overflow-hidden group"
     >
       {/* Food Image */}
       <div className="relative h-52 sm:h-64 overflow-hidden">
         <img
           src={imageUrl}
           alt={menu.nama_menu}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
           loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
@@ -44,7 +44,7 @@ export default function MenuCard({ menu, onRate, showRateButton = true }) {
 
         {/* Menu Name Overlay */}
         <div className="absolute bottom-4 left-6 right-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight drop-shadow-md line-clamp-2">
             {menu.nama_menu}
           </h2>
           {menu.harga_porsi && (

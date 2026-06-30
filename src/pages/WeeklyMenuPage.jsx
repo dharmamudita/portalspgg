@@ -234,7 +234,9 @@ export default function WeeklyMenuPage() {
                         </span>
                       </div>
                       <div className="absolute bottom-3 left-4 right-4">
-                        <h3 className="text-lg font-bold text-white leading-tight">{menu.nama_menu}</h3>
+                        <h3 className="text-lg font-bold text-white leading-tight drop-shadow-md line-clamp-2" title={menu.nama_menu}>
+                          {menu.nama_menu}
+                        </h3>
                       </div>
                     </div>
                     <div className="p-4">
