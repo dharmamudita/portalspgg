@@ -21,78 +21,99 @@
   display: none;
 }
 
-/* The Premium Card */
+/* The Premium Card - XATRA Style Glassmorphism */
 .liquid-glass {
-  /* Crisp white base */
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.7); /* Translucent base like XATRA */
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   
-  /* Sleek, delicate border instead of a thick rigid line */
-  border: 1px solid rgba(28, 79, 135, 0.2);
+  border: 1px solid rgba(28, 79, 135, 0.15); /* Soft blue border */
+  border-top-color: rgba(255, 255, 255, 1); /* White highlight on top */
+  border-left-color: rgba(255, 255, 255, 0.7); /* White highlight on left */
   
-  /* Soft, elegant shadow for floating effect */
   box-shadow: 
     0 12px 32px -8px rgba(17, 51, 89, 0.08),
     0 4px 12px -4px rgba(17, 51, 89, 0.04),
-    inset 0 1px 1px rgba(255, 255, 255, 1); /* Inner light */
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
     
   border-radius: 1.25rem;
   position: relative;
   z-index: 10;
-  /* Buttery smooth transition for all hover effects */
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
   will-change: transform, box-shadow, border-color;
 }
 
-/* Hover Effect: The border lights up vibrantly and the card glows */
+/* XATRA Inner Gradient Border Effect */
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  margin: -1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 40%, rgba(28, 79, 135, 0.05) 100%);
+}
+
+/* Hover Effect: Card floats and gets a subtle blue glow */
 .liquid-glass:hover {
-  border-color: #3B82F6; /* Vibrant accent blue */
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.4);
   box-shadow: 
-    0 0 0 1px #3B82F6, /* Creates a crisp 2px glowing edge */
-    0 20px 50px -10px rgba(17, 51, 89, 0.15),
-    0 10px 30px -5px rgba(59, 130, 246, 0.25); /* Blue atmospheric glow */
-  transform: translateY(-4px) scale(1.01);
+    0 20px 40px -10px rgba(17, 51, 89, 0.15),
+    0 10px 20px -5px rgba(59, 130, 246, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 1);
 }
 
 /* =========================================================
    DANGER GLASS (For Allergy Alerts)
    ========================================================= */
 .liquid-glass-danger {
-  background: rgba(254, 242, 242, 0.9); /* Red 50 tint */
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(254, 242, 242, 0.8);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-left-color: rgba(255, 255, 255, 0.6);
+  
   box-shadow: 
     0 12px 32px -8px rgba(220, 38, 38, 0.15),
-    inset 0 1px 1px rgba(255, 255, 255, 1);
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    
   border-radius: 1.25rem;
-  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform, box-shadow;
   position: relative;
+  z-index: 10;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
+  will-change: transform, box-shadow, border-color;
+}
+
+.liquid-glass-danger::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  margin: -1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 40%, rgba(239, 68, 68, 0.05) 100%);
 }
 
 .liquid-glass-danger:hover {
-  border-color: #EF4444;
+  transform: translateY(-4px);
+  border-color: rgba(239, 68, 68, 0.4);
   box-shadow: 
-    0 0 0 1px #EF4444,
-    0 20px 50px -10px rgba(220, 38, 38, 0.25),
-    0 10px 30px -5px rgba(239, 68, 68, 0.3);
-  transform: translateY(-3px) scale(1.01);
+    0 20px 40px -10px rgba(220, 38, 38, 0.2),
+    0 10px 20px -5px rgba(239, 68, 68, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 1);
 }
 
 /* Specific hover effect for the welcome banner to make text pop */
 .dashboard-welcome:hover h1 {
   text-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
   transition: text-shadow 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Inner Top Accent Line (Header of the card) */
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 5px;
-  background: linear-gradient(90deg, #091e36, #1C4F87); /* Very solid, thick dark blue gradient */
-  opacity: 1; /* Fully opaque / pekat */
 }
 
 /* Nutrition Progress Bar */
