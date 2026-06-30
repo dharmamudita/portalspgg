@@ -13,64 +13,8 @@ import { validatePassword } from '../lib/validators';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import SearchableSelect from '../components/ui/SearchableSelect';
-
-const getMockSchools = (tingkat) => {
-  if (!tingkat) return [];
-  const tk = tingkat.toUpperCase();
-  if (tk === 'SD') {
-    return [
-      'SDN 1 Kedaton, Bandar Lampung', 'SDN 2 Kedaton, Bandar Lampung', 'SDN 1 Rajabasa, Bandar Lampung', 
-      'SDN 2 Rajabasa, Bandar Lampung', 'SDN 1 Tanjung Karang, Bandar Lampung', 'SDN 2 Way Halim, Bandar Lampung',
-      'SD IT Permata Bunda, Bandar Lampung', 'SD Al Kautsar, Bandar Lampung', 'SD Global Madani, Bandar Lampung',
-      'SD Xaverius 1, Bandar Lampung', 'SD BPK Penabur, Bandar Lampung', 'SD IT Fitrah Insani, Bandar Lampung',
-      'SD Muhammadiyah 1, Bandar Lampung', 'SD Pelita Bangsa, Bandar Lampung'
-    ];
-  }
-  if (tk === 'SMP') {
-    return [
-      'SMPN 1 Bandar Lampung', 'SMPN 2 Bandar Lampung', 'SMPN 4 Bandar Lampung', 'SMPN 9 Bandar Lampung',
-      'SMPN 21 Bandar Lampung', 'SMPN 25 Bandar Lampung', 'SMP Al Kautsar Bandar Lampung',
-      'SMP Xaverius 1 Bandar Lampung', 'SMP Global Madani Bandar Lampung', 'SMP IT Fitrah Insani Bandar Lampung',
-      'SMP BPK Penabur Bandar Lampung', 'SMP Muhammadiyah 3 Bandar Lampung'
-    ];
-  }
-  if (tk === 'SMA') {
-    return [
-      'SMAN 1 Bandar Lampung', 'SMAN 2 Bandar Lampung', 'SMAN 3 Bandar Lampung', 'SMAN 5 Bandar Lampung',
-      'SMAN 9 Bandar Lampung', 'SMA Al Kautsar Bandar Lampung', 'SMA YP Unila Bandar Lampung',
-      'SMA Xaverius Pahoman Bandar Lampung', 'SMA Global Madani Bandar Lampung', 'SMA IT Ar Raihan Bandar Lampung',
-      'SMA Perintis 1 Bandar Lampung', 'SMA Muhammadiyah 2 Bandar Lampung'
-    ];
-  }
-  if (tk === 'SMK') {
-    return [
-      'SMKN 1 Bandar Lampung', 'SMKN 2 Bandar Lampung', 'SMKN 3 Bandar Lampung', 'SMKN 4 Bandar Lampung',
-      'SMKN 5 Bandar Lampung', 'SMK SMTI Bandar Lampung', 'SMK 2 Mei Bandar Lampung', 'SMK Pelita Bandar Lampung',
-      'SMK BPK Penabur Bandar Lampung', 'SMK Yadika Bandar Lampung', 'SMK Arjuna Bandar Lampung'
-    ];
-  }
-  return [];
-};
-
-const MOCK_WILAYAH = {
-  "Lampung": {
-    "Bandar Lampung": ["Bumi Waras", "Enggal", "Kedamaian", "Kedaton", "Kemiling", "Labuhan Ratu", "Langkapura", "Panjang", "Rajabasa", "Sukabumi", "Sukarame", "Tanjung Karang Barat", "Tanjung Karang Pusat", "Tanjung Karang Timur", "Tanjung Senang", "Teluk Betung Barat", "Teluk Betung Selatan", "Teluk Betung Timur", "Teluk Betung Utara", "Way Halim"],
-    "Metro": ["Metro Barat", "Metro Pusat", "Metro Selatan", "Metro Timur", "Metro Utara"],
-    "Lampung Barat": ["Air Hitam", "Balik Bukit", "Bandar Negeri Suoh", "Batu Brak", "Batu Ketulis", "Belalau", "Gedung Surian", "Kebun Tebu", "Lumbok Seminung", "Pagar Dewa", "Sekincau", "Sukau", "Sumber Jaya", "Suoh", "Way Tenong"],
-    "Lampung Selatan": ["Bakauheni", "Candipuro", "Jati Agung", "Kalianda", "Katibung", "Ketapang", "Merbau Mataram", "Natar", "Palas", "Penengahan", "Rajabasa", "Sidomulyo", "Sragi", "Tanjung Bintang", "Tanjung Sari", "Way Panji", "Way Sulan"],
-    "Lampung Tengah": ["Anak Ratu Aji", "Anak Tuha", "Bandar Mataram", "Bandar Surabaya", "Bangunrejo", "Bekri", "Bumi Nabung", "Bumi Ratu Nuban", "Gunung Sugih", "Kalirejo", "Kota Gajah", "Padang Ratu", "Punggur", "Putra Rumbia", "Rumbia", "Selagai Lingga", "Sendang Agung", "Seputih Agung", "Seputih Banyak", "Seputih Mataram", "Seputih Raman", "Seputih Surabaya", "Terbanggi Besar", "Terusan Nunyai", "Trimurjo", "Way Pengubuan", "Way Seputih"],
-    "Lampung Timur": ["Bandar Sribhawono", "Batanghari", "Batanghari Nuban", "Braja Selebah", "Bumi Agung", "Gunung Pelindung", "Jabung", "Labuhan Maringgai", "Labuhan Ratu", "Marga Sekampung", "Marga Tiga", "Mataram Baru", "Melinting", "Metro Kibang", "Pasir Sakti", "Pekalongan", "Purbolinggo", "Raman Utara", "Sekampung", "Sekampung Udik", "Sukadana", "Waway Karya", "Way Bungur", "Way Jepara"],
-    "Lampung Utara": ["Abung Barat", "Abung Kunang", "Abung Pekurun", "Abung Selatan", "Abung Semuli", "Abung Surakarta", "Abung Tengah", "Abung Timur", "Abung Tinggi", "Blambangan Umpu", "Bukit Kemuning", "Bunga Mayang", "Hulu Sungkai", "Kotabumi", "Kotabumi Selatan", "Kotabumi Utara", "Muara Sungkai", "Sungkai Barat", "Sungkai Jaya", "Sungkai Selatan", "Sungkai Tengah", "Sungkai Utara", "Tanjung Raja"],
-    "Mesuji": ["Mesuji", "Mesuji Timur", "Panca Jaya", "Rawa Jitu Utara", "Simpang Pematang", "Tanjung Raya", "Way Serdang"],
-    "Pesawaran": ["Gedong Tataan", "Kedondong", "Marga Punduh", "Negeri Katon", "Padang Cermin", "Punduh Pedada", "Tegineneng", "Way Khilau", "Way Lima", "Way Ratai", "Teluk Pandan"],
-    "Pesisir Barat": ["Bangkunat", "Krui Selatan", "Karya Penggawa", "Lemong", "Ngambur", "Ngaras", "Pesisir Selatan", "Pesisir Tengah", "Pesisir Utara", "Pulau Pisang", "Way Krui"],
-    "Pringsewu": ["Adiluwih", "Ambarawa", "Banyumas", "Gading Rejo", "Pagelaran", "Pagelaran Utara", "Pardasuka", "Pringsewu", "Sukoharjo"],
-    "Tanggamus": ["Air Naningan", "Bandar Negeri Semuong", "Bulok", "Cukuh Balak", "Gisting", "Gunung Alip", "Kelumbayan", "Kelumbayan Barat", "Kota Agung", "Kota Agung Barat", "Kota Agung Timur", "Limau", "Pematang Sawa", "Pugung", "Pulau Panggung", "Semaka", "Sumberejo", "Talang Padang", "Ulu Belu", "Wonosobo"],
-    "Tulang Bawang": ["Banjar Agung", "Banjar Baru", "Banjar Margo", "Dente Teladas", "Gedung Aji", "Gedung Aji Baru", "Gedung Meneng", "Menggala", "Menggala Timur", "Meraksa Aji", "Penawar Aji", "Penawar Tama", "Rawa Jitu Selatan", "Rawa Jitu Timur", "Rawa Pitu"],
-    "Tulang Bawang Barat": ["Batu Putih", "Gunung Agung", "Gunung Terang", "Lambu Kibang", "Pagar Dewa", "Tulang Bawang Tengah", "Tulang Bawang Udik", "Tumijajar", "Way Kenanga"],
-    "Way Kanan": ["Banjit", "Baradatu", "Blambangan Umpu", "Bumi Agung", "Gunung Labuhan", "Kasui", "Negara Batin", "Negeri Agung", "Negeri Besar", "Pakuan Ratu", "Rebang Tangkas", "Tangkas", "Umpu Semenguk", "Way Tuba"]
-  }
-};
+import { getMockSchools } from '../lib/schools';
+import { MOCK_WILAYAH } from '../lib/wilayah';
 
 export default function LoginPage() {
   const { login, register, resetPassword } = useAuth();
@@ -337,9 +281,9 @@ export default function LoginPage() {
                   <motion.div key="login" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4">
                     <Input 
                       id="login-email" 
-                      label={lastRole === 'student' ? 'NISN' : lastRole === 'spg' ? 'Nama Lengkap' : 'NISN / Nama / Email Admin'} 
-                      icon={User} 
-                      placeholder={lastRole === 'student' ? 'Masukkan 10 digit NISN' : 'Masukkan nama Anda'} 
+                      label="Alamat Email" 
+                      icon={Mail} 
+                      placeholder="nama@email.com atau ID Pengguna" 
                       type="text" 
                       value={form.email} 
                       onChange={(e) => updateField('email', e.target.value)} 
