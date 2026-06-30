@@ -81,7 +81,7 @@ export default function VotingPage() {
     setVotingId(menuId);
     try {
       await submitVote(menuId, currentUser.uid);
-      addToast('Vote berhasil dikirim! 🎉', 'success');
+      addToast('Vote berhasil dikirim!', 'success');
     } catch {
       addToast('Gagal mengirim vote', 'error');
     } finally {

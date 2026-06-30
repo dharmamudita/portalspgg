@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   FileText, Calendar, TrendingUp, Star, Flame, Droplets, Wheat,
-  UtensilsCrossed, MessageSquare, DollarSign, ArrowUpRight, ArrowDownRight,
+  UtensilsCrossed, MessageSquare, DollarSign, ArrowUpRight, ArrowDownRight, Trophy, Building2
 } from 'lucide-react';
 import { useMenusByDateRange, useFeedbacksByDateRange } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
@@ -216,7 +216,7 @@ export default function ReportsPage() {
                     <div className="space-y-3">
                       {stats.ratingDist.map((r) => (
                         <div key={r.star} className="flex items-center gap-3">
-                          <span className="text-sm font-bold text-text-secondary w-5">{r.star}★</span>
+                          <span className="text-sm font-bold text-text-secondary flex items-center gap-1 w-8">{r.star}<Star className="w-3 h-3 text-warning fill-warning" /></span>
                           <div className="flex-1 h-3 bg-black/5 rounded-full overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
@@ -235,9 +235,9 @@ export default function ReportsPage() {
                 {/* Top Menu */}
                 <motion.div variants={stagger.item}>
                   <Card>
-                    <h3 className="text-base font-bold text-text-primary mb-4 flex items-center gap-2">
-                      🏆 Menu Terbaik
-                    </h3>
+                    <h2 className="text-lg font-bold text-text-primary flex items-center gap-2 mb-4">
+                      <Trophy className="w-5 h-5 text-warning" /> Menu Terbaik
+                    </h2>
                     {stats.topMenu ? (
                       <div className="flex items-center gap-4">
                         <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
@@ -264,9 +264,9 @@ export default function ReportsPage() {
                 {/* Instansi Breakdown */}
                 <motion.div variants={stagger.item}>
                   <Card>
-                    <h3 className="text-base font-bold text-text-primary mb-4 flex items-center gap-2">
-                      🏫 Feedback per Instansi
-                    </h3>
+                    <h2 className="text-lg font-bold text-text-primary flex items-center gap-2 mb-4">
+                      <Building2 className="w-5 h-5 text-primary" /> Feedback per Instansi
+                    </h2>
                     {stats.instansiBreakdown.length > 0 ? (
                       <div className="space-y-2.5">
                         {stats.instansiBreakdown.map(([name, count]) => (

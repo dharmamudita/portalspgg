@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, Trophy, Vote, TrendingUp, Flame, Droplets, Wheat, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { BarChart3, Trophy, Vote, TrendingUp, Flame, Droplets, Wheat, ChevronLeft, ChevronRight, Calendar, Medal, Award } from 'lucide-react';
 import { useMenusByDateRange, useVoteCounts } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
 import Card from '../components/ui/Card';
@@ -167,8 +167,8 @@ export default function VotingResultsPage() {
                           <div className="flex items-center justify-between mb-1.5">
                             <div className="flex items-center gap-2 min-w-0">
                               {idx < 3 && (
-                                <span className={`text-lg ${idx === 0 ? 'text-warning' : idx === 1 ? 'text-text-secondary' : 'text-amber-600'}`}>
-                                  {idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
+                                <span className={`flex items-center justify-center w-6 h-6 rounded-full bg-white shadow-sm ${idx === 0 ? 'text-warning' : idx === 1 ? 'text-gray-400' : 'text-amber-600'}`}>
+                                  <Medal className="w-4 h-4" />
                                 </span>
                               )}
                               <span className="text-sm font-semibold text-text-primary truncate">{menu.nama_menu}</span>
@@ -214,8 +214,8 @@ export default function VotingResultsPage() {
                           key={menu.id}
                           className={`flex items-center gap-4 rounded-2xl p-3 ${idx < 3 ? medalBg[idx] : 'bg-black/5'}`}
                         >
-                          <div className="text-2xl font-black text-text-muted w-8 text-center shrink-0">
-                            {idx < 3 ? ['🥇', '🥈', '🥉'][idx] : `#${idx + 1}`}
+                          <div className={`text-2xl font-black w-8 flex items-center justify-center shrink-0 ${idx === 0 ? 'text-warning' : idx === 1 ? 'text-gray-400' : idx === 2 ? 'text-amber-600' : 'text-text-muted'}`}>
+                            {idx < 3 ? <Award className="w-6 h-6" /> : `#${idx + 1}`}
                           </div>
                           <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0">
                             <img

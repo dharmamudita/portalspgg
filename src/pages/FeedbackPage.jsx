@@ -100,8 +100,9 @@ export default function FeedbackPage() {
         <motion.div variants={stagger.container} initial="hidden" animate="show">
           {/* Header */}
           <motion.div variants={stagger.item} className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1">
-              <span className="gradient-text">Feedback</span> Siswa 💬
+            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1 flex items-center gap-3">
+              <span className="gradient-text">Feedback</span> Siswa
+              <MessageSquare className="w-8 h-8 text-primary" />
             </h1>
             <p className="text-sm text-text-muted">Kelola dan pantau semua feedback yang masuk</p>
           </motion.div>
@@ -125,7 +126,7 @@ export default function FeedbackPage() {
               <div className="space-y-1.5">
                 {ratingDist.map((r) => (
                   <div key={r.star} className="flex items-center gap-2">
-                    <span className="text-[10px] text-text-muted w-3">{r.star}★</span>
+                    <span className="text-[10px] text-text-muted flex items-center gap-0.5 w-6">{r.star}<Star className="w-2 h-2 text-warning fill-warning" /></span>
                     <div className="flex-1 h-2 bg-black/5 rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full bg-gradient-to-r from-warning to-warning/50 transition-all duration-500"
@@ -192,7 +193,7 @@ export default function FeedbackPage() {
                       filterRating === r ? 'bg-warning/20 text-warning' : 'bg-black/5 text-text-muted hover:bg-black/10'
                     }`}
                   >
-                    {r}★
+                    <span className="flex items-center gap-1">{r}<Star className="w-3 h-3 text-warning fill-warning" /></span>
                   </button>
                 ))}
               </div>

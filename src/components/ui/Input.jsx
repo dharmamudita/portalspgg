@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { AlertCircle } from 'lucide-react';
 
 const Input = forwardRef(function Input(
   { label, error, icon: Icon, type = 'text', className = '', id, ...props },
@@ -33,8 +34,8 @@ const Input = forwardRef(function Input(
         />
       </div>
       {error && (
-        <p className="text-xs text-danger flex items-center gap-1 mt-1">
-          <span>⚠</span> {error}
+        <p className="text-xs font-semibold text-danger mt-1.5 flex items-center gap-1.5 ml-1">
+          <AlertCircle className="w-3.5 h-3.5" /> {error}
         </p>
       )}
     </div>

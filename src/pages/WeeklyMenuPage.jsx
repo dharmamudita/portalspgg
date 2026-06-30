@@ -101,8 +101,9 @@ export default function WeeklyMenuPage() {
         <motion.div variants={stagger.container} initial="hidden" animate="show">
           {/* Header */}
           <motion.div variants={stagger.item} className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1">
-              <span className="gradient-text">Menu Mingguan</span> 📅
+            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1 flex items-center gap-3">
+              <span className="gradient-text">Menu Mingguan</span>
+              <CalendarDays className="w-8 h-8 text-primary" />
             </h1>
             <p className="text-sm text-text-muted">Lihat jadwal menu makan bergizi gratis selama satu minggu</p>
           </motion.div>
