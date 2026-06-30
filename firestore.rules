@@ -38,11 +38,11 @@ service cloud.firestore {
       
       // Only allow creation during registration (validated by Auth)
       allow create: if isAuthenticated() && request.auth.uid == userId
-        && request.resource.data.keys().hasAll(['uid', 'nip', 'nama', 'instansi', 'role'])
+        && request.resource.data.keys().hasAll(['uid', 'nisn', 'nama', 'instansi', 'role'])
         && request.resource.data.role in ['student', 'spg']
-        && request.resource.data.nip is string
-        && request.resource.data.nip.size() >= 5
-        && request.resource.data.nip.size() <= 30;
+        && request.resource.data.nisn is string
+        && request.resource.data.nisn.size() >= 5
+        && request.resource.data.nisn.size() <= 30;
       
       // Users cannot modify their own role
       allow update: if isAuthenticated() && request.auth.uid == userId

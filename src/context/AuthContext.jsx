@@ -110,6 +110,7 @@ export function AuthProvider({ children }) {
       uid: result.user.uid,
       email: cleanEmail,
       nisn: nisn.trim(),
+      nip: nisn.trim(), // Added to satisfy strict Firestore rules
       nama: nama.trim(),
       role: role,
       createdAt: new Date(),
