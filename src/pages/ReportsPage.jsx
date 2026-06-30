@@ -327,7 +327,7 @@ export default function ReportsPage() {
               <motion.div variants={stagger.item} className="mt-6">
                 <div className="liquid-glass p-6 rounded-3xl relative overflow-hidden">
                   {/* Subtle Glow Background */}
-                  <div className={`absolute top-0 right-0 w-64 h-64 opacity-20 blur-[80px] rounded-full mix-blend-screen pointer-events-none ${stats.efficiencyRate >= 70 ? 'bg-success' : 'bg-danger'}`} />
+                  <div className={`absolute top-0 right-0 w-64 h-64 opacity-20 blur-[80px] rounded-full mix-blend-screen pointer-events-none ${stats.efficiencyRate >= 70 ? 'bg-primary' : 'bg-danger'}`} />
                   
                   <div className="flex items-center gap-3 mb-8">
                     <div className="p-3 rounded-2xl bg-black/5 backdrop-blur-md">
@@ -343,10 +343,10 @@ export default function ReportsPage() {
                     {/* Efficiency Rate Card */}
                     <div className="glass p-6 relative group">
                       <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
-                        {stats.efficiencyRate >= 70 ? <CheckCircle2 className="w-32 h-32 text-success" /> : <AlertTriangle className="w-32 h-32 text-danger" />}
+                        {stats.efficiencyRate >= 70 ? <CheckCircle2 className="w-32 h-32 text-primary" /> : <AlertTriangle className="w-32 h-32 text-danger" />}
                       </div>
                       <p className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
-                        {stats.efficiencyRate >= 70 ? <CheckCircle2 className="w-4 h-4 text-success" /> : <AlertTriangle className="w-4 h-4 text-danger" />}
+                        {stats.efficiencyRate >= 70 ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <AlertTriangle className="w-4 h-4 text-danger" />}
                         Tingkat Efisiensi
                       </p>
                       <p className="text-4xl font-bold font-display text-text-primary">
@@ -357,7 +357,7 @@ export default function ReportsPage() {
                           initial={{ width: 0 }}
                           animate={{ width: `${stats.efficiencyRate}%` }}
                           transition={{ duration: 1, delay: 0.2 }}
-                          className={`h-full rounded-full ${stats.efficiencyRate >= 70 ? 'bg-success' : 'bg-danger'}`}
+                          className={`h-full rounded-full ${stats.efficiencyRate >= 70 ? 'bg-primary' : 'bg-danger'}`}
                         />
                       </div>
                     </div>
@@ -365,13 +365,13 @@ export default function ReportsPage() {
                     {/* Total Saved Card */}
                     <div className="glass p-6 relative group">
                       <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
-                        <Wallet className="w-32 h-32 text-success" />
+                        <Wallet className="w-32 h-32 text-primary" />
                       </div>
                       <p className="text-sm font-semibold text-text-secondary mb-2 flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-success" />
+                        <TrendingUp className="w-4 h-4 text-primary" />
                         Anggaran Tepat Sasaran
                       </p>
-                      <p className="text-3xl font-bold font-display text-success">
+                      <p className="text-3xl font-bold font-display text-primary">
                         <span className="text-lg opacity-70">Rp</span> {stats.totalSaved.toLocaleString('id-ID')}
                       </p>
                       <p className="text-xs text-text-muted mt-2">Porsi yang dihabiskan siswa</p>

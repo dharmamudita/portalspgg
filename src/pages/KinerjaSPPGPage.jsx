@@ -173,7 +173,7 @@ export default function KinerjaSPPGPage() {
 
                       <div className="text-center">
                         <p className="text-xs font-bold text-text-secondary uppercase">Anomali</p>
-                        <p className={`text-xl font-black mt-1 ${spg.negativeFeedbacks > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                        <p className={`text-xl font-black mt-1 ${spg.negativeFeedbacks > 0 ? 'text-red-500' : 'text-primary'}`}>
                           {spg.negativeFeedbacks} <span className="text-xs font-medium text-text-muted">Keluhan</span>
                         </p>
                       </div>

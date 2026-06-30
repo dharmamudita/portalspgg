@@ -138,7 +138,7 @@ export default function SuperAdminDashboard() {
                     <div className={`p-3 rounded-2xl ${stat.bg}`}>
                       <stat.icon className={`w-7 h-7 ${stat.color}`} />
                     </div>
-                    <span className="flex items-center text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-full">
+                    <span className="flex items-center text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full">
                       <TrendingUp className="w-3 h-3 mr-1" /> +Live
                     </span>
                   </div>
@@ -221,13 +221,13 @@ export default function SuperAdminDashboard() {
                      ))}
                    </div>
                  ) : (
-                   <div className="bg-success/10 rounded-2xl h-48 flex flex-col items-center justify-center border border-success/20 text-center p-6">
-                     <div className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center mb-3">
-                       <ShieldCheck className="w-6 h-6 text-success" />
-                     </div>
-                     <p className="text-success-dark font-bold">Semua Aman!</p>
-                     <p className="text-success text-sm mt-1">Tidak ada anomali atau ulasan kritis yang membutuhkan perhatian segera pada periode ini.</p>
+                 <div className="bg-primary/10 rounded-2xl h-48 flex flex-col items-center justify-center border border-primary/20 text-center p-6">
+                   <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-3">
+                     <ShieldCheck className="w-6 h-6 text-primary" />
                    </div>
+                   <p className="text-primary-dark font-bold">Semua Aman!</p>
+                   <p className="text-primary text-sm mt-1">Tidak ada anomali atau ulasan kritis yang membutuhkan perhatian segera pada periode ini.</p>
+                 </div>
                  )}
                </Card>
             </motion.div>
