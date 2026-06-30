@@ -1,0 +1,357 @@
+import { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Vote, CheckCircle2, Trophy, Flame, Droplets, Wheat, ChevronRight, ChevronLeft, Calendar, Lock } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useMenusByDateRange, useVoteCounts, useUserVotedMap, submitVote } from '../hooks/useFirestore';
+import { useToast } from '../components/ui/Toast';
+import Navbar from '../components/layout/Navbar';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
+import { MonthYearPicker } from './WeeklyMenuPage';
+
+const DAYS = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+const DAYS_SHORT = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+function getWeekRange(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const start = new Date(d);
+  start.setDate(d.getDate() - day + 1);
+  start.setDate(start.getDate() + 7); // next week Monday
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6); // next week Sunday
+  return { start, end };
+}
+
+function formatDate(d) { return d.toISOString().split('T')[0]; }
+
+export default function VotingPage() {
+  const { currentUser } = useAuth();
+  const { addToast } = useToast();
+
+  const [baseDate, setBaseDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState(-1); // -1 = all
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  // Get next week's range for voting
+  const { start: weekStart, end: weekEnd } = useMemo(() => getWeekRange(baseDate), [baseDate]);
+
+  // Fetch voting menus for that week
+  const { menus: allMenus, loading: menusLoading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd));
+  const votingMenus = useMemo(() => allMenus.filter((m) => m.is_voting_option), [allMenus]);
+
+  const menuIds = useMemo(() => votingMenus.map((m) => m.id), [votingMenus]);
+  const { counts, loading: countsLoading } = useVoteCounts(menuIds);
+
+  const votedMap = useUserVotedMap(menuIds, currentUser?.uid);
+  const [votingId, setVotingId] = useState(null);
+  const [selectedDetail, setSelectedDetail] = useState(null);
+
+
+  // Filter by selected day
+  const filteredMenus = useMemo(() => {
+    if (selectedDay === -1) return votingMenus;
+    return votingMenus.filter((m) => {
+      const d = m.tanggal?.toDate ? m.tanggal.toDate() : new Date(m.tanggal);
+      return d.getDay() === selectedDay;
+    });
+  }, [votingMenus, selectedDay]);
+
+  // Week days for the filter
+  const weekDays = useMemo(() => {
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekStart);
+      d.setDate(weekStart.getDate() + i);
+      days.push(d);
+    }
+    return days;
+  }, [weekStart]);
+
+  const totalVotes = Object.values(counts).reduce((a, b) => a + b, 0);
+  const maxVotes = Math.max(...Object.values(counts), 1);
+
+  // Check if voting period has passed
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isClosed = weekEnd < today;
+
+  const handleVote = async (menuId) => {
+    if (votedMap[menuId] || votingId || isClosed) return;
+    setVotingId(menuId);
+    try {
+      await submitVote(menuId, currentUser.uid);
+      addToast('Vote berhasil dikirim! 🎉', 'success');
+    } catch {
+      addToast('Gagal mengirim vote', 'error');
+    } finally {
+      setVotingId(null);
+    }
+  };
+
+  const prevWeek = () => {
+    const d = new Date(baseDate);
+    d.setDate(d.getDate() - 7);
+    setBaseDate(d);
+  };
+  const nextWeek = () => {
+    const d = new Date(baseDate);
+    d.setDate(d.getDate() + 7);
+    setBaseDate(d);
+  };
+
+  const jumpToDate = (month, year) => {
+    setBaseDate(new Date(year, month, 1));
+    setSelectedDay(-1);
+    setShowDatePicker(false);
+  };
+
+  const weekLabel = `${weekStart.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} — ${weekEnd.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+
+  const stagger = {
+    container: { hidden: {}, show: { transition: { staggerChildren: 0.1 } } },
+    item: { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } },
+  };
+
+  return (
+    <div className="page-mesh">
+      <Navbar />
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+        <motion.div variants={stagger.container} initial="hidden" animate="show">
+          {/* Header */}
+          <motion.div variants={stagger.item} className="mb-6 text-center">
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-4">
+              <Vote className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2">
+              <span className="gradient-text">Voting Menu</span> Minggu Depan
+            </h1>
+            <p className="text-sm text-text-muted max-w-md mx-auto">
+              Pilih menu favorit kamu. Setiap siswa dapat memberikan 1 vote per menu.
+            </p>
+            {totalVotes > 0 && (
+              <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/5 border border-black/10">
+                <Trophy className="w-3.5 h-3.5 text-warning" />
+                <span className="text-xs font-semibold text-text-secondary">{totalVotes} total vote masuk</span>
+              </div>
+            )}
+            {isClosed && (
+              <div className="mt-3 flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-danger/10 border border-danger/20">
+                <Lock className="w-4 h-4 text-danger" />
+                <span className="text-xs font-bold text-danger">Voting periode ini sudah ditutup</span>
+              </div>
+            )}
+          </motion.div>
+
+          {/* Week + Day Filter */}
+          <motion.div variants={stagger.item} className="glass rounded-2xl p-4 mb-6">
+            {/* Month/Year jump */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="relative">
+                <button
+                  onClick={() => setShowDatePicker(!showDatePicker)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/5 hover:bg-black/10 text-sm font-medium text-text-secondary transition-colors cursor-pointer"
+                >
+                  <Calendar className="w-4 h-4" />
+                  {MONTHS[weekStart.getMonth()]} {weekStart.getFullYear()}
+                </button>
+                {showDatePicker && (
+                  <MonthYearPicker
+                    currentMonth={weekStart.getMonth()}
+                    currentYear={weekStart.getFullYear()}
+                    onSelect={jumpToDate}
+                    onClose={() => setShowDatePicker(false)}
+                  />
+                )}
+              </div>
+              <button
+                onClick={() => { setBaseDate(new Date()); setSelectedDay(-1); }}
+                className="px-3 py-1.5 rounded-xl bg-primary/20 text-xs font-semibold text-primary-light hover:bg-primary/30 transition-colors cursor-pointer"
+              >
+                Minggu Ini
+              </button>
+            </div>
+
+            {/* Week navigation */}
+            <div className="flex items-center justify-between mb-3">
+              <button onClick={prevWeek} className="p-2 rounded-xl hover:bg-black/10 transition-colors cursor-pointer">
+                <ChevronLeft className="w-5 h-5 text-text-secondary" />
+              </button>
+              <p className="text-xs font-bold text-text-primary">Voting untuk: {weekLabel}</p>
+              <button onClick={nextWeek} className="p-2 rounded-xl hover:bg-black/10 transition-colors cursor-pointer">
+                <ChevronRight className="w-5 h-5 text-text-secondary" />
+              </button>
+            </div>
+
+            {/* Day filter pills */}
+            <div className="flex gap-1.5 overflow-x-auto pb-1">
+              <button
+                onClick={() => setSelectedDay(-1)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  selectedDay === -1 ? 'bg-primary/10 text-primary-dark border border-primary/30' : 'bg-black/5 text-text-muted hover:bg-black/10'
+                }`}
+              >
+                Semua Hari
+              </button>
+              {weekDays.map((day, i) => {
+                const dayNum = day.getDay();
+                const hasMenu = votingMenus.some((m) => {
+                  const md = m.tanggal?.toDate ? m.tanggal.toDate() : new Date(m.tanggal);
+                  return md.getDay() === dayNum;
+                });
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedDay(dayNum)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer relative ${
+                      selectedDay === dayNum
+                        ? 'bg-primary/10 text-primary-dark border border-primary/30'
+                        : 'bg-black/5 text-text-muted hover:bg-black/10'
+                    }`}
+                  >
+                    {DAYS_SHORT[dayNum]} {day.getDate()}/{day.getMonth() + 1}
+                    {hasMenu && <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full bg-success" />}
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* Voting Cards */}
+          {menusLoading ? (
+            <LoadingSpinner text="Memuat kandidat menu..." />
+          ) : filteredMenus.length === 0 ? (
+            <motion.div variants={stagger.item} className="glass rounded-3xl p-12 text-center">
+              <Vote className="w-16 h-16 text-text-muted mx-auto mb-4 opacity-30" />
+              <h3 className="text-lg font-bold text-text-primary mb-2">Belum Ada Voting</h3>
+              <p className="text-sm text-text-muted">
+                {selectedDay === -1
+                  ? 'Tidak ada menu voting untuk periode ini'
+                  : `Tidak ada menu voting untuk hari ${DAYS[selectedDay]}`}
+              </p>
+            </motion.div>
+          ) : (
+            <div className="space-y-4">
+              {filteredMenus.map((menu, idx) => {
+                const menuDate = menu.tanggal?.toDate ? menu.tanggal.toDate() : new Date(menu.tanggal);
+                const voteCount = counts[menu.id] || 0;
+                const percentage = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0;
+                const isVoted = votedMap[menu.id];
+                const isLoading = votingId === menu.id;
+                const isLeading = voteCount === maxVotes && voteCount > 0;
+
+                return (
+                  <motion.div
+                    key={menu.id}
+                    variants={stagger.item}
+                    className={`glass rounded-2xl overflow-hidden transition-all ${isLeading ? 'border-warning/30 glow-primary' : ''}`}
+                  >
+                    <div className="flex flex-col sm:flex-row">
+                      <div className="relative w-full sm:w-48 h-40 sm:h-auto shrink-0">
+                        <img
+                          src={menu.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop'}
+                          alt={menu.nama_menu}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute top-2 left-2 flex items-center gap-1">
+                          <span className="bg-black/50 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1 rounded-lg">
+                            {DAYS[menuDate.getDay()]}, {menuDate.getDate()}/{menuDate.getMonth() + 1}
+                          </span>
+                        </div>
+                        {isLeading && (
+                          <div className="absolute top-2 right-2 flex items-center gap-1 bg-warning/90 text-white px-2 py-1 rounded-lg text-[10px] font-bold">
+                            <Trophy className="w-3 h-3" /> Terdepan
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex-1 p-4 sm:p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h3 className="text-lg font-bold text-text-primary">{menu.nama_menu}</h3>
+                            <div className="flex items-center gap-3 mt-1 text-[10px] text-text-muted">
+                              <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-danger" />{menu.kalori} kkal</span>
+                              <span className="flex items-center gap-1"><Droplets className="w-3 h-3 text-accent" />{menu.protein}g protein</span>
+                              <span className="flex items-center gap-1"><Wheat className="w-3 h-3 text-warning" />{menu.karbo}g karbo</span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => setSelectedDetail(selectedDetail === menu.id ? null : menu.id)}
+                            className="p-1.5 rounded-lg hover:bg-black/10 transition-colors cursor-pointer"
+                          >
+                            <ChevronRight className={`w-4 h-4 text-text-muted transition-transform ${selectedDetail === menu.id ? 'rotate-90' : ''}`} />
+                          </button>
+                        </div>
+
+                        {/* Vote Bar */}
+                        <div className="mb-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] text-text-muted">{voteCount} vote</span>
+                            <span className="text-[10px] font-bold text-text-secondary">{percentage}%</span>
+                          </div>
+                          <div className="h-2 bg-black/5 rounded-full overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${percentage}%` }}
+                              transition={{ duration: 0.8, ease: 'easeOut', delay: idx * 0.1 }}
+                              className={`h-full rounded-full ${isLeading ? 'bg-gradient-to-r from-warning to-warning/60' : 'bg-gradient-to-r from-primary to-accent'}`}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Vote Button */}
+                        <motion.button
+                          whileHover={!isVoted && !isClosed ? { scale: 1.02 } : {}}
+                          whileTap={!isVoted && !isClosed ? { scale: 0.98 } : {}}
+                          onClick={() => handleVote(menu.id)}
+                          disabled={isVoted || isLoading || isClosed}
+                          className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
+                            isClosed
+                              ? 'bg-black/5 text-text-muted border border-black/5 cursor-not-allowed'
+                              : isVoted
+                                ? 'bg-success/20 text-success border border-success/20'
+                                : isLoading
+                                  ? 'bg-black/5 text-text-muted'
+                                  : 'bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/20 hover:shadow-xl'
+                          }`}
+                        >
+                          {isClosed ? (
+                            <span className="flex items-center justify-center gap-2"><Lock className="w-4 h-4" /> Voting Ditutup</span>
+                          ) : isVoted ? (
+                            <span className="flex items-center justify-center gap-2"><CheckCircle2 className="w-4 h-4" /> Sudah Vote</span>
+                          ) : isLoading ? 'Mengirim vote...' : (
+                            <span className="flex items-center justify-center gap-2"><Vote className="w-4 h-4" /> Vote Menu Ini</span>
+                          )}
+                        </motion.button>
+
+                        <AnimatePresence>
+                          {selectedDetail === menu.id && menu.bahan_baku && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden mt-3 pt-3 border-t border-black/5"
+                            >
+                              <p className="text-[10px] font-bold text-text-secondary mb-1">BAHAN BAKU:</p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {menu.bahan_baku.map((b, i) => (
+                                  <span key={i} className="px-2 py-0.5 rounded-full bg-black/5 text-[10px] text-text-muted">{b}</span>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </motion.div>
+      </main>
+    </div>
+  );
+}
+
+
