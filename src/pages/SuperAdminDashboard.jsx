@@ -6,7 +6,7 @@ import {
   ArrowUpRight, BarChart3, AlertTriangle, ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useMenusByDateRange, useAllFeedbacks, useAllSpgUsers, usePendingSpgUsers, approveSpgUser, rejectSpgUser } from '../hooks/useFirestore';
+import { useMenusByDateRange, useAllFeedbacks, useAllSpgUsers } from '../hooks/useFirestore';
 import { getSchoolWeekRange, formatDate } from '../lib/dateUtils';
 import Navbar from '../components/layout/Navbar';
 import Card from '../components/ui/Card';
@@ -42,10 +42,7 @@ export default function SuperAdminDashboard() {
   // Fetch all SPG users globally for the map
   const { spgUsers, loading: spgLoading } = useAllSpgUsers();
   
-  // Fetch pending SPG users for approval
-  const { pendingUsers, loading: pendingLoading } = usePendingSpgUsers();
-
-  const loading = menusLoading || feedbacksLoading || spgLoading || pendingLoading;
+  const loading = menusLoading || feedbacksLoading || spgLoading;
 
   // Compute Global Stats
   const globalStats = useMemo(() => {
@@ -157,50 +154,7 @@ export default function SuperAdminDashboard() {
             ))}
           </motion.div>
 
-          {/* Pending Approvals Section */}
-          {pendingUsers.length > 0 && (
-            <motion.div variants={stagger.item} className="mb-8">
-              <Card className="p-6 border-none shadow-xl shadow-danger/5 bg-danger/5 ring-1 ring-danger/20">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-full bg-danger/20 flex items-center justify-center">
-                    <ShieldCheck className="w-5 h-5 text-danger" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-danger">Menunggu Persetujuan ({pendingUsers.length})</h2>
-                    <p className="text-sm text-text-secondary">Pendaftaran Dapur SPPG baru yang memerlukan verifikasi Anda.</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  {pendingUsers.map(user => (
-                    <div key={user.id} className="bg-white rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 border border-black/5 shadow-sm">
-                      <div className="flex-1">
-                        <h3 className="font-bold text-text-primary text-lg">{user.nama} <span className="text-sm font-normal text-text-secondary">({user.instansi})</span></h3>
-                        <p className="text-sm text-text-secondary flex items-center gap-1 mt-1">
-                          <MapPin className="w-3 h-3" /> {user.kecamatan}, {user.kabupaten}, {user.provinsi}
-                        </p>
-                        <p className="text-xs text-text-muted mt-1">Email: {user.email} • NIP/ID: {user.nip}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => rejectSpgUser(user.id)}
-                          className="px-4 py-2 rounded-lg bg-danger/10 text-danger font-bold text-sm hover:bg-danger hover:text-white transition-colors"
-                        >
-                          Tolak
-                        </button>
-                        <button 
-                          onClick={() => approveSpgUser(user.id)}
-                          className="px-4 py-2 rounded-lg bg-success/10 text-success font-bold text-sm hover:bg-success hover:text-white transition-colors"
-                        >
-                          Terima & Aktifkan
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </motion.div>
-          )}
+
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <motion.div variants={stagger.item}>

@@ -16,6 +16,7 @@ import ProfilePage from './pages/ProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
 import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import KinerjaSPPGPage from './pages/KinerjaSPPGPage';
+import ApprovalPage from './pages/ApprovalPage';
 
 export default function App() {
   useEffect(() => {
@@ -134,6 +135,14 @@ export default function App() {
               element={
                 <ProtectedRoute requiredRole="superadmin">
                   <KinerjaSPPGPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/superadmin/approvals"
+              element={
+                <ProtectedRoute requiredRole="superadmin">
+                  <ApprovalPage />
                 </ProtectedRoute>
               }
             />

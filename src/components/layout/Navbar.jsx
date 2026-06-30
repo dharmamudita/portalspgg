@@ -16,6 +16,7 @@ import {
   BarChart3,
   MessageSquare,
   FileText,
+  ShieldCheck,
 } from 'lucide-react';
 import './Navbar.css';
 
@@ -50,6 +51,7 @@ export default function Navbar() {
   const navLinks = userData?.role === 'superadmin'
     ? [
         { to: '/superadmin', label: 'Ringkasan Global', icon: LayoutDashboard },
+        { to: '/superadmin/approvals', label: 'Verifikasi Akun', icon: ShieldCheck },
         { to: '/superadmin/kinerja', label: 'Kinerja SPPG', icon: BarChart3 },
         { to: '/superadmin/feedback', label: 'Pusat Ulasan', icon: MessageSquare },
         { to: '/superadmin/laporan', label: 'Laporan Nasional', icon: FileText },
