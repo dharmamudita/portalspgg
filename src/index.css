@@ -118,6 +118,13 @@
     background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 40%, rgba(28, 79, 135, 0.05) 100%);
   }
 
+  /* Mouse hover spotlight */
+  .glass::after {
+    content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59, 130, 246, 0.15), transparent 40%);
+    opacity: 0; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   .glass:hover {
     transform: translateY(-4px);
     border-color: rgba(59, 130, 246, 0.4);
@@ -126,6 +133,8 @@
       0 10px 20px -5px rgba(59, 130, 246, 0.15),
       inset 0 1px 1px rgba(255, 255, 255, 1);
   }
+
+  .glass:hover::after { opacity: 1; }
 
   .glass-strong {
     background: rgba(255, 255, 255, 0.85);
