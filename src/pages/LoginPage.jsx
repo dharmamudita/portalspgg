@@ -21,6 +21,21 @@ const MOCK_SCHOOLS = {
   smk: ['SMKN 1 Jakarta', 'SMKN 2 Surabaya', 'SMK Telkom']
 };
 
+const MOCK_WILAYAH = {
+  "DKI Jakarta": {
+    "Jakarta Selatan": ["Kebayoran Baru", "Kebayoran Lama", "Cilandak", "Pesanggrahan"],
+    "Jakarta Pusat": ["Menteng", "Senayan", "Tanah Abang", "Cempaka Putih"]
+  },
+  "Jawa Barat": {
+    "Kota Bandung": ["Coblong", "Cidadap", "Andir", "Cicendo"],
+    "Kota Bogor": ["Bogor Tengah", "Bogor Timur", "Bogor Barat"]
+  },
+  "Jawa Timur": {
+    "Kota Surabaya": ["Gubeng", "Tegalsari", "Wonokromo"],
+    "Kota Malang": ["Klojen", "Blimbing", "Lowokwaru"]
+  }
+};
+
 export default function LoginPage() {
   const { login, register, resetPassword } = useAuth();
   const { addToast } = useToast();
@@ -46,7 +61,10 @@ export default function LoginPage() {
     nisn: '', // or NIP for admin
     instansi: '',
     tingkat: '',
-    alergi: ''
+    alergi: '',
+    provinsi: '',
+    kabupaten: '',
+    kecamatan: ''
   });
 
   const updateField = (field, value) => {
@@ -90,7 +108,9 @@ export default function LoginPage() {
         if (!form.instansi) newErrors.instansi = 'Pilih sekolah';
       } else {
         if (!form.nama.trim()) newErrors.nama = 'Nama wajib diisi';
-        if (!form.instansi.trim()) newErrors.instansi = 'Instansi wajib diisi';
+        if (!form.provinsi) newErrors.provinsi = 'Pilih Provinsi';
+        if (!form.kabupaten) newErrors.kabupaten = 'Pilih Kabupaten/Kota';
+        if (!form.kecamatan) newErrors.kecamatan = 'Pilih Kecamatan';
       }
     }
 
@@ -117,9 +137,12 @@ export default function LoginPage() {
           form.role,
           { 
             tingkat: form.tingkat, 
-            instansi: cleanInstansi,
+            instansi: form.role === 'spg' ? `SPPG ${form.kecamatan}, ${form.kabupaten}, ${form.provinsi}` : cleanInstansi,
             alergi: allergiesArray,
-            status: form.role === 'spg' ? 'pending_approval' : 'active'
+            status: form.role === 'spg' ? 'pending_approval' : 'active',
+            provinsi: form.provinsi,
+            kabupaten: form.kabupaten,
+            kecamatan: form.kecamatan
           }
         );
         
@@ -405,7 +428,56 @@ export default function LoginPage() {
 
                     {regStep === 3 && form.role !== 'student' && (
                       <motion.div key="step3-admin" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-4">
-                        <Input id="reg-instansi-admin" label="Instansi / Wilayah SPPG" icon={Building2} placeholder="Misal: SPPG Wilayah Jakarta Selatan" value={form.instansi} onChange={(e) => updateField('instansi', e.target.value)} error={errors.instansi} />
+                        
+                        <div>
+                          <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Provinsi</label>
+                          <select 
+                            className="w-full bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
+                            value={form.provinsi}
+                            onChange={(e) => { updateField('provinsi', e.target.value); updateField('kabupaten', ''); updateField('kecamatan', ''); }}
+                          >
+                            <option value="">Pilih Provinsi...</option>
+                            {Object.keys(MOCK_WILAYAH).map(prov => (
+                              <option key={prov} value={prov}>{prov}</option>
+                            ))}
+                          </select>
+                          {errors.provinsi && <p className="text-xs text-danger font-semibold mt-1 ml-1">{errors.provinsi}</p>}
+                        </div>
+
+                        {form.provinsi && (
+                          <div>
+                            <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Kabupaten / Kota</label>
+                            <select 
+                              className="w-full bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
+                              value={form.kabupaten}
+                              onChange={(e) => { updateField('kabupaten', e.target.value); updateField('kecamatan', ''); }}
+                            >
+                              <option value="">Pilih Kabupaten/Kota...</option>
+                              {Object.keys(MOCK_WILAYAH[form.provinsi] || {}).map(kab => (
+                                <option key={kab} value={kab}>{kab}</option>
+                              ))}
+                            </select>
+                            {errors.kabupaten && <p className="text-xs text-danger font-semibold mt-1 ml-1">{errors.kabupaten}</p>}
+                          </div>
+                        )}
+
+                        {form.kabupaten && (
+                          <div>
+                            <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Kecamatan</label>
+                            <select 
+                              className="w-full bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
+                              value={form.kecamatan}
+                              onChange={(e) => updateField('kecamatan', e.target.value)}
+                            >
+                              <option value="">Pilih Kecamatan...</option>
+                              {(MOCK_WILAYAH[form.provinsi]?.[form.kabupaten] || []).map(kec => (
+                                <option key={kec} value={kec}>{kec}</option>
+                              ))}
+                            </select>
+                            {errors.kecamatan && <p className="text-xs text-danger font-semibold mt-1 ml-1">{errors.kecamatan}</p>}
+                          </div>
+                        )}
+
                         <div className="bg-warning/10 border border-warning/20 rounded-xl p-3 flex gap-2 text-xs text-warning-dark mt-2">
                           <AlertCircle className="w-4 h-4 shrink-0" />
                           <p>Pendaftaran akun SPPG memerlukan persetujuan Super Admin sebelum bisa digunakan secara penuh.</p>
