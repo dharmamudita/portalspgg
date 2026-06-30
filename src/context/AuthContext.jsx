@@ -38,17 +38,9 @@ export function AuthProvider({ children }) {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
             setUserData(userDoc.data());
-          } else {
-            console.warn('User document missing. Orphaned account. Logging out.');
-            await signOut(auth);
-            setCurrentUser(null);
-            setUserData(null);
           }
         } catch (error) {
           console.error('Error fetching user data:', error);
-          await signOut(auth);
-          setCurrentUser(null);
-          setUserData(null);
         }
       } else {
         setUserData(null);
@@ -94,6 +86,14 @@ export function AuthProvider({ children }) {
     const userDoc = await getDoc(doc(db, 'users', result.user.uid));
     if (userDoc.exists()) {
       setUserData(userDoc.data());
+    } else {
+      // Orphaned account detection during login
+      // Delete the Auth account so the user can re-register properly
+      await deleteUser(result.user).catch(() => {});
+      await signOut(auth).catch(() => {});
+      setCurrentUser(null);
+      setUserData(null);
+      throw new Error('Akun belum selesai didaftarkan. Data lama telah dibersihkan, silakan Daftar Baru.');
     }
     return result;
   }
