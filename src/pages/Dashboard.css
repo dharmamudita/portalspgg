@@ -1,5 +1,5 @@
 /* =========================================================
-   DASHBOARD CSS (XATRA WORKS Premium Design)
+   DASHBOARD CSS (XATRA WORKS Extreme Premium Design)
    ========================================================= */
 
 .dashboard-welcome {
@@ -9,105 +9,58 @@
 
 .stats-grid {
   display: grid; grid-template-columns: repeat(4, 1fr); 
-  gap: 1rem; margin-bottom: 2rem;
-}
-
-.stat-card {
-  padding: 1.25rem; 
-  display: flex; align-items: center; gap: 1rem; 
-  background: var(--color-glass); 
-  backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--color-border); 
-  border-top-color: rgba(255, 255, 255, 0.9); 
-  border-left-color: rgba(255, 255, 255, 0.6); 
-  border-radius: 1.5rem; 
-  box-shadow: 0 4px 24px -4px rgba(65, 112, 48, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8);
-  position: relative; overflow: hidden; 
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.stat-card::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; 
-  border-radius: inherit; margin: -1px; 
-  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 40%, rgba(65,112,48,0.05) 100%);
-}
-
-.stat-card:hover {
-  background: rgba(255,255,255,0.9);
-  border-color: rgba(65, 112, 48, 0.3);
-  box-shadow: 0 12px 32px rgba(65, 112, 48, 0.15), inset 0 1px 1px rgba(255, 255, 255, 1);
-  transform: translateY(-4px);
-}
-
-.stat-icon-wrapper {
-  width: 48px; height: 48px; 
-  border-radius: 1rem; 
-  background: var(--color-surface-light); 
-  display: flex; align-items: center; justify-content: center; 
-}
-
-.quick-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); 
-  gap: 1rem; margin-bottom: 2rem;
-}
-
-.quick-card {
-  padding: 1.5rem; text-align: center; cursor: pointer; 
-  background: var(--color-glass); 
-  backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid var(--color-border); 
-  border-top-color: rgba(255, 255, 255, 0.9); 
-  border-left-color: rgba(255, 255, 255, 0.6); 
-  border-radius: 1.5rem; 
-  box-shadow: 0 4px 24px -4px rgba(65, 112, 48, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8);
-  position: relative; overflow: hidden; 
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.quick-card::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; 
-  border-radius: inherit; margin: -1px; 
-  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 40%, rgba(65,112,48,0.05) 100%);
-}
-
-.quick-card:hover {
-  background: rgba(255,255,255,0.9);
-  border-color: rgba(65, 112, 48, 0.3);
-  box-shadow: 0 12px 32px rgba(65, 112, 48, 0.15), inset 0 1px 1px rgba(255, 255, 255, 1);
-  transform: translateY(-4px) scale(1.02);
-}
-
-@media (max-width: 1024px) {
-  .stats-grid, .quick-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 768px) {
-  .stats-grid { grid-template-columns: 1fr; }
-  .quick-grid { grid-template-columns: repeat(2, 1fr); }
+  gap: 1.25rem; margin-bottom: 2rem;
 }
 
 /* =========================================================
-   LIQUID GLASS & BLOBS
+   TRUE GLASSMORPHISM & BLOBS
    ========================================================= */
 
+/* The glass container itself */
 .liquid-glass {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(40px) saturate(200%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  /* Ultra-clear glass base */
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(48px) saturate(250%);
+  -webkit-backdrop-filter: blur(48px) saturate(250%);
+  
+  /* Sharp inner light (top & left) and deep outer shadow */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 
+    inset 0 2px 2px rgba(255, 255, 255, 0.9),
+    inset 2px 0 2px rgba(255, 255, 255, 0.4),
+    0 24px 48px -12px rgba(16, 185, 129, 0.15),
+    0 12px 24px -8px rgba(0, 0, 0, 0.05);
+    
   border-radius: 1.5rem;
   position: relative;
-  overflow: hidden;
   z-index: 10;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* 
+  Microscopic Noise Texture
+  This is the secret sauce for Apple-like frosted glass. 
+  It adds a very subtle grainy texture to the glass.
+*/
+.liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.04; /* Very subtle */
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Inner Light Gradient */
 .liquid-glass::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 50%, rgba(65,112,48,0.1) 100%);
-  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0.1) 100%);
+  z-index: -2;
   pointer-events: none;
 }
 
@@ -116,57 +69,78 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  z-index: -1;
+  z-index: 0; /* Sit behind the glass */
   pointer-events: none;
+  /* Darken the background slightly so glass pops more */
+  background: #f4f9f4; 
 }
 
+/* Extremely vibrant blobs to shine through the glass */
 .blob {
   position: absolute;
-  filter: blur(80px);
-  opacity: 0.6;
+  filter: blur(100px);
+  opacity: 0.8; /* High opacity for strong contrast */
   border-radius: 50%;
-  animation: blob-float 20s infinite ease-in-out alternate;
+  animation: blob-float 25s infinite ease-in-out alternate;
 }
 
 .blob-1 {
   top: -10%; left: -10%;
-  width: 500px; height: 500px;
-  background: rgba(16, 185, 129, 0.3); /* Accent Glow */
+  width: 700px; height: 700px;
+  background: #10b981; /* Solid Emerald */
   animation-delay: 0s;
 }
 
 .blob-2 {
   bottom: -20%; right: -10%;
-  width: 600px; height: 600px;
-  background: rgba(65, 112, 48, 0.2); /* Primary Glow */
+  width: 800px; height: 800px;
+  background: #059669; /* Solid Forest Green */
   animation-delay: -5s;
 }
 
 .blob-3 {
-  top: 40%; left: 60%;
-  width: 400px; height: 400px;
-  background: rgba(245, 158, 11, 0.15); /* Warning/Gold Glow */
+  top: 30%; left: 40%;
+  width: 500px; height: 500px;
+  background: #f59e0b; /* Solid Amber/Gold */
   animation-delay: -10s;
 }
 
-@keyframes blob-float {
-  0% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 20px) scale(0.9); }
-  100% { transform: translate(0, 0) scale(1); }
+.blob-4 {
+  bottom: 20%; left: 10%;
+  width: 400px; height: 400px;
+  background: #34d399; /* Light Mint */
+  animation-delay: -15s;
 }
 
+@keyframes blob-float {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate(50px, -80px) scale(1.2) rotate(10deg); }
+  66% { transform: translate(-40px, 40px) scale(0.9) rotate(-10deg); }
+  100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+}
+
+/* Nutrition Progress Bar */
 .nutrition-progress {
-  width: 100%; height: 8px;
+  width: 100%; height: 10px;
   background: rgba(0,0,0,0.05);
   border-radius: 999px;
   overflow: hidden;
   position: relative;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .nutrition-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  background: linear-gradient(90deg, #10b981, #f59e0b);
   border-radius: 999px;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+}
+
+/* Responsiveness */
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: 1fr; }
 }
