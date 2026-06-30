@@ -37,17 +37,25 @@
   border-radius: 1.25rem;
   position: relative;
   z-index: 10;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Buttery smooth transition for all hover effects */
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
+  will-change: transform, box-shadow, border-color;
 }
 
-/* Hover Effect: The border goes even darker and the card lifts up */
+/* Hover Effect: The border goes even darker and the card lifts up smoothly */
 .liquid-glass:hover {
   border-color: #091e36; /* Deepest Blue */
   box-shadow: 
-    0 16px 40px -8px rgba(17, 51, 89, 0.35),
-    0 8px 16px -4px rgba(17, 51, 89, 0.20);
-  transform: translateY(-3px);
+    0 20px 50px -10px rgba(17, 51, 89, 0.4),
+    0 10px 20px -5px rgba(17, 51, 89, 0.25);
+  transform: translateY(-4px) scale(1.01);
+}
+
+/* Specific hover effect for the welcome banner to make text pop */
+.dashboard-welcome:hover h1 {
+  text-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  transition: text-shadow 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Inner Top Accent Line (Header of the card) */
