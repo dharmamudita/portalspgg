@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Vote, CheckCircle2, Trophy, Flame, Droplets, Wheat, ChevronRight, ChevronLeft, Calendar, Lock } from 'lucide-react';
+import { Vote, CheckCircle2, Trophy, Flame, Droplets, Wheat, ChevronRight, ChevronLeft, Calendar, Lock, TriangleAlert, Radio } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useMenusByDateRange, useVoteCounts, useUserVotedMap, submitVote } from '../hooks/useFirestore';
 import { useToast } from '../components/ui/Toast';
@@ -47,6 +47,8 @@ export default function VotingPage() {
   const [votingId, setVotingId] = useState(null);
   const [selectedDetail, setSelectedDetail] = useState(null);
 
+  // Mock allergies if user has none for the sake of demo
+  const userAllergies = currentUser?.alergi || ['Kacang Tanah', 'Seafood'];
 
   // Filter by selected day
   const filteredMenus = useMemo(() => {
@@ -119,26 +121,39 @@ export default function VotingPage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-12">
         <motion.div variants={stagger.container} initial="hidden" animate="show">
           {/* Header */}
-          <motion.div variants={stagger.item} className="mb-6 text-center">
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-4">
+          <motion.div variants={stagger.item} className="mb-8 text-center relative">
+            <div className="flex justify-center mb-4">
+              {isClosed ? (
+                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-danger/10 border border-danger/20">
+                  <Lock className="w-4 h-4 text-danger" />
+                  <span className="text-xs font-bold text-danger">Pemungutan Suara Ditutup</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-success/10 border border-success/20">
+                  <Radio className="w-4 h-4 text-success animate-pulse" />
+                  <span className="text-xs font-bold text-success">Live Polling Aktif</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-4 shadow-xl shadow-primary/20">
               <Vote className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2">
-              <span className="gradient-text">Voting Menu</span> Minggu Depan
+            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-3 font-display">
+              <span className="gradient-text">Voting Menu</span> Favorit
             </h1>
-            <p className="text-sm text-text-muted max-w-md mx-auto">
-              Pilih menu favorit kamu. Setiap siswa dapat memberikan 1 vote per menu.
-            </p>
+            
+            {/* Impact Banner */}
+            <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 max-w-xl mx-auto mb-4 backdrop-blur-sm">
+              <p className="text-sm text-text-secondary leading-relaxed">
+                <strong className="text-primary font-bold">Suara Anda menentukan kebijakan!</strong> Menu yang menang akan diprioritaskan untuk dihidangkan bulan depan dan direkomendasikan kepada Pemerintah Daerah.
+              </p>
+            </div>
+
             {totalVotes > 0 && (
-              <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/5 border border-black/10">
-                <Trophy className="w-3.5 h-3.5 text-warning" />
-                <span className="text-xs font-semibold text-text-secondary">{totalVotes} total vote masuk</span>
-              </div>
-            )}
-            {isClosed && (
-              <div className="mt-3 flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-danger/10 border border-danger/20">
-                <Lock className="w-4 h-4 text-danger" />
-                <span className="text-xs font-bold text-danger">Voting periode ini sudah ditutup</span>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/5 border border-black/10">
+                <Trophy className="w-4 h-4 text-warning" />
+                <span className="text-xs font-semibold text-text-secondary">{totalVotes} total suara masuk</span>
               </div>
             )}
           </motion.div>
@@ -239,21 +254,25 @@ export default function VotingPage() {
                 const isVoted = votedMap[menu.id];
                 const isLoading = votingId === menu.id;
                 const isLeading = voteCount === maxVotes && voteCount > 0;
+                
+                const menuAllergens = menu.bahan_baku?.filter(b => userAllergies.includes(b)) || [];
+                const hasAllergy = menuAllergens.length > 0;
 
                 return (
                   <motion.div
                     key={menu.id}
                     variants={stagger.item}
-                    className={`glass rounded-2xl overflow-hidden transition-all ${isLeading ? 'border-warning/30 glow-primary' : ''}`}
+                    className={`liquid-glass overflow-hidden transition-all duration-300 group ${isLeading ? 'border-warning/30 shadow-warning/10 shadow-xl' : ''} ${hasAllergy ? 'opacity-80' : ''}`}
                   >
                     <div className="flex flex-col sm:flex-row">
-                      <div className="relative w-full sm:w-48 h-40 sm:h-auto shrink-0">
+                      <div className="relative w-full sm:w-48 h-48 sm:h-auto shrink-0 overflow-hidden">
                         <img
                           src={menu.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop'}
                           alt={menu.nama_menu}
-                          className="w-full h-full object-cover"
+                          className={`w-full h-full object-cover transition-transform duration-1000 ${hasAllergy ? 'grayscale opacity-80' : 'group-hover:scale-110'}`}
                         />
-                        <div className="absolute top-2 left-2 flex items-center gap-1">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent sm:hidden" />
+                        <div className="absolute top-3 left-3 flex items-center gap-1">
                           <span className="bg-black/50 backdrop-blur-sm text-[10px] font-bold text-white px-2 py-1 rounded-lg">
                             {DAYS[menuDate.getDay()]}, {menuDate.getDate()}/{menuDate.getMonth() + 1}
                           </span>
@@ -265,10 +284,11 @@ export default function VotingPage() {
                         )}
                       </div>
 
-                      <div className="flex-1 p-4 sm:p-5">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <h3 className="text-lg font-bold text-text-primary">{menu.nama_menu}</h3>
+                      <div className="flex-1 p-5 sm:p-6 flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h3 className="text-xl font-bold font-display text-text-primary line-clamp-2 leading-tight pr-4">{menu.nama_menu}</h3>
                             <div className="flex items-center gap-3 mt-1 text-[10px] text-text-muted">
                               <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-danger" />{menu.kalori} kkal</span>
                               <span className="flex items-center gap-1"><Droplets className="w-3 h-3 text-accent" />{menu.protein}g protein</span>
@@ -283,8 +303,16 @@ export default function VotingPage() {
                           </button>
                         </div>
 
+                        {/* Allergy Warning */}
+                        {hasAllergy && (
+                          <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-xl bg-red-50 border border-red-100">
+                            <TriangleAlert className="w-4 h-4 text-red-500 shrink-0" />
+                            <p className="text-xs text-red-700 font-semibold">Bahaya Alergi: <span className="font-bold">{menuAllergens.join(', ')}</span></p>
+                          </div>
+                        )}
+
                         {/* Vote Bar */}
-                        <div className="mb-3">
+                        <div className="mb-4 mt-auto pt-4">
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-[10px] text-text-muted">{voteCount} vote</span>
                             <span className="text-[10px] font-bold text-text-secondary">{percentage}%</span>
@@ -301,21 +329,25 @@ export default function VotingPage() {
 
                         {/* Vote Button */}
                         <motion.button
-                          whileHover={!isVoted && !isClosed ? { scale: 1.02 } : {}}
-                          whileTap={!isVoted && !isClosed ? { scale: 0.98 } : {}}
+                          whileHover={!isVoted && !isClosed && !hasAllergy ? { scale: 1.02 } : {}}
+                          whileTap={!isVoted && !isClosed && !hasAllergy ? { scale: 0.98 } : {}}
                           onClick={() => handleVote(menu.id)}
-                          disabled={isVoted || isLoading || isClosed}
-                          className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-                            isClosed
-                              ? 'bg-black/5 text-text-muted border border-black/5 cursor-not-allowed'
-                              : isVoted
-                                ? 'bg-success/20 text-success border border-success/20'
-                                : isLoading
-                                  ? 'bg-black/5 text-text-muted'
-                                  : 'bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/20 hover:shadow-xl'
+                          disabled={isVoted || isLoading || isClosed || hasAllergy}
+                          className={`w-full py-3 rounded-xl text-sm font-bold transition-all cursor-pointer shadow-sm ${
+                            hasAllergy 
+                              ? 'bg-red-100 text-red-500 border border-red-200 cursor-not-allowed opacity-70'
+                              : isClosed
+                                ? 'bg-black/5 text-text-muted border border-black/5 cursor-not-allowed'
+                                : isVoted
+                                  ? 'bg-success/10 text-success border border-success/20 ring-1 ring-success/30'
+                                  : isLoading
+                                    ? 'bg-black/5 text-text-muted'
+                                    : 'bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/30 hover:shadow-primary/40'
                           }`}
                         >
-                          {isClosed ? (
+                          {hasAllergy ? (
+                            <span className="flex items-center justify-center gap-2"><TriangleAlert className="w-4 h-4" /> Berbahaya Untuk Anda</span>
+                          ) : isClosed ? (
                             <span className="flex items-center justify-center gap-2"><Lock className="w-4 h-4" /> Voting Ditutup</span>
                           ) : isVoted ? (
                             <span className="flex items-center justify-center gap-2"><CheckCircle2 className="w-4 h-4" /> Sudah Vote</span>
