@@ -13,12 +13,15 @@ import { validatePassword } from '../lib/validators';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 
-// Mock Data for Schools
-const MOCK_SCHOOLS = {
-  sd: ['SDN 1 Jakarta', 'SDN Menteng 01', 'SDIT Al-Falah'],
-  smp: ['SMPN 2 Bandung', 'SMPN 115 Jakarta', 'SMP Labschool'],
-  sma: ['SMAN 8 Jakarta', 'SMAN 3 Bandung', 'SMA Taruna Nusantara'],
-  smk: ['SMKN 1 Jakarta', 'SMKN 2 Surabaya', 'SMK Telkom']
+const getMockSchools = (tingkat, kecamatan) => {
+  if (!kecamatan || !tingkat) return [];
+  const tk = tingkat.toUpperCase();
+  return [
+    `${tk}N 1 ${kecamatan}`,
+    `${tk}N 2 ${kecamatan}`,
+    `${tk} IT ${kecamatan}`,
+    `${tk} Swasta ${kecamatan}`
+  ];
 };
 
 const MOCK_WILAYAH = {
@@ -86,6 +89,10 @@ export default function LoginPage() {
       if (!form.email.trim() || !form.email.includes('@')) newErrors.email = 'Email tidak valid';
       const passCheck = validatePassword(form.password);
       if (!passCheck.valid) newErrors.password = passCheck.message;
+    } else if (regStep === 3) {
+      if (!form.provinsi) newErrors.provinsi = 'Pilih Provinsi';
+      if (!form.kabupaten) newErrors.kabupaten = 'Pilih Kabupaten/Kota';
+      if (!form.kecamatan) newErrors.kecamatan = 'Pilih Kecamatan';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -106,12 +113,12 @@ export default function LoginPage() {
       if (!form.password) newErrors.password = 'Password wajib diisi';
     } else if (mode === 'forgot') {
       if (!form.email.trim()) newErrors.email = 'Email wajib diisi';
-    } else if (mode === 'register' && regStep === 3) {
-      if (form.role === 'student') {
+    } else if (mode === 'register') {
+      if (form.role === 'student' && regStep === 4) {
         if (!form.nisn.trim()) newErrors.nisn = 'NISN wajib diisi';
         if (!form.tingkat) newErrors.tingkat = 'Pilih tingkat pendidikan';
         if (!form.instansi) newErrors.instansi = 'Pilih sekolah';
-      } else {
+      } else if (form.role === 'spg' && regStep === 3) {
         if (!form.nama.trim()) newErrors.nama = 'Nama wajib diisi';
         if (!form.provinsi) newErrors.provinsi = 'Pilih Provinsi';
         if (!form.kabupaten) newErrors.kabupaten = 'Pilih Kabupaten/Kota';
@@ -326,7 +333,7 @@ export default function LoginPage() {
                 <div className="flex flex-col h-full">
                   {/* Stepper Indicator */}
                   <div className="flex gap-2 mb-6">
-                    {[1, 2, 3].map(step => (
+                    {Array.from({ length: form.role === 'student' ? 4 : 3 }, (_, i) => i + 1).map(step => (
                       <div key={step} className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${regStep >= step ? 'bg-primary' : 'bg-black/10'}`} />
                     ))}
                   </div>
@@ -385,54 +392,9 @@ export default function LoginPage() {
                       </motion.div>
                     )}
 
-                    {/* STEP 3: DETAILS */}
-                    {regStep === 3 && form.role === 'student' && (
-                      <motion.div key="step3-student" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-4">
-                        <Input id="reg-nisn" label="NISN" icon={User} placeholder="10 Digit NISN" value={form.nisn} onChange={(e) => updateField('nisn', e.target.value)} error={errors.nisn} />
-                        
-                        <div>
-                          <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Tingkat Pendidikan</label>
-                          <select 
-                            className="w-full bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
-                            value={form.tingkat}
-                            onChange={(e) => { updateField('tingkat', e.target.value); updateField('instansi', ''); }}
-                          >
-                            <option value="">Pilih Tingkat...</option>
-                            <option value="sd">Sekolah Dasar (SD)</option>
-                            <option value="smp">Sekolah Menengah Pertama (SMP)</option>
-                            <option value="sma">Sekolah Menengah Atas (SMA)</option>
-                            <option value="smk">Sekolah Menengah Kejuruan (SMK)</option>
-                          </select>
-                          {errors.tingkat && <p className="text-xs text-danger font-semibold mt-1 ml-1">{errors.tingkat}</p>}
-                        </div>
-
-                        {form.tingkat && (
-                          <div>
-                            <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Pilih Sekolah</label>
-                            <select 
-                              className="w-full bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
-                              value={form.instansi}
-                              onChange={(e) => updateField('instansi', e.target.value)}
-                            >
-                              <option value="">Pilih Sekolah...</option>
-                              {MOCK_SCHOOLS[form.tingkat]?.map(school => (
-                                <option key={school} value={school}>{school}</option>
-                              ))}
-                            </select>
-                            {errors.instansi && <p className="text-xs text-danger font-semibold mt-1 ml-1">{errors.instansi}</p>}
-                          </div>
-                        )}
-
-                        <div className="pt-2">
-                          <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Riwayat Alergi (Opsional)</label>
-                          <p className="text-[10px] text-text-muted mb-2 ml-1">Pisahkan dengan koma. Contoh: Kacang, Seafood, Susu</p>
-                          <Input id="reg-alergi" label="" icon={AlertCircle} placeholder="Misal: Kacang, Udang..." value={form.alergi} onChange={(e) => updateField('alergi', e.target.value)} />
-                        </div>
-                      </motion.div>
-                    )}
-
-                    {regStep === 3 && form.role !== 'student' && (
-                      <motion.div key="step3-admin" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-4">
+                    {/* STEP 3: REGION SELECTION */}
+                    {regStep === 3 && (
+                      <motion.div key="step3-region" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-4">
                         
                         <div>
                           <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Provinsi</label>
@@ -483,9 +445,57 @@ export default function LoginPage() {
                           </div>
                         )}
 
-                        <div className="bg-warning/10 border border-warning/20 rounded-xl p-3 flex gap-2 text-xs text-warning-dark mt-2">
-                          <AlertCircle className="w-4 h-4 shrink-0" />
-                          <p>Pendaftaran akun SPPG memerlukan persetujuan Super Admin sebelum bisa digunakan secara penuh.</p>
+                        {form.role === 'spg' && (
+                          <div className="bg-warning/10 border border-warning/20 rounded-xl p-3 flex gap-2 text-xs text-warning-dark mt-2">
+                            <AlertCircle className="w-4 h-4 shrink-0" />
+                            <p>Pendaftaran akun SPPG memerlukan persetujuan Super Admin sebelum bisa digunakan secara penuh.</p>
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+
+                    {/* STEP 4: STUDENT DETAILS */}
+                    {regStep === 4 && form.role === 'student' && (
+                      <motion.div key="step4-student" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-4">
+                        <Input id="reg-nisn" label="NISN" icon={User} placeholder="10 Digit NISN" value={form.nisn} onChange={(e) => updateField('nisn', e.target.value)} error={errors.nisn} />
+                        
+                        <div>
+                          <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Tingkat Pendidikan</label>
+                          <select 
+                            className="w-full bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
+                            value={form.tingkat}
+                            onChange={(e) => { updateField('tingkat', e.target.value); updateField('instansi', ''); }}
+                          >
+                            <option value="">Pilih Tingkat...</option>
+                            <option value="sd">Sekolah Dasar (SD)</option>
+                            <option value="smp">Sekolah Menengah Pertama (SMP)</option>
+                            <option value="sma">Sekolah Menengah Atas (SMA)</option>
+                            <option value="smk">Sekolah Menengah Kejuruan (SMK)</option>
+                          </select>
+                          {errors.tingkat && <p className="text-xs text-danger font-semibold mt-1 ml-1">{errors.tingkat}</p>}
+                        </div>
+
+                        {form.tingkat && (
+                          <div>
+                            <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Pilih Sekolah</label>
+                            <select 
+                              className="w-full bg-black/5 border border-black/10 rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer"
+                              value={form.instansi}
+                              onChange={(e) => updateField('instansi', e.target.value)}
+                            >
+                              <option value="">Pilih Sekolah...</option>
+                              {getMockSchools(form.tingkat, form.kecamatan).map(school => (
+                                <option key={school} value={school}>{school}</option>
+                              ))}
+                            </select>
+                            {errors.instansi && <p className="text-xs text-danger font-semibold mt-1 ml-1">{errors.instansi}</p>}
+                          </div>
+                        )}
+
+                        <div className="pt-2">
+                          <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-1.5 ml-1">Riwayat Alergi (Opsional)</label>
+                          <p className="text-[10px] text-text-muted mb-2 ml-1">Pisahkan dengan koma. Contoh: Kacang, Seafood, Susu</p>
+                          <Input id="reg-alergi" label="" icon={AlertCircle} placeholder="Misal: Kacang, Udang..." value={form.alergi} onChange={(e) => updateField('alergi', e.target.value)} />
                         </div>
                       </motion.div>
                     )}
@@ -499,7 +509,7 @@ export default function LoginPage() {
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                     )}
-                    {regStep < 3 ? (
+                    {regStep < (form.role === 'student' ? 4 : 3) ? (
                       <Button type="button" onClick={handleNextStep} icon={ChevronRight} className="flex-1" size="lg">Selanjutnya</Button>
                     ) : (
                       <Button type="submit" loading={loading} icon={UserPlus} className="flex-1" size="lg">Selesaikan Pendaftaran</Button>
