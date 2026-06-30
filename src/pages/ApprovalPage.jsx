@@ -50,27 +50,27 @@ export default function ApprovalPage() {
             </p>
           </motion.div>
 
-          <div className="flex justify-center mb-8">
-            <div className="bg-white/50 backdrop-blur-md p-1.5 rounded-full border border-white/40 shadow-sm inline-flex">
+          <div className="flex justify-center mb-6 md:mb-8">
+            <div className="bg-white/50 backdrop-blur-md p-1.5 rounded-full border border-white/40 shadow-sm inline-flex w-full md:w-auto overflow-hidden">
               <button
                 onClick={() => setActiveTab('pending')}
-                className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 flex items-center gap-2 ${
+                className={`flex-1 md:flex-none px-3 sm:px-6 py-2 md:py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 ${
                   activeTab === 'pending'
                     ? 'bg-blue-600 text-white shadow-md'
                     : 'text-gray-600 hover:text-blue-600 hover:bg-white/60'
                 }`}
               >
-                <Clock className="w-4 h-4" /> Menunggu ({pendingUsers.length})
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Menunggu</span> <span className="sm:hidden">({pendingUsers.length})</span><span className="hidden sm:inline">({pendingUsers.length})</span>
               </button>
               <button
                 onClick={() => setActiveTab('history')}
-                className={`px-6 py-2.5 rounded-full font-bold text-sm transition-all duration-300 flex items-center gap-2 ${
+                className={`flex-1 md:flex-none px-3 sm:px-6 py-2 md:py-2.5 rounded-full font-bold text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 ${
                   activeTab === 'history'
                     ? 'bg-blue-600 text-white shadow-md'
                     : 'text-gray-600 hover:text-blue-600 hover:bg-white/60'
                 }`}
               >
-                <History className="w-4 h-4" /> Riwayat ({historyUsers.length})
+                <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> <span className="hidden sm:inline">Riwayat</span> <span className="sm:hidden">({historyUsers.length})</span><span className="hidden sm:inline">({historyUsers.length})</span>
               </button>
             </div>
           </div>
