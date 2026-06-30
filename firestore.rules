@@ -1,0 +1,116 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Get user document data
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Check if the user is admin (SPG)
+    function isAdmin() {
+      return isAuthenticated() && getUserData().role == 'spg';
+    }
+
+    // Check if the user is a student
+    function isStudent() {
+      return isAuthenticated() && getUserData().role == 'student';
+    }
+
+    // ============================================
+    // USERS COLLECTION
+    // ============================================
+    match /users/{userId} {
+      // Users can read their own profile
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Admin can read all users
+      allow read: if isAdmin();
+      
+      // Only allow creation during registration (validated by Auth)
+      allow create: if isAuthenticated() && request.auth.uid == userId
+        && request.resource.data.keys().hasAll(['uid', 'nip', 'nama', 'instansi', 'role'])
+        && request.resource.data.role in ['student', 'spg']
+        && request.resource.data.nip is string
+        && request.resource.data.nip.size() >= 5
+        && request.resource.data.nip.size() <= 30;
+      
+      // Users cannot modify their own role
+      allow update: if isAuthenticated() && request.auth.uid == userId
+        && request.resource.data.role == resource.data.role;
+      
+      // Only admin can delete users
+      allow delete: if isAdmin();
+    }
+
+    // ============================================
+    // MENUS COLLECTION
+    // ============================================
+    match /menus/{menuId} {
+      // All authenticated users can read menus
+      allow read: if isAuthenticated();
+      
+      // Only admin can create/update/delete menus
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasAll(['nama_menu', 'tanggal', 'kalori', 'protein', 'lemak', 'karbo'])
+        && request.resource.data.nama_menu is string
+        && request.resource.data.nama_menu.size() >= 3
+        && request.resource.data.nama_menu.size() <= 100
+        && request.resource.data.kalori is number
+        && request.resource.data.kalori >= 0
+        && request.resource.data.protein is number
+        && request.resource.data.protein >= 0;
+      
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ============================================
+    // FEEDBACKS COLLECTION
+    // ============================================
+    match /feedbacks/{feedbackId} {
+      // All authenticated users can read feedbacks
+      allow read: if isAuthenticated();
+      
+      // Users can only create their own feedback
+      allow create: if isAuthenticated()
+        && request.resource.data.user_uid == request.auth.uid
+        && request.resource.data.keys().hasAll(['menu_id', 'user_uid', 'rating', 'komentar', 'timestamp'])
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5
+        && request.resource.data.komentar is string
+        && request.resource.data.komentar.size() <= 500;
+      
+      // Nobody can edit or delete feedbacks (immutable for accountability)
+      allow update: if false;
+      allow delete: if isAdmin(); // Only admin can moderate
+    }
+
+    // ============================================
+    // VOTES COLLECTION
+    // ============================================
+    match /votes/{voteId} {
+      // All authenticated users can read votes
+      allow read: if isAuthenticated();
+      
+      // Users can only create their own votes
+      allow create: if isAuthenticated()
+        && request.resource.data.user_uid == request.auth.uid
+        && request.resource.data.keys().hasAll(['menu_id', 'user_uid', 'timestamp']);
+      
+      // Votes are immutable
+      allow update: if false;
+      allow delete: if false;
+    }
+  }
+}
