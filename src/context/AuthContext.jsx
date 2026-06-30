@@ -9,6 +9,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -50,12 +51,10 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * Login with NIP (used as email: nip@sppg.id) and password
-   * Using email format because Firebase Auth requires email
+   * Login with Email and password
    */
-  async function login(nip, password) {
-    const email = `${nip.trim().toLowerCase()}@sppg.id`;
-    const result = await signInWithEmailAndPassword(auth, email, password);
+  async function login(email, password) {
+    const result = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
     const userDoc = await getDoc(doc(db, 'users', result.user.uid));
     if (userDoc.exists()) {
       setUserData(userDoc.data());
@@ -67,27 +66,24 @@ export function AuthProvider({ children }) {
    * Register new user
    * Creates Firebase Auth account + Firestore user document
    */
-  async function register(nip, password, nama, instansi, role = 'student') {
-    const email = `${nip.trim().toLowerCase()}@sppg.id`;
-    const result = await createUserWithEmailAndPassword(auth, email, password);
+  async function register(email, password, nisn, nama, role = 'student', extraData = {}) {
+    const cleanEmail = email.trim().toLowerCase();
+    const result = await createUserWithEmailAndPassword(auth, cleanEmail, password);
 
-    // Create user document in Firestore
-    await setDoc(doc(db, 'users', result.user.uid), {
+    const newUserData = {
       uid: result.user.uid,
-      nip: nip.trim(),
+      email: cleanEmail,
+      nisn: nisn.trim(),
       nama: nama.trim(),
-      instansi: instansi.trim(),
       role: role,
       createdAt: new Date(),
-    });
+      ...extraData,
+    };
 
-    setUserData({
-      uid: result.user.uid,
-      nip: nip.trim(),
-      nama: nama.trim(),
-      instansi: instansi.trim(),
-      role: role,
-    });
+    // Create user document in Firestore
+    await setDoc(doc(db, 'users', result.user.uid), newUserData);
+
+    setUserData(newUserData);
 
     return result;
   }
@@ -100,6 +96,13 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  /**
+   * Send Password Reset Email
+   */
+  async function resetPassword(email) {
+    return sendPasswordResetEmail(auth, email.trim().toLowerCase());
+  }
+
   const value = {
     currentUser,
     userData,
@@ -107,6 +110,7 @@ export function AuthProvider({ children }) {
     login,
     register,
     logout,
+    resetPassword,
     isAdmin: userData?.role === 'spg',
     isStudent: userData?.role === 'student',
   };
