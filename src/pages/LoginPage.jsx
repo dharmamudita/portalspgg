@@ -240,7 +240,16 @@ export default function LoginPage() {
       </div>
 
       {/* RIGHT SIDE: Auth Form */}
-      <div className="w-full lg:w-[55%] flex items-center justify-center p-6 sm:p-12 relative bg-surface">
+      <div className="w-full lg:w-[55%] flex items-center justify-center p-6 sm:p-12 relative bg-surface overflow-hidden">
+        
+        {/* --- Neumorphic Background Elements --- */}
+        <div className="absolute top-1/2 right-0 -translate-y-1/2 pointer-events-none opacity-60 flex items-center justify-center translate-x-1/4 lg:translate-x-0">
+          {/* Outer Squircle */}
+          <div className="absolute w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] rounded-[100px] sm:rounded-[150px] bg-surface shadow-[inset_10px_10px_30px_rgba(0,0,0,0.03),inset_-10px_-10px_30px_rgba(255,255,255,1),20px_20px_40px_rgba(0,0,0,0.03)] border border-white/50 rotate-45" />
+          
+          {/* Inner Circle */}
+          <div className="absolute w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full bg-surface shadow-[inset_15px_15px_40px_rgba(0,0,0,0.04),inset_-15px_-15px_40px_rgba(255,255,255,1),15px_15px_30px_rgba(0,0,0,0.02)] border border-white/60" />
+        </div>
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
