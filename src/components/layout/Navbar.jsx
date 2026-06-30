@@ -50,11 +50,11 @@ export default function Navbar() {
 
   const navLinks = userData?.role === 'superadmin'
     ? [
-        { to: '/superadmin', label: 'Ringkasan Global', icon: LayoutDashboard },
-        { to: '/superadmin/approvals', label: 'Verifikasi Akun', icon: ShieldCheck },
-        { to: '/superadmin/kinerja', label: 'Kinerja SPPG', icon: BarChart3 },
-        { to: '/superadmin/feedback', label: 'Pusat Ulasan', icon: MessageSquare },
-        { to: '/superadmin/laporan', label: 'Laporan Nasional', icon: FileText },
+        { to: '/superadmin', label: 'Ringkasan', icon: LayoutDashboard },
+        { to: '/superadmin/approvals', label: 'Verifikasi', icon: ShieldCheck },
+        { to: '/superadmin/kinerja', label: 'Kinerja', icon: BarChart3 },
+        { to: '/superadmin/feedback', label: 'Ulasan', icon: MessageSquare },
+        { to: '/superadmin/laporan', label: 'Laporan', icon: FileText },
       ]
     : isAdmin
       ? [
