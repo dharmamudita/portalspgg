@@ -235,7 +235,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5 relative z-10">
+            <form onSubmit={handleSubmit} className="space-y-5 relative z-10 min-h-[380px]">
               
               {/* === MODE: LOGIN === */}
               {mode === 'login' && (
