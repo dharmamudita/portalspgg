@@ -35,7 +35,7 @@ function LocationMarker({ position, setPosition }) {
 }
 
 export default function ProfilePage() {
-  const { userData, currentUser, updateUserData, sendResetPassword } = useAuth();
+  const { userData, currentUser, updateUserData, resetPassword } = useAuth();
   const { addToast } = useToast();
   
   // State
@@ -149,7 +149,7 @@ export default function ProfilePage() {
   const handleResetPassword = async () => {
     setResetLoading(true);
     try {
-      await sendResetPassword(currentUser.email);
+      await resetPassword(currentUser.email);
       addToast('Link reset password telah dikirim ke email Anda!', 'success');
     } catch (error) {
       console.error(error);
