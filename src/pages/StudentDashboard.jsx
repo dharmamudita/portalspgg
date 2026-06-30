@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { CalendarDays, MessageSquare, UtensilsCrossed } from 'lucide-react';
+import { CalendarDays, MessageSquare, UtensilsCrossed, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTodayMenu, useVotingMenus, useMenuFeedbacks } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
@@ -11,6 +11,7 @@ import FeedbackList from '../components/FeedbackList';
 import FeedbackForm from '../components/FeedbackForm';
 import Modal from '../components/ui/Modal';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import './Dashboard.css';
 
 export default function StudentDashboard() {
   const { userData } = useAuth();
@@ -33,70 +34,97 @@ export default function StudentDashboard() {
 
   const stagger = {
     container: { hidden: {}, show: { transition: { staggerChildren: 0.1 } } },
-    item: { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } },
+    item: { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } } },
   };
 
   return (
     <div className="page-mesh">
       <Navbar />
 
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-12">
         <motion.div variants={stagger.container} initial="hidden" animate="show">
-          {/* Header */}
-          <motion.div variants={stagger.item} className="mb-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1">
-              {getGreeting()}, <span className="gradient-text">{userData?.nama || 'Siswa'}</span>
-            </h1>
-            <div className="flex items-center gap-2 text-sm text-text-muted">
-              <CalendarDays className="w-4 h-4" />
-              <span>{today}</span>
+          
+          {/* Premium Welcome Banner */}
+          <motion.div variants={stagger.item} className="dashboard-welcome">
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary mb-2 font-display tracking-tight flex items-center gap-3">
+                {getGreeting()}, <span className="gradient-text">{userData?.nama || 'Siswa'}</span>
+                <Sparkles className="w-6 h-6 text-warning animate-pulse-glow" />
+              </h1>
+              <div className="flex items-center gap-2 text-sm font-medium text-text-secondary bg-black/5 px-3 py-1.5 rounded-full inline-flex">
+                <CalendarDays className="w-4 h-4 text-primary" />
+                <span>{today}</span>
+              </div>
             </div>
           </motion.div>
 
           {menuLoading ? (
             <LoadingSpinner text="Memuat menu hari ini..." />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
               {/* Left Column: Menu Card + Voting */}
-              <div className="lg:col-span-2 space-y-6">
+              <div className="lg:col-span-8 space-y-8">
                 <motion.div variants={stagger.item}>
+                  <div className="flex items-center justify-between mb-4 px-1">
+                    <h2 className="text-xl font-bold font-display text-text-primary">Menu Hari Ini</h2>
+                    <span className="text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">Menu Utama</span>
+                  </div>
+                  
                   {todayMenu ? (
-                    <MenuCard menu={todayMenu} onRate={() => setShowFeedbackModal(true)} />
+                    <motion.div whileHover={{ y: -4, scale: 1.01 }} transition={{ type: 'spring', stiffness: 400 }}>
+                      <MenuCard menu={todayMenu} onRate={() => setShowFeedbackModal(true)} />
+                    </motion.div>
                   ) : (
-                    <div className="glass rounded-3xl p-12 text-center">
-                      <UtensilsCrossed className="w-16 h-16 mx-auto mb-4 text-text-muted opacity-50" />
-                      <h3 className="text-lg font-bold text-text-primary mb-2">Belum Ada Menu Hari Ini</h3>
-                      <p className="text-sm text-text-muted">Menu akan ditampilkan setelah admin menginput data</p>
+                    <div className="stat-card flex-col justify-center text-center py-16">
+                      <div className="w-20 h-20 rounded-full bg-black/5 flex items-center justify-center mb-4">
+                        <UtensilsCrossed className="w-10 h-10 text-text-muted opacity-50" />
+                      </div>
+                      <h3 className="text-lg font-bold text-text-primary mb-2 font-display">Belum Ada Menu Hari Ini</h3>
+                      <p className="text-sm text-text-muted max-w-xs">Menu bergizi akan ditampilkan di sini setelah admin sekolah memasukkan data untuk hari ini.</p>
                     </div>
                   )}
                 </motion.div>
 
-                {/* Voting */}
+                {/* Voting Section */}
                 {votingMenus.length > 0 && (
                   <motion.div variants={stagger.item}>
+                    <div className="flex items-center justify-between mb-4 px-1">
+                      <h2 className="text-xl font-bold font-display text-text-primary">Voting Menu Depan</h2>
+                      <span className="text-xs font-semibold text-accent bg-accent/10 px-3 py-1 rounded-full">Partisipasi Aktif</span>
+                    </div>
                     <VotingSlider menus={votingMenus} />
                   </motion.div>
                 )}
               </div>
 
               {/* Right Column: NutriFact + Feedbacks */}
-              <div className="space-y-6">
+              <div className="lg:col-span-4 space-y-8">
                 {todayMenu && (
                   <motion.div variants={stagger.item}>
-                    <NutriFact menu={todayMenu} />
+                    <div className="stat-card p-1 block">
+                      <NutriFact menu={todayMenu} />
+                    </div>
                   </motion.div>
                 )}
 
-                {/* Feedback Section */}
-                <motion.div variants={stagger.item} className="glass rounded-3xl p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-primary" />
-                      <h3 className="text-sm font-bold text-text-primary">Feedback Hari Ini</h3>
+                {/* Feedback Section in Premium Glass Card */}
+                <motion.div variants={stagger.item} className="stat-card flex-col items-stretch p-6">
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-black/5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <MessageSquare className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-base font-bold text-text-primary font-display">Ulasan Menu</h3>
+                        <p className="text-xs text-text-muted">Apa kata teman-temanmu?</p>
+                      </div>
                     </div>
-                    <span className="text-[10px] text-text-muted">{feedbacks.length} ulasan</span>
+                    <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-lg">{feedbacks.length}</span>
                   </div>
-                  <FeedbackList feedbacks={feedbacks} loading={feedbackLoading} />
+                  <div className="max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    <FeedbackList feedbacks={feedbacks} loading={feedbackLoading} />
+                  </div>
                 </motion.div>
               </div>
             </div>
