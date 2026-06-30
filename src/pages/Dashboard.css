@@ -1,0 +1,87 @@
+/* =========================================================
+   DASHBOARD CSS (XATRA WORKS Premium Design)
+   ========================================================= */
+
+.dashboard-welcome {
+  display: flex; align-items: center; justify-content: space-between; 
+  margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap;
+}
+
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); 
+  gap: 1rem; margin-bottom: 2rem;
+}
+
+.stat-card {
+  padding: 1.25rem; 
+  display: flex; align-items: center; gap: 1rem; 
+  background: var(--color-glass); 
+  backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--color-border); 
+  border-top-color: rgba(255, 255, 255, 0.9); 
+  border-left-color: rgba(255, 255, 255, 0.6); 
+  border-radius: 1.5rem; 
+  box-shadow: 0 4px 24px -4px rgba(65, 112, 48, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  position: relative; overflow: hidden; 
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat-card::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; 
+  border-radius: inherit; margin: -1px; 
+  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 40%, rgba(65,112,48,0.05) 100%);
+}
+
+.stat-card:hover {
+  background: rgba(255,255,255,0.9);
+  border-color: rgba(65, 112, 48, 0.3);
+  box-shadow: 0 12px 32px rgba(65, 112, 48, 0.15), inset 0 1px 1px rgba(255, 255, 255, 1);
+  transform: translateY(-4px);
+}
+
+.stat-icon-wrapper {
+  width: 48px; height: 48px; 
+  border-radius: 1rem; 
+  background: var(--color-surface-light); 
+  display: flex; align-items: center; justify-content: center; 
+}
+
+.quick-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); 
+  gap: 1rem; margin-bottom: 2rem;
+}
+
+.quick-card {
+  padding: 1.5rem; text-align: center; cursor: pointer; 
+  background: var(--color-glass); 
+  backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--color-border); 
+  border-top-color: rgba(255, 255, 255, 0.9); 
+  border-left-color: rgba(255, 255, 255, 0.6); 
+  border-radius: 1.5rem; 
+  box-shadow: 0 4px 24px -4px rgba(65, 112, 48, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  position: relative; overflow: hidden; 
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.quick-card::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; 
+  border-radius: inherit; margin: -1px; 
+  background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 40%, rgba(65,112,48,0.05) 100%);
+}
+
+.quick-card:hover {
+  background: rgba(255,255,255,0.9);
+  border-color: rgba(65, 112, 48, 0.3);
+  box-shadow: 0 12px 32px rgba(65, 112, 48, 0.15), inset 0 1px 1px rgba(255, 255, 255, 1);
+  transform: translateY(-4px) scale(1.02);
+}
+
+@media (max-width: 1024px) {
+  .stats-grid, .quick-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: 1fr; }
+  .quick-grid { grid-template-columns: repeat(2, 1fr); }
+}
