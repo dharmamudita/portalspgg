@@ -64,43 +64,51 @@ export default function ApprovalPage() {
                 
                 {pendingUsers.map(user => (
                   <motion.div key={user.id} variants={stagger.item}>
-                    <Card className="p-6 border-none shadow-lg shadow-black/5 hover:shadow-xl transition-all relative overflow-hidden group">
-                      <div className="absolute top-0 left-0 w-2 h-full bg-danger"></div>
+                    <Card className="p-6 border border-amber-200/60 shadow-xl shadow-amber-500/5 bg-white/90 backdrop-blur-xl relative overflow-hidden group hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-500">
+                      <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all"></div>
                       
-                      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pl-4">
-                        <div className="flex-1 w-full text-center md:text-left">
-                          <h3 className="text-2xl font-bold text-text-primary mb-1">
-                            {user.instansi}
-                          </h3>
-                          <div className="flex items-center justify-center md:justify-start gap-2 text-text-secondary mb-3">
-                            <MapPin className="w-4 h-4 text-primary" />
-                            <span className="text-sm font-medium">{user.kecamatan}, {user.kabupaten}, {user.provinsi}</span>
+                      <div className="flex flex-col md:flex-row gap-6 relative z-10">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-3">
+                            <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-inner">
+                              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                              Menunggu Verifikasi
+                            </span>
                           </div>
                           
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
-                            <div>
-                              <p className="text-[10px] uppercase font-bold text-text-muted tracking-wider">Penanggung Jawab</p>
-                              <p className="font-semibold text-text-primary">{user.nama}</p>
+                          <h3 className="text-2xl md:text-3xl font-black text-slate-800 mb-2 tracking-tight">
+                            {user.instansi}
+                          </h3>
+                          <div className="flex items-center gap-2 text-slate-500 mb-6 font-medium">
+                            <MapPin className="w-4 h-4 text-primary" />
+                            {user.kecamatan}, {user.kabupaten}, {user.provinsi}
+                          </div>
+                          
+                          <div className="flex flex-wrap sm:flex-nowrap gap-4 sm:gap-6 bg-slate-50/80 rounded-2xl p-4 border border-slate-100/80 shadow-sm">
+                            <div className="flex-1">
+                              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Penanggung Jawab</p>
+                              <p className="font-bold text-slate-700">{user.nama}</p>
                             </div>
-                            <div>
-                              <p className="text-[10px] uppercase font-bold text-text-muted tracking-wider">Kontak & NIP</p>
-                              <p className="font-medium text-sm text-text-primary">{user.email} • {user.nip}</p>
+                            <div className="w-full sm:w-px h-px sm:h-auto bg-slate-200"></div>
+                            <div className="flex-1">
+                              <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Kontak & Identitas</p>
+                              <p className="font-bold text-slate-700">{user.email} <span className="text-slate-400 font-normal mx-1">•</span> {user.nip}</p>
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex flex-col gap-3 w-full md:w-48 shrink-0">
+                        <div className="flex flex-row md:flex-col gap-3 justify-center md:justify-center md:w-44 shrink-0 pt-2">
                           <button 
                             onClick={() => approveSpgUser(user.id)}
-                            className="w-full py-3 rounded-xl bg-success text-white font-bold text-sm shadow-lg shadow-success/30 hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+                            className="flex-1 md:flex-none py-3 px-4 rounded-xl bg-gradient-to-r from-success to-emerald-400 text-white font-bold text-sm shadow-lg shadow-success/30 hover:shadow-success/50 hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
                           >
-                            <CheckCircle className="w-5 h-5" /> Terima
+                            <CheckCircle className="w-5 h-5" /> Setujui
                           </button>
                           <button 
                             onClick={() => rejectSpgUser(user.id)}
-                            className="w-full py-3 rounded-xl bg-danger/10 text-danger font-bold text-sm hover:bg-danger hover:text-white transition-colors flex items-center justify-center gap-2"
+                            className="flex-1 md:flex-none py-3 px-4 rounded-xl bg-white border-2 border-danger/20 text-danger font-bold text-sm hover:bg-danger/5 hover:border-danger transition-all duration-300 flex items-center justify-center gap-2"
                           >
-                            <XCircle className="w-5 h-5" /> Tolak Pendaftaran
+                            <XCircle className="w-5 h-5" /> Tolak
                           </button>
                         </div>
                       </div>
