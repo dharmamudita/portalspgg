@@ -552,14 +552,30 @@ export default function LoginPage() {
             </form>
 
             {/* Toggle Modes */}
-            <div className="mt-8 text-center border-t border-black/5 pt-6">
-              <button
-                type="button"
-                onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setErrors({}); setRegStep(1); }}
-                className="text-sm font-semibold text-text-muted hover:text-primary transition-colors cursor-pointer"
-              >
-                {mode === 'login' ? 'Belum punya akun? Daftar Sekarang' : 'Sudah punya akun? Masuk'}
-              </button>
+            <div className="mt-8 text-center border-t border-black/5 pt-6 text-sm font-semibold text-text-muted">
+              {mode === 'login' ? (
+                <>
+                  Belum punya akun?{' '}
+                  <button
+                    type="button"
+                    onClick={() => { setMode('register'); setErrors({}); setRegStep(1); }}
+                    className="text-primary hover:text-primary-dark hover:underline transition-colors cursor-pointer font-bold"
+                  >
+                    Daftar Sekarang
+                  </button>
+                </>
+              ) : (
+                <>
+                  Sudah punya akun?{' '}
+                  <button
+                    type="button"
+                    onClick={() => { setMode('login'); setErrors({}); setRegStep(1); }}
+                    className="text-primary hover:text-primary-dark hover:underline transition-colors cursor-pointer font-bold"
+                  >
+                    Masuk
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
