@@ -6,30 +6,18 @@ import Navbar from '../components/layout/Navbar';
 import Card from '../components/ui/Card';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { MonthYearPicker } from './WeeklyMenuPage';
-
-const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-function getWeekRange(date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const start = new Date(d);
-  start.setDate(d.getDate() - day + 1); // Monday
-  start.setDate(start.getDate() + 7);   // Next week Monday
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6);     // Next week Sunday
-  return { start, end };
-}
-
-function formatDate(d) {
-  return d.toISOString().split('T')[0];
-}
+import { getSchoolWeekRange, formatDate, MONTHS } from '../lib/dateUtils';
 
 export default function VotingResultsPage() {
   const [baseDate, setBaseDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   // Get next week's range (voting is always for next week)
-  const { start: weekStart, end: weekEnd } = useMemo(() => getWeekRange(baseDate), [baseDate]);
+  const { start: weekStart, end: weekEnd } = useMemo(() => {
+    const nextWeekDate = new Date(baseDate);
+    nextWeekDate.setDate(nextWeekDate.getDate() + 7);
+    return getSchoolWeekRange(nextWeekDate);
+  }, [baseDate]);
 
   // Fetch menus for that week, filter only voting options
   const { menus: allMenus, loading: menusLoading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd));

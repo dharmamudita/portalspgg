@@ -7,23 +7,7 @@ import { useToast } from '../components/ui/Toast';
 import Navbar from '../components/layout/Navbar';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { MonthYearPicker } from './WeeklyMenuPage';
-
-const DAYS = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-const DAYS_SHORT = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-function getWeekRange(date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const start = new Date(d);
-  start.setDate(d.getDate() - day + 1);
-  start.setDate(start.getDate() + 7); // next week Monday
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6); // next week Sunday
-  return { start, end };
-}
-
-function formatDate(d) { return d.toISOString().split('T')[0]; }
+import { getSchoolWeekRange, formatDate, DAYS, DAYS_SHORT, MONTHS } from '../lib/dateUtils';
 
 export default function VotingPage() {
   const { currentUser } = useAuth();
@@ -33,8 +17,12 @@ export default function VotingPage() {
   const [selectedDay, setSelectedDay] = useState(-1); // -1 = all
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // Get next week's range for voting
-  const { start: weekStart, end: weekEnd } = useMemo(() => getWeekRange(baseDate), [baseDate]);
+  const { start: weekStart, end: weekEnd } = useMemo(() => {
+    // We want NEXT week for voting
+    const nextWeekDate = new Date(baseDate);
+    nextWeekDate.setDate(nextWeekDate.getDate() + 7);
+    return getSchoolWeekRange(nextWeekDate);
+  }, [baseDate]);
 
   // Fetch voting menus for that week
   const { menus: allMenus, loading: menusLoading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd));
@@ -59,10 +47,10 @@ export default function VotingPage() {
     });
   }, [votingMenus, selectedDay]);
 
-  // Week days for the filter
   const weekDays = useMemo(() => {
     const days = [];
-    for (let i = 0; i < 7; i++) {
+    // 5 days: Monday to Friday
+    for (let i = 0; i < 5; i++) {
       const d = new Date(weekStart);
       d.setDate(weekStart.getDate() + i);
       days.push(d);
@@ -285,22 +273,23 @@ export default function VotingPage() {
                       </div>
 
                       <div className="flex-1 p-5 sm:p-6 flex flex-col justify-between">
-                        <div>
+                        <div className="w-full">
                           <div className="flex items-start justify-between mb-2">
                             <div>
                               <h3 className="text-xl font-bold font-display text-text-primary line-clamp-2 leading-tight pr-4">{menu.nama_menu}</h3>
-                            <div className="flex items-center gap-3 mt-1 text-[10px] text-text-muted">
-                              <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-danger" />{menu.kalori} kkal</span>
-                              <span className="flex items-center gap-1"><Droplets className="w-3 h-3 text-accent" />{menu.protein}g protein</span>
-                              <span className="flex items-center gap-1"><Wheat className="w-3 h-3 text-warning" />{menu.karbo}g karbo</span>
+                              <div className="flex items-center gap-3 mt-1 text-[10px] text-text-muted">
+                                <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-danger" />{menu.kalori} kkal</span>
+                                <span className="flex items-center gap-1"><Droplets className="w-3 h-3 text-accent" />{menu.protein}g protein</span>
+                                <span className="flex items-center gap-1"><Wheat className="w-3 h-3 text-warning" />{menu.karbo}g karbo</span>
+                              </div>
                             </div>
+                            <button
+                              onClick={() => setSelectedDetail(selectedDetail === menu.id ? null : menu.id)}
+                              className="p-1.5 rounded-lg hover:bg-black/10 transition-colors cursor-pointer"
+                            >
+                              <ChevronRight className={`w-4 h-4 text-text-muted transition-transform ${selectedDetail === menu.id ? 'rotate-90' : ''}`} />
+                            </button>
                           </div>
-                          <button
-                            onClick={() => setSelectedDetail(selectedDetail === menu.id ? null : menu.id)}
-                            className="p-1.5 rounded-lg hover:bg-black/10 transition-colors cursor-pointer"
-                          >
-                            <ChevronRight className={`w-4 h-4 text-text-muted transition-transform ${selectedDetail === menu.id ? 'rotate-90' : ''}`} />
-                          </button>
                         </div>
 
                         {/* Allergy Warning */}

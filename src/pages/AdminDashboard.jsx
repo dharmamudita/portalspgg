@@ -23,21 +23,7 @@ import StarRating from '../components/ui/StarRating';
 import { MonthYearPicker } from './WeeklyMenuPage';
 import './Dashboard.css';
 
-const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-function getWeekRange(date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const start = new Date(d);
-  start.setDate(d.getDate() - day + 1); // Monday
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6); // Sunday
-  return { start, end };
-}
-
-function formatDate(d) {
-  return d.toISOString().split('T')[0];
-}
+import { getSchoolWeekRange, formatDate, MONTHS, DAYS } from '../lib/dateUtils';
 
 // Dummy data for the chart to make it look active even if there are few feedbacks
 const dummyChartData = [
@@ -59,7 +45,7 @@ export default function AdminDashboard() {
 
   // Week-based menu filtering
   const [currentDate, setCurrentDate] = useState(new Date());
-  const { start: weekStart, end: weekEnd } = useMemo(() => getWeekRange(currentDate), [currentDate]);
+  const { start: weekStart, end: weekEnd } = useMemo(() => getSchoolWeekRange(currentDate), [currentDate]);
   const { menus, loading: menusLoading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd));
 
   // Stats (scoped to current week)

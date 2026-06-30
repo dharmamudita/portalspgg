@@ -7,23 +7,7 @@ import NutriFact from '../components/NutriFact';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import Modal from '../components/ui/Modal';
 
-const DAYS = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-const DAYS_SHORT = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-const MONTHS = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-function getWeekRange(date) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const start = new Date(d);
-  start.setDate(d.getDate() - day + 1); // Monday
-  const end = new Date(start);
-  end.setDate(start.getDate() + 6); // Sunday
-  return { start, end };
-}
-
-function formatDate(d) {
-  return d.toISOString().split('T')[0];
-}
+import { getSchoolWeekRange, formatDate, DAYS, DAYS_SHORT, MONTHS } from '../lib/dateUtils';
 
 export default function WeeklyMenuPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -31,12 +15,13 @@ export default function WeeklyMenuPage() {
   const [nutriModal, setNutriModal] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const { start: weekStart, end: weekEnd } = useMemo(() => getWeekRange(currentDate), [currentDate]);
+  const { start: weekStart, end: weekEnd } = useMemo(() => getSchoolWeekRange(currentDate), [currentDate]);
   const { menus, loading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd));
 
   const weekDays = useMemo(() => {
     const days = [];
-    for (let i = 0; i < 7; i++) {
+    // 5 days: Monday to Friday
+    for (let i = 0; i < 5; i++) {
       const d = new Date(weekStart);
       d.setDate(weekStart.getDate() + i);
       days.push(d);
