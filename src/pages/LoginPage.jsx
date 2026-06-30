@@ -251,12 +251,21 @@ export default function LoginPage() {
                       onChange={(e) => updateField('email', e.target.value)} 
                       error={errors.email} 
                     />
-                    <div className="relative">
-                      <Input id="login-password" label="Password" icon={Lock} type={showPassword ? 'text' : 'password'} placeholder="Masukkan password" value={form.password} onChange={(e) => updateField('password', e.target.value)} error={errors.password} />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-9 text-text-muted hover:text-primary cursor-pointer">
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
+                    <Input 
+                      id="login-password" 
+                      label="Password" 
+                      icon={Lock} 
+                      type={showPassword ? 'text' : 'password'} 
+                      placeholder="Masukkan password" 
+                      value={form.password} 
+                      onChange={(e) => updateField('password', e.target.value)} 
+                      error={errors.password} 
+                      rightElement={
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-text-muted hover:text-primary cursor-pointer p-1">
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      }
+                    />
                     <div className="flex justify-end">
                       <button type="button" onClick={() => { setMode('forgot'); setErrors({}); }} className="text-xs font-bold text-primary hover:text-primary-dark transition-colors cursor-pointer">
                         Lupa Password?
@@ -330,12 +339,21 @@ export default function LoginPage() {
                       <motion.div key="step2" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-4">
                         <Input id="reg-nama" label="Nama Lengkap" icon={User} placeholder="Nama sesuai identitas" value={form.nama} onChange={(e) => updateField('nama', e.target.value)} error={errors.nama} />
                         <Input id="reg-email" label="Alamat Email (Asli)" icon={Mail} placeholder="Akan digunakan untuk login & reset" type="email" value={form.email} onChange={(e) => updateField('email', e.target.value)} error={errors.email} />
-                        <div className="relative">
-                          <Input id="reg-password" label="Password" icon={Lock} type={showPassword ? 'text' : 'password'} placeholder="Minimal 6 karakter" value={form.password} onChange={(e) => updateField('password', e.target.value)} error={errors.password} />
-                          <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-9 text-text-muted hover:text-primary cursor-pointer">
-                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </button>
-                        </div>
+                        <Input 
+                          id="reg-password" 
+                          label="Password" 
+                          icon={Lock} 
+                          type={showPassword ? 'text' : 'password'} 
+                          placeholder="Minimal 6 karakter" 
+                          value={form.password} 
+                          onChange={(e) => updateField('password', e.target.value)} 
+                          error={errors.password} 
+                          rightElement={
+                            <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-text-muted hover:text-primary cursor-pointer p-1">
+                              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </button>
+                          }
+                        />
                       </motion.div>
                     )}
 

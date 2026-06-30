@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { AlertCircle } from 'lucide-react';
 
 const Input = forwardRef(function Input(
-  { label, error, icon: Icon, type = 'text', className = '', id, ...props },
+  { label, error, icon: Icon, rightElement, type = 'text', className = '', id, ...props },
   ref
 ) {
   return (
@@ -27,11 +27,17 @@ const Input = forwardRef(function Input(
             focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50
             transition-all duration-200
             ${Icon ? 'pl-10' : ''}
+            ${rightElement ? 'pr-10' : ''}
             ${error ? 'border-danger/50 focus:ring-danger/50' : ''}
             ${className}
           `}
           {...props}
         />
+        {rightElement && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
+            {rightElement}
+          </div>
+        )}
       </div>
       {error && (
         <p className="text-xs font-semibold text-danger mt-1.5 flex items-center gap-1.5 ml-1">
