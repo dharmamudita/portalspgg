@@ -88,9 +88,16 @@ export default function WeeklyMenuPage() {
   };
 
   return (
-    <div className="page-mesh">
+    <div className="page-mesh relative min-h-screen overflow-hidden">
+      {/* Liquid Glass Background Blobs */}
+      <div className="blob-container">
+        <div className="blob blob-1"></div>
+        <div className="blob blob-2"></div>
+        <div className="blob blob-3"></div>
+      </div>
+
       <Navbar />
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-12 relative z-10">
         <motion.div variants={stagger.container} initial="hidden" animate="show">
           {/* Header */}
           <motion.div variants={stagger.item} className="mb-6">
@@ -101,7 +108,7 @@ export default function WeeklyMenuPage() {
           </motion.div>
 
           {/* Month/Year Picker + Week Navigator */}
-          <motion.div variants={stagger.item} className="glass rounded-2xl p-4 mb-6">
+          <motion.div variants={stagger.item} className="liquid-glass p-6 mb-8">
             {/* Top row: Month/Year jump + Today button */}
             <div className="flex items-center justify-between mb-3">
               <div className="relative">
@@ -193,7 +200,7 @@ export default function WeeklyMenuPage() {
           {loading ? (
             <LoadingSpinner text="Memuat menu mingguan..." />
           ) : filteredMenus.length === 0 ? (
-            <motion.div variants={stagger.item} className="glass rounded-3xl p-12 text-center">
+            <motion.div variants={stagger.item} className="liquid-glass p-12 text-center border-dashed">
               <UtensilsCrossed className="w-16 h-16 text-text-muted mx-auto mb-4 opacity-30" />
               <h3 className="text-lg font-bold text-text-primary mb-2">Belum Ada Menu</h3>
               <p className="text-sm text-text-muted">
@@ -210,13 +217,13 @@ export default function WeeklyMenuPage() {
                   <motion.div
                     key={menu.id}
                     variants={stagger.item}
-                    className="glass rounded-2xl overflow-hidden hover:border-primary/20 transition-all"
+                    className="liquid-glass overflow-hidden flex flex-col"
                   >
-                    <div className="relative h-40 overflow-hidden">
+                    <div className="relative h-48 overflow-hidden group">
                       <img
                         src={menu.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop'}
                         alt={menu.nama_menu}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
