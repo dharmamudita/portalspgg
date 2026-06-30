@@ -313,7 +313,7 @@ export default function AdminDashboard() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
                         key={fb.id} 
-                        className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white hover:border-primary/30 transition-colors"
+                        className="glass p-4"
                       >
                         <div className="flex items-start gap-3">
                           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center shrink-0 shadow-inner">

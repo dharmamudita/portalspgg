@@ -325,7 +325,7 @@ export default function ReportsPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Efficiency Rate Card */}
-                    <div className="bg-black/5 rounded-2xl p-6 border border-black/5 relative overflow-hidden group">
+                    <div className="glass p-6 relative group">
                       <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
                         {stats.efficiencyRate >= 70 ? <CheckCircle2 className="w-32 h-32 text-success" /> : <AlertTriangle className="w-32 h-32 text-danger" />}
                       </div>
@@ -339,15 +339,15 @@ export default function ReportsPage() {
                       <div className="mt-4 w-full h-2 bg-black/10 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
-                          animate={{ width: \`\${stats.efficiencyRate}%\` }}
+                          animate={{ width: `${stats.efficiencyRate}%` }}
                           transition={{ duration: 1, delay: 0.2 }}
-                          className={\`h-full rounded-full \${stats.efficiencyRate >= 70 ? 'bg-success' : 'bg-danger'}\`}
+                          className={`h-full rounded-full ${stats.efficiencyRate >= 70 ? 'bg-success' : 'bg-danger'}`}
                         />
                       </div>
                     </div>
 
                     {/* Total Saved Card */}
-                    <div className="bg-black/5 rounded-2xl p-6 border border-black/5 relative overflow-hidden group">
+                    <div className="glass p-6 relative group">
                       <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
                         <Wallet className="w-32 h-32 text-success" />
                       </div>
@@ -362,7 +362,7 @@ export default function ReportsPage() {
                     </div>
 
                     {/* Total Wasted Card */}
-                    <div className="bg-black/5 rounded-2xl p-6 border border-black/5 relative overflow-hidden group">
+                    <div className="glass p-6 relative group">
                       <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500">
                         <TrendingDown className="w-32 h-32 text-danger" />
                       </div>

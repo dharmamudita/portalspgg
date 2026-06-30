@@ -184,13 +184,16 @@ export default function LoginPage() {
         setMode('login');
       }
     } catch (err) {
-      let msg = 'Terjadi kesalahan';
+      console.error('Submission Error:', err);
+      let msg = err.message || 'Terjadi kesalahan';
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
         msg = 'Kredensial salah atau tidak ditemukan';
       } else if (err.code === 'auth/email-already-in-use') {
         msg = 'Email sudah terdaftar';
       } else if (err.code === 'auth/too-many-requests') {
         msg = 'Terlalu banyak percobaan. Coba lagi nanti.';
+      } else if (err.code === 'permission-denied' || err.message?.includes('network') || err.message?.includes('offline')) {
+        msg = 'Koneksi ke database gagal. Pastikan internet Anda tidak memblokir server Google.';
       }
       addToast(msg, 'error');
     } finally {
@@ -252,7 +255,7 @@ export default function LoginPage() {
             <h1 className="text-2xl font-bold gradient-text font-display">Portal SPPG</h1>
           </div>
 
-          <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-2xl shadow-primary/5 border border-black/5 relative overflow-hidden">
+          <div className="glass p-8 sm:p-10 relative">
             {/* Liquid Glass ambient inside card */}
             <div className="absolute -top-32 -right-32 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 

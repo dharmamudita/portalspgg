@@ -132,7 +132,7 @@ export default function VotingPage() {
             </h1>
             
             {/* Impact Banner */}
-            <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 max-w-xl mx-auto mb-4 backdrop-blur-sm">
+            <div className="glass p-4 max-w-xl mx-auto mb-4">
               <p className="text-sm text-text-secondary leading-relaxed">
                 <strong className="text-primary font-bold">Suara Anda menentukan kebijakan!</strong> Menu yang menang akan diprioritaskan untuk dihidangkan bulan depan dan direkomendasikan kepada Pemerintah Daerah.
               </p>
