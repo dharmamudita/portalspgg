@@ -253,22 +253,22 @@ export default function LoginPage() {
       <div className="w-full lg:w-[55%] flex items-center justify-center p-6 sm:p-12 relative bg-surface overflow-hidden">
         
         {/* --- Neumorphic Background Elements --- */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-80 flex items-center justify-center">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-100 flex items-center justify-center">
           {/* Base large circle layer */}
-          <div className="absolute w-[800px] h-[800px] rounded-full border border-white/60 bg-surface shadow-[inset_10px_10px_40px_rgba(0,0,0,0.02),inset_-10px_-10px_40px_rgba(255,255,255,1),20px_20px_50px_rgba(0,0,0,0.03)]" />
+          <div className="absolute w-[800px] h-[800px] rounded-full border border-white bg-surface shadow-[inset_10px_10px_40px_rgba(0,0,0,0.04),inset_-10px_-10px_40px_rgba(255,255,255,1),20px_20px_50px_rgba(0,0,0,0.05)]" />
           
           {/* Overlapping top shape */}
-          <div className="absolute -top-[300px] w-[900px] h-[600px] rounded-[200px] border border-white/80 bg-surface shadow-[inset_15px_15px_40px_rgba(0,0,0,0.02),inset_-15px_-15px_40px_rgba(255,255,255,1),0_20px_40px_rgba(0,0,0,0.015)]" />
+          <div className="absolute -top-[300px] w-[900px] h-[600px] rounded-[200px] border border-white bg-surface shadow-[inset_15px_15px_40px_rgba(0,0,0,0.04),inset_-15px_-15px_40px_rgba(255,255,255,1),0_20px_40px_rgba(0,0,0,0.03)]" />
           
           {/* Overlapping bottom shape to create the central intersection arc */}
-          <div className="absolute -bottom-[300px] w-[900px] h-[600px] rounded-[200px] border border-white/80 bg-surface shadow-[inset_15px_15px_40px_rgba(0,0,0,0.02),inset_-15px_-15px_40px_rgba(255,255,255,1),0_-20px_40px_rgba(0,0,0,0.015)]" />
+          <div className="absolute -bottom-[300px] w-[900px] h-[600px] rounded-[200px] border border-white bg-surface shadow-[inset_15px_15px_40px_rgba(0,0,0,0.04),inset_-15px_-15px_40px_rgba(255,255,255,1),0_-20px_40px_rgba(0,0,0,0.03)]" />
           
           {/* Central prominent circle */}
-          <div className="absolute w-[400px] h-[400px] rounded-full border border-white bg-surface shadow-[inset_8px_8px_20px_rgba(0,0,0,0.03),inset_-8px_-8px_20px_rgba(255,255,255,1),10px_10px_20px_rgba(0,0,0,0.02)]" />
+          <div className="absolute w-[400px] h-[400px] rounded-full border-[3px] border-white bg-surface shadow-[inset_8px_8px_20px_rgba(0,0,0,0.05),inset_-8px_-8px_20px_rgba(255,255,255,1),10px_10px_20px_rgba(0,0,0,0.04)]" />
           
           {/* Corner subtle objects */}
-          <div className="absolute -top-20 -left-20 w-[300px] h-[300px] rounded-full border border-white bg-surface shadow-[inset_5px_5px_15px_rgba(0,0,0,0.02),inset_-5px_-5px_15px_rgba(255,255,255,1),5px_5px_15px_rgba(0,0,0,0.01)]" />
-          <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-[100px] border border-white bg-surface shadow-[inset_10px_10px_30px_rgba(0,0,0,0.02),inset_-10px_-10px_30px_rgba(255,255,255,1),15px_15px_30px_rgba(0,0,0,0.01)] rotate-45" />
+          <div className="absolute -top-20 -left-20 w-[300px] h-[300px] rounded-full border-2 border-white bg-surface shadow-[inset_5px_5px_15px_rgba(0,0,0,0.05),inset_-5px_-5px_15px_rgba(255,255,255,1),5px_5px_15px_rgba(0,0,0,0.03)]" />
+          <div className="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-[100px] border-2 border-white bg-surface shadow-[inset_10px_10px_30px_rgba(0,0,0,0.05),inset_-10px_-10px_30px_rgba(255,255,255,1),15px_15px_30px_rgba(0,0,0,0.04)] rotate-45" />
         </div>
 
         <motion.div
