@@ -6,6 +6,7 @@ import Navbar from '../components/layout/Navbar';
 import NutriFact from '../components/NutriFact';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import Modal from '../components/ui/Modal';
+import PageHeaderBg from '../components/ui/PageHeaderBg';
 
 import { getSchoolWeekRange, formatDate, DAYS, DAYS_SHORT, MONTHS } from '../lib/dateUtils';
 
@@ -16,7 +17,7 @@ export default function WeeklyMenuPage() {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const { start: weekStart, end: weekEnd } = useMemo(() => getSchoolWeekRange(currentDate), [currentDate]);
-  const { menus, loading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd));
+  const { menus, loading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd), userData?.spg_uid);
 
   const weekDays = useMemo(() => {
     const days = [];
@@ -73,25 +74,20 @@ export default function WeeklyMenuPage() {
   };
 
   return (
-    <div className="page-mesh relative min-h-screen overflow-hidden">
-      {/* Liquid Glass Background Blobs */}
-      <div className="blob-container">
-        <div className="blob blob-1"></div>
-        <div className="blob blob-2"></div>
-        <div className="blob blob-3"></div>
-      </div>
-
-      <Navbar />
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-12 relative z-10">
-        <motion.div variants={stagger.container} initial="hidden" animate="show">
-          {/* Header */}
-          <motion.div variants={stagger.item} className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1 flex items-center gap-3">
-              <span className="gradient-text">Menu Mingguan</span>
-              <CalendarDays className="w-8 h-8 text-primary" />
-            </h1>
-            <p className="text-sm text-text-muted">Lihat jadwal menu makan bergizi gratis selama satu minggu</p>
-          </motion.div>
+    <div className="bg-[#f1f5f9] relative min-h-screen overflow-hidden font-sans pb-12">
+      <PageHeaderBg />
+      <div className="relative z-10">
+        <Navbar />
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+          <motion.div variants={stagger.container} initial="hidden" animate="show">
+            {/* Header */}
+            <motion.div variants={stagger.item} className="mb-8">
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-md mb-2 flex items-center gap-3">
+                <span className="text-accent-light">Menu</span> Mingguan
+                <CalendarDays className="w-8 h-8 text-white" />
+              </h1>
+              <p className="text-sm font-medium text-white/90">Lihat jadwal menu makan bergizi gratis selama satu minggu</p>
+            </motion.div>
 
           {/* Month/Year Picker + Week Navigator */}
           <motion.div variants={stagger.item} className="liquid-glass p-6 mb-8">
@@ -249,6 +245,7 @@ export default function WeeklyMenuPage() {
       <Modal isOpen={!!nutriModal} onClose={() => setNutriModal(null)} title="Informasi Gizi">
         {nutriModal && <NutriFact menu={nutriModal} />}
       </Modal>
+    </div>
     </div>
   );
 }

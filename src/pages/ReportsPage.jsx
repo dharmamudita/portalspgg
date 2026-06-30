@@ -5,8 +5,11 @@ import {
   UtensilsCrossed, MessageSquare, DollarSign, ArrowUpRight, ArrowDownRight, Trophy, Building2,
   Wallet, AlertTriangle, TrendingDown, CheckCircle2
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { useMenusByDateRange, useFeedbacksByDateRange } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
+import PageHeaderBg from '../components/ui/PageHeaderBg';
+import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 
@@ -20,21 +23,32 @@ function getDefaultRange() {
 }
 
 export default function ReportsPage() {
+  const { userData } = useAuth();
   const defaultRange = useMemo(() => getDefaultRange(), []);
   const [startDate, setStartDate] = useState(defaultRange.start);
   const [endDate, setEndDate] = useState(defaultRange.end);
 
-  const { menus, loading: menusLoading } = useMenusByDateRange(startDate, endDate);
+  const { menus, loading: menusLoading } = useMenusByDateRange(
+    startDate, 
+    endDate, 
+    userData?.role === 'superadmin' ? undefined : userData?.uid
+  );
   const { feedbacks, loading: feedbacksLoading } = useFeedbacksByDateRange(startDate, endDate);
 
   const loading = menusLoading || feedbacksLoading;
 
+  // Filter feedbacks to only those belonging to menus managed by this SPPG
+  const filteredFeedbacks = useMemo(() => {
+    const spgMenuIds = menus.map(m => m.id);
+    return feedbacks.filter(f => spgMenuIds.includes(f.menu_id));
+  }, [menus, feedbacks]);
+
   // ── Computed Stats ──
   const stats = useMemo(() => {
     const totalMenus = menus.length;
-    const totalFeedbacks = feedbacks.length;
+    const totalFeedbacks = filteredFeedbacks.length;
     const avgRating = totalFeedbacks > 0
-      ? (feedbacks.reduce((s, f) => s + (f.rating || 0), 0) / totalFeedbacks).toFixed(1)
+      ? (filteredFeedbacks.reduce((s, f) => s + (f.rating || 0), 0) / totalFeedbacks).toFixed(1)
       : '0.0';
 
     const totalKalori = menus.reduce((s, m) => s + (m.kalori || 0), 0);
@@ -53,7 +67,7 @@ export default function ReportsPage() {
     let totalSpent = 0;
     let totalWasted = 0;
 
-    feedbacks.forEach(f => {
+    filteredFeedbacks.forEach(f => {
       const price = menuPrices[f.menu_id] || 0;
       totalSpent += price;
       
@@ -73,12 +87,12 @@ export default function ReportsPage() {
     // Rating distribution
     const ratingDist = [5, 4, 3, 2, 1].map((r) => ({
       star: r,
-      count: feedbacks.filter((f) => f.rating === r).length,
+      count: filteredFeedbacks.filter((f) => f.rating === r).length,
     }));
 
     // Top-rated menu
     const menuRatings = {};
-    feedbacks.forEach((f) => {
+    filteredFeedbacks.forEach((f) => {
       if (!menuRatings[f.menu_id]) menuRatings[f.menu_id] = { sum: 0, count: 0 };
       menuRatings[f.menu_id].sum += f.rating || 0;
       menuRatings[f.menu_id].count += 1;
@@ -95,7 +109,7 @@ export default function ReportsPage() {
 
     // Instansi breakdown
     const instansiMap = {};
-    feedbacks.forEach((f) => {
+    filteredFeedbacks.forEach((f) => {
       const inst = f.user_instansi || 'Lainnya';
       if (!instansiMap[inst]) instansiMap[inst] = 0;
       instansiMap[inst]++;
@@ -112,7 +126,7 @@ export default function ReportsPage() {
       mostFbMenu, mostFbId,
       instansiBreakdown,
     };
-  }, [menus, feedbacks]);
+  }, [menus, filteredFeedbacks]);
 
   const quickRanges = [
     { label: '7 Hari', days: 7 },
@@ -137,17 +151,19 @@ export default function ReportsPage() {
   const maxDist = Math.max(...stats.ratingDist.map((r) => r.count), 1);
 
   return (
-    <div className="page-mesh">
-      <Navbar />
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
-        <motion.div variants={stagger.container} initial="hidden" animate="show">
-          {/* Header */}
-          <motion.div variants={stagger.item} className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1">
-              <span className="gradient-text">Laporan</span> & Statistik
-            </h1>
-            <p className="text-sm text-text-muted">Analisis data gizi, biaya, dan feedback dalam periode tertentu</p>
-          </motion.div>
+    <div className="bg-[#f1f5f9] relative min-h-screen overflow-hidden font-sans pb-12">
+      <PageHeaderBg />
+      <div className="relative z-10">
+        <Navbar />
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+          <motion.div variants={stagger.container} initial="hidden" animate="show">
+            {/* Header */}
+            <motion.div variants={stagger.item} className="mb-8">
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-md mb-2">
+                Laporan & Statistik
+              </h1>
+              <p className="text-sm font-medium text-white/90">Analisis data gizi, biaya, dan feedback dalam periode tertentu</p>
+            </motion.div>
 
           {/* Date Range Picker */}
           <motion.div variants={stagger.item} className="glass rounded-2xl p-4 mb-6">
@@ -197,7 +213,7 @@ export default function ReportsPage() {
                   <p className="text-[10px] text-text-muted">Total Menu</p>
                 </Card>
                 <Card hover={false} className="text-center">
-                  <MessageSquare className="w-5 h-5 text-accent mx-auto mb-2" />
+                  <MessageSquare className="w-5 h-5 text-primary mx-auto mb-2" />
                   <p className="text-2xl font-bold text-text-primary">{stats.totalFeedbacks}</p>
                   <p className="text-[10px] text-text-muted">Total Feedback</p>
                 </Card>
@@ -207,7 +223,7 @@ export default function ReportsPage() {
                   <p className="text-[10px] text-text-muted">Rata-rata Rating</p>
                 </Card>
                 <Card hover={false} className="text-center">
-                  <Wallet className="w-5 h-5 text-success mx-auto mb-2" />
+                  <Wallet className="w-5 h-5 text-primary mx-auto mb-2" />
                   <p className="text-2xl font-bold text-text-primary">
                     <span className="text-sm text-text-secondary">Rp</span>{stats.totalSpent > 1000000 ? (stats.totalSpent / 1000000).toFixed(1) + 'M' : (stats.totalSpent / 1000).toFixed(0) + 'K'}
                   </p>
@@ -223,10 +239,10 @@ export default function ReportsPage() {
                       <TrendingUp className="w-4 h-4 text-primary" /> Rata-rata Gizi per Porsi
                     </h3>
                     <div className="grid grid-cols-2 gap-3">
-                      <NutriStat icon={Flame} label="Kalori" value={stats.avgKalori} unit="kkal" color="text-danger" bg="bg-danger/10" />
-                      <NutriStat icon={Droplets} label="Protein" value={stats.avgProtein} unit="g" color="text-accent" bg="bg-accent/10" />
-                      <NutriStat icon={Wheat} label="Karbohidrat" value={stats.avgKarbo} unit="g" color="text-warning" bg="bg-warning/10" />
-                      <NutriStat icon={Droplets} label="Lemak" value={stats.avgLemak} unit="g" color="text-secondary" bg="bg-secondary/10" />
+                      <NutriStat icon={Flame} label="Kalori" value={stats.avgKalori} unit="kkal" color="text-primary" bg="bg-primary/10" />
+                      <NutriStat icon={Droplets} label="Protein" value={stats.avgProtein} unit="g" color="text-primary" bg="bg-primary/10" />
+                      <NutriStat icon={Wheat} label="Karbohidrat" value={stats.avgKarbo} unit="g" color="text-primary" bg="bg-primary/10" />
+                      <NutriStat icon={Droplets} label="Lemak" value={stats.avgLemak} unit="g" color="text-primary" bg="bg-primary/10" />
                     </div>
                   </Card>
                 </motion.div>
@@ -260,7 +276,7 @@ export default function ReportsPage() {
                 <motion.div variants={stagger.item}>
                   <Card>
                     <h2 className="text-lg font-bold text-text-primary flex items-center gap-2 mb-4">
-                      <Trophy className="w-5 h-5 text-warning" /> Menu Terbaik
+                      <Trophy className="w-5 h-5 text-primary" /> Menu Terbaik
                     </h2>
                     {stats.topMenu ? (
                       <div className="flex items-center gap-4">
@@ -382,6 +398,7 @@ export default function ReportsPage() {
           )}
         </motion.div>
       </main>
+    </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { History, Calendar, Star, MessageCircle, Filter, ChevronDown, Award, Med
 import { useAuth } from '../context/AuthContext';
 import { useUserFeedbackHistory, useMenuDetails } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
+import PageHeaderBg from '../components/ui/PageHeaderBg';
 import StarRating from '../components/ui/StarRating';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { MonthYearPicker } from './WeeklyMenuPage';
@@ -96,18 +97,20 @@ export default function HistoryPage() {
   };
 
   return (
-    <div className="page-mesh">
-      <Navbar />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-12">
-        <motion.div variants={stagger.container} initial="hidden" animate="show">
-          {/* Header */}
-          <motion.div variants={stagger.item} className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1 flex items-center gap-3">
-              <span className="gradient-text">Riwayat</span> Feedback
-              <History className="w-8 h-8 text-primary" />
-            </h1>
-            <p className="text-sm text-text-muted">Lihat kembali ulasan dan penilaian yang telah Anda berikan</p>
-          </motion.div>
+    <div className="bg-[#f1f5f9] relative min-h-screen overflow-hidden font-sans pb-12">
+      <PageHeaderBg />
+      <div className="relative z-10">
+        <Navbar />
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+          <motion.div variants={stagger.container} initial="hidden" animate="show">
+            {/* Header */}
+            <motion.div variants={stagger.item} className="mb-8">
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-md mb-2 flex items-center gap-3">
+                <span className="text-accent-light">Riwayat</span> Feedback
+                <History className="w-8 h-8 text-white" />
+              </h1>
+              <p className="text-sm font-medium text-white/90">Lihat kembali ulasan dan penilaian yang telah Anda berikan</p>
+            </motion.div>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
             {/* Filters Row */}
@@ -265,6 +268,7 @@ export default function HistoryPage() {
           )}
         </motion.div>
       </main>
+    </div>
     </div>
   );
 }

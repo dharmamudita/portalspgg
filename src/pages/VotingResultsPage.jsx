@@ -1,14 +1,17 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { BarChart3, Trophy, Vote, TrendingUp, Flame, Droplets, Wheat, ChevronLeft, ChevronRight, Calendar, Medal, Award } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { useMenusByDateRange, useVoteCounts } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
+import PageHeaderBg from '../components/ui/PageHeaderBg';
 import Card from '../components/ui/Card';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { MonthYearPicker } from './WeeklyMenuPage';
 import { getSchoolWeekRange, formatDate, MONTHS } from '../lib/dateUtils';
 
 export default function VotingResultsPage() {
+  const { userData } = useAuth();
   const [baseDate, setBaseDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -20,7 +23,11 @@ export default function VotingResultsPage() {
   }, [baseDate]);
 
   // Fetch menus for that week, filter only voting options
-  const { menus: allMenus, loading: menusLoading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd));
+  const { menus: allMenus, loading: menusLoading } = useMenusByDateRange(
+    formatDate(weekStart), 
+    formatDate(weekEnd), 
+    userData?.role === 'superadmin' ? undefined : (userData?.spg_uid || userData?.uid)
+  );
   const votingMenus = useMemo(() => allMenus.filter((m) => m.is_voting_option), [allMenus]);
 
   const menuIds = useMemo(() => votingMenus.map((m) => m.id), [votingMenus]);
@@ -60,17 +67,19 @@ export default function VotingResultsPage() {
   const medalBg = ['bg-warning/10', 'bg-black/5', 'bg-amber-900/10'];
 
   return (
-    <div className="page-mesh">
-      <Navbar />
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-12">
-        <motion.div variants={stagger.container} initial="hidden" animate="show">
-          {/* Header */}
-          <motion.div variants={stagger.item} className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1">
-              <span className="gradient-text">Hasil Voting</span>
-            </h1>
-            <p className="text-sm text-text-muted">Hasil pemilihan menu oleh siswa untuk periode berikutnya</p>
-          </motion.div>
+    <div className="bg-[#f1f5f9] relative min-h-screen overflow-hidden font-sans pb-12">
+      <PageHeaderBg />
+      <div className="relative z-10">
+        <Navbar />
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+          <motion.div variants={stagger.container} initial="hidden" animate="show">
+            {/* Header */}
+            <motion.div variants={stagger.item} className="mb-8">
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-md mb-2">
+                Hasil Voting
+              </h1>
+              <p className="text-sm font-medium text-white/90">Hasil pemilihan menu oleh siswa untuk periode berikutnya</p>
+            </motion.div>
 
           {/* Week Filter */}
           <motion.div variants={stagger.item} className="glass rounded-2xl p-4 mb-6">
@@ -118,12 +127,12 @@ export default function VotingResultsPage() {
               <p className="text-xs text-text-muted">Total Vote</p>
             </Card>
             <Card hover={false} className="text-center">
-              <Trophy className="w-6 h-6 text-warning mx-auto mb-2" />
+              <Trophy className="w-6 h-6 text-primary mx-auto mb-2" />
               <p className="text-2xl font-bold text-text-primary">{votingMenus.length}</p>
               <p className="text-xs text-text-muted">Kandidat Menu</p>
             </Card>
             <Card hover={false} className="text-center">
-              <TrendingUp className="w-6 h-6 text-success mx-auto mb-2" />
+              <TrendingUp className="w-6 h-6 text-primary mx-auto mb-2" />
               <p className="text-2xl font-bold text-text-primary">
                 {totalVotes > 0 && sortedMenus[0] ? Math.round(((counts[sortedMenus[0].id] || 0) / totalVotes) * 100) : 0}%
               </p>
@@ -216,9 +225,9 @@ export default function VotingResultsPage() {
                             <h4 className="text-sm font-bold text-text-primary truncate">{menu.nama_menu}</h4>
                             <div className="flex items-center gap-3 text-[10px] text-text-muted mt-1">
                               <span>{menuDate.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
-                              <span><Flame className="w-3 h-3 text-danger inline mr-0.5" />{menu.kalori} kkal</span>
-                              <span><Droplets className="w-3 h-3 text-accent inline mr-0.5" />{menu.protein}g</span>
-                              <span><Wheat className="w-3 h-3 text-warning inline mr-0.5" />{menu.karbo}g</span>
+                              <span><Flame className="w-3 h-3 text-primary inline mr-0.5" />{menu.kalori} kkal</span>
+                              <span><Droplets className="w-3 h-3 text-primary inline mr-0.5" />{menu.protein}g</span>
+                              <span><Wheat className="w-3 h-3 text-primary inline mr-0.5" />{menu.karbo}g</span>
                             </div>
                           </div>
                           <div className="text-right shrink-0">
@@ -235,6 +244,7 @@ export default function VotingResultsPage() {
           )}
         </motion.div>
       </main>
+    </div>
     </div>
   );
 }

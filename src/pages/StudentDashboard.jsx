@@ -3,7 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarDays, MessageSquare, UtensilsCrossed, Sparkles, Flame, Droplets, Wheat, TriangleAlert } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTodayMenu, useVotingMenus, useMenuFeedbacks } from '../hooks/useFirestore';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
+import PageHeaderBg from '../components/ui/PageHeaderBg';
+import { getSchoolWeekRange, formatDate } from '../lib/dateUtils';
 import MenuCard from '../components/MenuCard';
 import NutriFact from '../components/NutriFact';
 import VotingSlider from '../components/VotingSlider';
@@ -15,8 +18,8 @@ import './Dashboard.css';
 
 export default function StudentDashboard() {
   const { userData } = useAuth();
-  const { menu: todayMenu, loading: menuLoading } = useTodayMenu();
-  const { menus: votingMenus } = useVotingMenus();
+  const { menu: todayMenu, loading: menuLoading } = useTodayMenu(userData?.spg_uid);
+  const { menus: votingMenus } = useVotingMenus(userData?.spg_uid);
   const { feedbacks, loading: feedbackLoading } = useMenuFeedbacks(todayMenu?.id);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
@@ -45,30 +48,35 @@ export default function StudentDashboard() {
   };
 
   return (
-    <div className="page-mesh relative min-h-screen overflow-hidden">
-      {/* Liquid Glass Background Blobs */}
-      <div className="blob-container">
-        <div className="blob blob-1"></div>
-        <div className="blob blob-2"></div>
-        <div className="blob blob-3"></div>
-      </div>
+    <div className="bg-[#f1f5f9] relative min-h-screen overflow-hidden font-sans pb-12">
+      <PageHeaderBg />
 
-      <Navbar />
+      <div className="relative z-10">
+        <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-28 pb-12 relative z-10">
-        <motion.div variants={stagger.container} initial="hidden" animate="show">
-          
-
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+          <motion.div variants={stagger.container} initial="hidden" animate="show">
+          {userData?.spg_uid === null && (
+            <motion.div variants={stagger.item} className="mb-8 bg-warning/10 border-2 border-warning/30 rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 shadow-lg shadow-warning/5">
+              <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center shrink-0 border border-warning/30">
+                <TriangleAlert className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-lg font-bold text-text-primary mb-1">Sekolah Belum Terhubung</h3>
+                <p className="text-sm text-text-secondary">Sekolah Anda (<span className="font-semibold">{userData?.instansi}</span>) belum didaftarkan sebagai sekolah binaan oleh dapur SPPG manapun. Menu makanan tidak akan muncul hingga admin SPPG mengelola sekolah ini.</p>
+              </div>
+            </motion.div>
+          )}
 
           {/* Premium Welcome Banner */}
-          <motion.div variants={stagger.item} className="dashboard-welcome liquid-glass p-6 mb-8">
+          <motion.div variants={stagger.item} className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary mb-2 font-display tracking-tight flex items-center gap-3">
-                {getGreeting()}, <span className="gradient-text">{userData?.nama || 'Siswa'}</span>
-                <Sparkles className="w-6 h-6 text-warning animate-pulse-glow" />
+              <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-md flex items-center gap-3">
+                {getGreeting()}, <span className="text-accent-light">{userData?.nama || 'Siswa'}</span>
+                <Sparkles className="w-8 h-8 text-yellow-300 animate-pulse-glow" />
               </h1>
-              <div className="flex items-center gap-2 text-sm font-medium text-text-secondary bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full inline-flex border border-white/50">
-                <CalendarDays className="w-4 h-4 text-primary" />
+              <div className="flex items-center gap-2 text-sm font-medium text-white/90 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full inline-flex border border-white/30 mt-4">
+                <CalendarDays className="w-4 h-4 text-white" />
                 <span>{today}</span>
               </div>
             </div>
@@ -78,7 +86,7 @@ export default function StudentDashboard() {
               <div className="flex items-center gap-4 mt-4 md:mt-0">
                 <div className="bg-white/60 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/50 shadow-sm flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-danger/10 flex items-center justify-center">
-                    <Flame className="w-4 h-4 text-danger" />
+                    <Flame className="w-4 h-4 text-primary" />
                   </div>
                   <div>
                     <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Kalori</p>
@@ -166,7 +174,7 @@ export default function StudentDashboard() {
                   <div className="liquid-glass p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center">
-                        <Flame className="w-4 h-4 text-success" />
+                        <Flame className="w-4 h-4 text-primary" />
                       </div>
                       <h3 className="text-base font-bold text-text-primary font-display">Target Kalori Harian</h3>
                     </div>
@@ -236,6 +244,7 @@ export default function StudentDashboard() {
           />
         )}
       </Modal>
+    </div>
     </div>
   );
 }

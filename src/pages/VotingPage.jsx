@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Vote, CheckCircle2, Trophy, Flame, Droplets, Wheat, ChevronRight, ChevronLeft, Calendar, Lock, TriangleAlert, Radio } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useMenusByDateRange, useVoteCounts, useUserVotedMap, submitVote } from '../hooks/useFirestore';
-import { useToast } from '../components/ui/Toast';
+import { getSchoolWeekRange, formatDate } from '../lib/dateUtils';
 import Navbar from '../components/layout/Navbar';
+import PageHeaderBg from '../components/ui/PageHeaderBg';
+import { useToast } from '../components/ui/Toast';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { MonthYearPicker } from './WeeklyMenuPage';
-import { getSchoolWeekRange, formatDate, DAYS, DAYS_SHORT, MONTHS } from '../lib/dateUtils';
+import { DAYS, DAYS_SHORT, MONTHS } from '../lib/dateUtils';
 
 export default function VotingPage() {
   const { currentUser } = useAuth();
@@ -25,7 +27,7 @@ export default function VotingPage() {
   }, [baseDate]);
 
   // Fetch voting menus for that week
-  const { menus: allMenus, loading: menusLoading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd));
+  const { menus: allMenus, loading: menusLoading } = useMenusByDateRange(formatDate(weekStart), formatDate(weekEnd), userData?.spg_uid);
   const votingMenus = useMemo(() => allMenus.filter((m) => m.is_voting_option), [allMenus]);
 
   const menuIds = useMemo(() => votingMenus.map((m) => m.id), [votingMenus]);
@@ -104,43 +106,45 @@ export default function VotingPage() {
   };
 
   return (
-    <div className="page-mesh">
-      <Navbar />
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-12">
-        <motion.div variants={stagger.container} initial="hidden" animate="show">
-          {/* Header */}
-          <motion.div variants={stagger.item} className="mb-8 text-center relative">
-            <div className="flex justify-center mb-4">
-              {isClosed ? (
-                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-danger/10 border border-danger/20">
-                  <Lock className="w-4 h-4 text-danger" />
-                  <span className="text-xs font-bold text-danger">Pemungutan Suara Ditutup</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-success/10 border border-success/20">
-                  <Radio className="w-4 h-4 text-success animate-pulse" />
-                  <span className="text-xs font-bold text-success">Live Polling Aktif</span>
-                </div>
-              )}
-            </div>
-            
-            <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center mb-4 shadow-xl shadow-primary/20">
-              <Vote className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-3 font-display">
-              <span className="gradient-text">Voting Menu</span> Favorit
-            </h1>
-            
-            {/* Impact Banner */}
-            <div className="glass p-4 max-w-xl mx-auto mb-4">
-              <p className="text-sm text-text-secondary leading-relaxed">
-                <strong className="text-primary font-bold">Suara Anda menentukan kebijakan!</strong> Menu yang menang akan diprioritaskan untuk dihidangkan bulan depan dan direkomendasikan kepada Pemerintah Daerah.
-              </p>
-            </div>
+    <div className="bg-[#f1f5f9] relative min-h-screen overflow-hidden font-sans pb-12">
+      <PageHeaderBg />
+      <div className="relative z-10">
+        <Navbar />
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+          <motion.div variants={stagger.container} initial="hidden" animate="show">
+            {/* Header */}
+            <motion.div variants={stagger.item} className="mb-8 text-center relative">
+              <div className="flex justify-center mb-4">
+                {isClosed ? (
+                  <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-danger/20 border border-danger/30 backdrop-blur-md">
+                    <Lock className="w-4 h-4 text-white" />
+                    <span className="text-xs font-bold text-white">Pemungutan Suara Ditutup</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-success/20 border border-success/30 backdrop-blur-md">
+                    <Radio className="w-4 h-4 text-white animate-pulse" />
+                    <span className="text-xs font-bold text-white">Live Polling Aktif</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center mb-4 shadow-xl">
+                <Vote className="w-8 h-8 text-white" />
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-md mb-3">
+                <span className="text-accent-light">Voting Menu</span> Favorit
+              </h1>
+              
+              {/* Impact Banner */}
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 max-w-xl mx-auto mb-4">
+                <p className="text-sm font-medium text-white/90 leading-relaxed">
+                  <strong className="text-white font-bold">Suara Anda menentukan kebijakan!</strong> Menu yang menang akan diprioritaskan untuk dihidangkan bulan depan dan direkomendasikan kepada Pemerintah Daerah.
+                </p>
+              </div>
 
-            {totalVotes > 0 && (
+              {totalVotes > 0 && (
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/5 border border-black/10">
-                <Trophy className="w-4 h-4 text-warning" />
+                <Trophy className="w-4 h-4 text-primary" />
                 <span className="text-xs font-semibold text-text-secondary">{totalVotes} total suara masuk</span>
               </div>
             )}
@@ -278,9 +282,9 @@ export default function VotingPage() {
                             <div>
                               <h3 className="text-xl font-bold font-display text-text-primary line-clamp-2 leading-tight pr-4">{menu.nama_menu}</h3>
                               <div className="flex items-center gap-3 mt-1 text-[10px] text-text-muted">
-                                <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-danger" />{menu.kalori} kkal</span>
-                                <span className="flex items-center gap-1"><Droplets className="w-3 h-3 text-accent" />{menu.protein}g protein</span>
-                                <span className="flex items-center gap-1"><Wheat className="w-3 h-3 text-warning" />{menu.karbo}g karbo</span>
+                                <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-primary" />{menu.kalori} kkal</span>
+                                <span className="flex items-center gap-1"><Droplets className="w-3 h-3 text-primary" />{menu.protein}g protein</span>
+                                <span className="flex items-center gap-1"><Wheat className="w-3 h-3 text-primary" />{menu.karbo}g karbo</span>
                               </div>
                             </div>
                             <button
@@ -371,6 +375,7 @@ export default function VotingPage() {
           )}
         </motion.div>
       </main>
+      </div>
     </div>
   );
 }

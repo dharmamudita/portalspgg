@@ -1,15 +1,18 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { MessageSquare, Star, Filter, Calendar, Building2, Search, TrendingUp } from 'lucide-react';
+import { MessageSquare, Star, Filter, Calendar, Building2, Search, TrendingUp, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import { useAllFeedbacks, useAllMenus } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
+import PageHeaderBg from '../components/ui/PageHeaderBg';
 import Card from '../components/ui/Card';
 import StarRating from '../components/ui/StarRating';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 export default function FeedbackPage() {
+  const { userData } = useAuth();
   const { feedbacks, loading } = useAllFeedbacks();
-  const { menus } = useAllMenus();
+  const { menus } = useAllMenus(userData?.role === 'superadmin' ? undefined : userData?.uid);
   const [filterRange, setFilterRange] = useState('all');
   const [filterRating, setFilterRating] = useState(0); // 0 = all
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,7 +26,9 @@ export default function FeedbackPage() {
 
   // Filter feedbacks
   const filteredFeedbacks = useMemo(() => {
-    let filtered = [...feedbacks];
+    // Only include feedbacks for menus managed by this SPPG
+    const spgMenuIds = menus.map(m => m.id);
+    let filtered = feedbacks.filter(f => spgMenuIds.includes(f.menu_id));
 
     // Date filter
     if (filterRange !== 'all') {
@@ -94,18 +99,20 @@ export default function FeedbackPage() {
   };
 
   return (
-    <div className="page-mesh">
-      <Navbar />
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-12">
-        <motion.div variants={stagger.container} initial="hidden" animate="show">
-          {/* Header */}
-          <motion.div variants={stagger.item} className="mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-1 flex items-center gap-3">
-              <span className="gradient-text">Feedback</span> Siswa
-              <MessageSquare className="w-8 h-8 text-primary" />
-            </h1>
-            <p className="text-sm text-text-muted">Kelola dan pantau semua feedback yang masuk</p>
-          </motion.div>
+    <div className="bg-[#f1f5f9] relative min-h-screen overflow-hidden font-sans pb-12">
+      <PageHeaderBg />
+      <div className="relative z-10">
+        <Navbar />
+        <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-12">
+          <motion.div variants={stagger.container} initial="hidden" animate="show">
+            {/* Header */}
+            <motion.div variants={stagger.item} className="mb-8">
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-md mb-2 flex items-center gap-3">
+                Pusat <span className="text-accent-light">Ulasan</span>
+                <MessageSquare className="w-8 h-8 text-white" />
+              </h1>
+              <p className="text-sm font-medium text-white/90">Kelola dan pantau semua feedback yang masuk</p>
+            </motion.div>
 
           {/* Stats + Distribution */}
           <motion.div variants={stagger.item} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -221,10 +228,8 @@ export default function FeedbackPage() {
                     className="glass rounded-2xl p-4"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                        <span className="text-xs font-bold text-primary-light">
-                          {nipMasked.substring(0, 2).toUpperCase()}
-                        </span>
+                      <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center overflow-hidden shrink-0">
+                        <User className="w-6 h-6 text-text-muted mt-1" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
@@ -252,6 +257,7 @@ export default function FeedbackPage() {
           )}
         </motion.div>
       </main>
+    </div>
     </div>
   );
 }
