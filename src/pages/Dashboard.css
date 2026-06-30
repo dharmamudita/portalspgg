@@ -26,29 +26,31 @@
   /* Crisp white base */
   background: #ffffff;
   
-  /* BLUE BORDER - Solid and very dark for high contrast */
-  border: 2px solid #113359; /* Solid Dark Blue */
+  /* Sleek, delicate border instead of a thick rigid line */
+  border: 1px solid rgba(28, 79, 135, 0.2);
   
-  /* A subtle blue glowing shadow to make it pop off the white background */
+  /* Soft, elegant shadow for floating effect */
   box-shadow: 
-    0 12px 32px -8px rgba(17, 51, 89, 0.25),
-    0 4px 12px -4px rgba(17, 51, 89, 0.15);
+    0 12px 32px -8px rgba(17, 51, 89, 0.08),
+    0 4px 12px -4px rgba(17, 51, 89, 0.04),
+    inset 0 1px 1px rgba(255, 255, 255, 1); /* Inner light */
     
   border-radius: 1.25rem;
   position: relative;
   z-index: 10;
   /* Buttery smooth transition for all hover effects */
-  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
   will-change: transform, box-shadow, border-color;
 }
 
-/* Hover Effect: The border goes even darker and the card lifts up smoothly */
+/* Hover Effect: The border lights up vibrantly and the card glows */
 .liquid-glass:hover {
-  border-color: #091e36; /* Deepest Blue */
+  border-color: #3B82F6; /* Vibrant accent blue */
   box-shadow: 
-    0 20px 50px -10px rgba(17, 51, 89, 0.4),
-    0 10px 20px -5px rgba(17, 51, 89, 0.25);
+    0 0 0 1px #3B82F6, /* Creates a crisp 2px glowing edge */
+    0 20px 50px -10px rgba(17, 51, 89, 0.15),
+    0 10px 30px -5px rgba(59, 130, 246, 0.25); /* Blue atmospheric glow */
   transform: translateY(-4px) scale(1.01);
 }
 
