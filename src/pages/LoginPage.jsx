@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   UtensilsCrossed, Lock, User, Building2, Eye, EyeOff, UserPlus, 
   LogIn, ShieldCheck, Mail, ChevronRight, ChevronLeft, AlertCircle,
-  GraduationCap, ChefHat, Crown
+  GraduationCap, ChefHat, Crown, KeyRound, ArrowLeft
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/ui/Toast';
@@ -558,15 +558,56 @@ export default function LoginPage() {
 
             </form>
 
-            {/* Toggle Modes */}
-            <div className="mt-8 text-center border-t border-black/5 pt-6">
-              <button
-                onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setErrors({}); setRegStep(1); }}
-                className="text-sm font-semibold text-text-muted hover:text-primary transition-colors cursor-pointer"
-              >
-                {mode === 'login' ? 'Belum punya akun? Daftar Sekarang' : 'Sudah punya akun? Masuk'}
-              </button>
-            </div>
+            {/* Toggle Modes - Premium Aesthetic Design */}
+            {mode === 'login' ? (
+              <div className="mt-8">
+                <div className="relative flex items-center py-4 mb-4">
+                  <div className="flex-grow border-t border-black/5"></div>
+                  <span className="flex-shrink-0 mx-4 text-xs font-bold text-text-muted tracking-widest">ATAU</span>
+                  <div className="flex-grow border-t border-black/5"></div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <button 
+                    type="button"
+                    onClick={() => { setMode('register'); setErrors({}); setRegStep(1); }} 
+                    className="flex items-center gap-3 p-4 rounded-xl border border-black/10 hover:border-primary/30 hover:bg-primary/5 transition-all group text-left cursor-pointer"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-black/5 group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
+                      <UserPlus className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-text-primary group-hover:text-primary transition-colors">Pengguna Baru?</h4>
+                      <p className="text-[11px] text-text-muted mt-0.5">Daftar akun di sini</p>
+                    </div>
+                  </button>
+
+                  <button 
+                    type="button"
+                    onClick={() => { setMode('forgot'); setErrors({}); }} 
+                    className="flex items-center gap-3 p-4 rounded-xl border border-black/10 hover:border-primary/30 hover:bg-primary/5 transition-all group text-left cursor-pointer"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-black/5 group-hover:bg-primary/10 flex items-center justify-center shrink-0 transition-colors">
+                      <KeyRound className="w-5 h-5 text-text-secondary group-hover:text-primary transition-colors" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-text-primary group-hover:text-primary transition-colors">Lupa Sandi?</h4>
+                      <p className="text-[11px] text-text-muted mt-0.5">Reset akses Anda</p>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-8 text-center border-t border-black/5 pt-6">
+                <button
+                  type="button"
+                  onClick={() => { setMode('login'); setErrors({}); setRegStep(1); }}
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-text-muted hover:text-primary transition-colors cursor-pointer"
+                >
+                  <ArrowLeft className="w-4 h-4" /> Kembali ke Halaman Login
+                </button>
+              </div>
+            )}
           </div>
 
           <p className="flex items-center justify-center gap-1.5 text-center text-xs text-text-muted mt-6 font-medium">
