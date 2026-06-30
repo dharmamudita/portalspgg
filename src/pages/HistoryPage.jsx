@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { History, Calendar, Star, MessageCircle, Filter, ChevronDown } from 'lucide-react';
+import { History, Calendar, Star, MessageCircle, Filter, ChevronDown, Award, Medal, Trophy } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { useUserFeedbackHistory, useMenuNames } from '../hooks/useFirestore';
+import { useUserFeedbackHistory, useMenuDetails } from '../hooks/useFirestore';
 import Navbar from '../components/layout/Navbar';
 import StarRating from '../components/ui/StarRating';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
@@ -12,7 +12,7 @@ export default function HistoryPage() {
   const { currentUser, userData } = useAuth();
   const { feedbacks, loading } = useUserFeedbackHistory(currentUser?.uid);
   const feedbackMenuIds = useMemo(() => feedbacks.map((f) => f.menu_id), [feedbacks]);
-  const menuNames = useMenuNames(feedbackMenuIds);
+  const menuDetails = useMenuDetails(feedbackMenuIds);
   const [filterRange, setFilterRange] = useState('all');
   const [showFilter, setShowFilter] = useState(false);
   const [showMonthPicker, setShowMonthPicker] = useState(false);
@@ -69,6 +69,17 @@ export default function HistoryPage() {
   const ratingDist = [1, 2, 3, 4, 5].map((r) =>
     filteredFeedbacks.filter((f) => f.rating === r).length
   );
+
+  // Gamification Badge (Based on total historical feedbacks, not filtered)
+  const overallFeedbacks = feedbacks.length;
+  let badge = { title: 'Taster Pemula', icon: Star, color: 'text-text-muted', bg: 'bg-black/5' };
+  if (overallFeedbacks >= 16) {
+    badge = { title: 'Zero-Waste Hero', icon: Trophy, color: 'text-warning', bg: 'bg-warning/10', glow: 'shadow-[0_0_15px_rgba(234,179,8,0.3)]' };
+  } else if (overallFeedbacks >= 6) {
+    badge = { title: 'Silver Critic', icon: Medal, color: 'text-secondary', bg: 'bg-secondary/10', glow: 'shadow-[0_0_15px_rgba(168,162,158,0.3)]' };
+  } else if (overallFeedbacks >= 1) {
+    badge = { title: 'Bronze Taster', icon: Award, color: 'text-accent', bg: 'bg-accent/10', glow: 'shadow-[0_0_15px_rgba(249,115,22,0.3)]' };
+  }
 
   const filterOptions = [
     { value: 'all', label: 'Semua Waktu' },
@@ -157,22 +168,27 @@ export default function HistoryPage() {
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Stats Cards */}
-          <motion.div variants={stagger.item} className="grid grid-cols-3 gap-3 mb-6">
-            <div className="glass rounded-2xl p-4 text-center">
-              <p className="text-2xl font-bold text-text-primary">{totalFeedbacks}</p>
-              <p className="text-[10px] text-text-muted mt-1">Total Feedback</p>
+          {/* Stats & Badge Cards */}
+          <motion.div variants={stagger.item} className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+            <div className={`liquid-glass rounded-2xl p-4 text-center border ${badge.glow ? badge.glow : ''}`}>
+              <div className="flex justify-center mb-1">
+                <div className={`p-2 rounded-xl ${badge.bg}`}>
+                  <badge.icon className={`w-6 h-6 ${badge.color}`} />
+                </div>
+              </div>
+              <p className={`text-sm font-bold ${badge.color}`}>{badge.title}</p>
+              <p className="text-[10px] text-text-muted mt-1">{overallFeedbacks} Total Kontribusi</p>
             </div>
-            <div className="glass rounded-2xl p-4 text-center">
+            <div className="liquid-glass rounded-2xl p-4 text-center flex flex-col justify-center">
               <div className="flex items-center justify-center gap-1">
                 <Star className="w-4 h-4 text-warning fill-warning" />
                 <p className="text-2xl font-bold text-text-primary">{avgRating}</p>
               </div>
               <p className="text-[10px] text-text-muted mt-1">Rata-rata Rating</p>
             </div>
-            <div className="glass rounded-2xl p-4 text-center">
+            <div className="liquid-glass rounded-2xl p-4 text-center">
               {/* Mini rating distribution */}
               <div className="flex items-end justify-center gap-0.5 h-8 mb-1">
                 {ratingDist.map((count, i) => (
@@ -200,32 +216,47 @@ export default function HistoryPage() {
             <div className="space-y-3">
               {filteredFeedbacks.map((fb, idx) => {
                 const date = fb.timestamp?.toDate ? fb.timestamp.toDate() : new Date(fb.timestamp);
+                const menuData = menuDetails[fb.menu_id];
+                const menuName = menuData?.nama_menu || 'Memuat menu...';
+                const menuImg = menuData?.image_url || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop';
+                
+                // Color code sentiment
+                let sentimentClass = 'border-black/5';
+                if (fb.rating >= 4) sentimentClass = 'border-l-4 border-l-success bg-success/5';
+                else if (fb.rating <= 2) sentimentClass = 'border-l-4 border-l-danger bg-danger/5';
+                
                 return (
                   <motion.div
                     key={fb.id}
                     variants={stagger.item}
-                    className="glass rounded-2xl p-4"
+                    className={`liquid-glass rounded-2xl p-4 transition-all duration-300 hover:shadow-lg flex flex-col sm:flex-row gap-4 ${sentimentClass}`}
                   >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-bold text-text-primary truncate">
-                          {menuNames[fb.menu_id] || 'Memuat menu...'}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Calendar className="w-3 h-3 text-text-muted" />
-                          <span className="text-[10px] text-text-muted">
-                            {date.toLocaleDateString('id-ID', {
-                              weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
-                              hour: '2-digit', minute: '2-digit',
-                            })}
-                          </span>
+                    {/* Menu Thumbnail */}
+                    <div className="w-full sm:w-24 h-32 sm:h-24 rounded-xl overflow-hidden shrink-0">
+                      <img src={menuImg} alt={menuName} className="w-full h-full object-cover transition-transform duration-500 hover:scale-110" />
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1 min-w-0 pr-4">
+                            <h4 className="text-base font-bold text-text-primary truncate">{menuName}</h4>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Calendar className="w-3.5 h-3.5 text-text-muted" />
+                              <span className="text-xs text-text-muted">
+                                {date.toLocaleDateString('id-ID', {
+                                  weekday: 'short', day: 'numeric', month: 'short', year: 'numeric'
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                          <StarRating value={fb.rating} readonly size={14} />
+                        </div>
+                        <div className="flex items-start gap-2 mt-3 bg-white/50 p-3 rounded-xl">
+                          <MessageCircle className="w-4 h-4 text-text-muted shrink-0 mt-0.5" />
+                          <p className="text-sm text-text-secondary leading-relaxed italic">"{fb.komentar}"</p>
                         </div>
                       </div>
-                      <StarRating value={fb.rating} readonly size={14} />
-                    </div>
-                    <div className="flex items-start gap-2 mt-2">
-                      <MessageCircle className="w-3.5 h-3.5 text-text-muted shrink-0 mt-0.5" />
-                      <p className="text-sm text-text-secondary leading-relaxed">{fb.komentar}</p>
                     </div>
                   </motion.div>
                 );

@@ -450,10 +450,10 @@ export function useMenuById(menuId) {
 }
 
 /**
- * Realtime hook: resolve menu names for a list of menu IDs
+ * Realtime hook: resolve menu details for a list of menu IDs
  */
-export function useMenuNames(menuIds) {
-  const [names, setNames] = useState({});
+export function useMenuDetails(menuIds) {
+  const [details, setDetails] = useState({});
 
   useEffect(() => {
     if (!menuIds || menuIds.length === 0) return;
@@ -462,7 +462,7 @@ export function useMenuNames(menuIds) {
     const unsubscribes = uniqueIds.map((id) =>
       onSnapshot(doc(db, 'menus', id), (docSnap) => {
         if (docSnap.exists()) {
-          setNames((prev) => ({ ...prev, [id]: docSnap.data().nama_menu }));
+          setDetails((prev) => ({ ...prev, [id]: docSnap.data() }));
         }
       })
     );
@@ -470,5 +470,5 @@ export function useMenuNames(menuIds) {
     return () => unsubscribes.forEach((unsub) => unsub());
   }, [menuIds]);
 
-  return names;
+  return details;
 }
