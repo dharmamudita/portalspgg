@@ -186,8 +186,8 @@ export default function AdminDashboard() {
                       contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
                       itemStyle={{ fontSize: '12px', fontWeight: 'bold' }}
                     />
-                    <Line yAxisId="left" type="monotone" dataKey="rating" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} name="Rata-rata Rating" />
-                    <Line yAxisId="right" type="monotone" dataKey="feedback" stroke="#417030" strokeWidth={3} dot={{ r: 4, fill: '#417030', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} name="Total Ulasan" />
+                    <Line yAxisId="left" type="monotone" dataKey="rating" stroke="#3B82F6" strokeWidth={3} dot={{ r: 4, fill: '#3B82F6', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} name="Rata-rata Rating" />
+                    <Line yAxisId="right" type="monotone" dataKey="feedback" stroke="#1C4F87" strokeWidth={3} dot={{ r: 4, fill: '#1C4F87', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} name="Total Ulasan" />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
