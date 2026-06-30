@@ -8,9 +8,11 @@ import LoadingSpinner from '../components/ui/LoadingSpinner';
 import Modal from '../components/ui/Modal';
 import PageHeaderBg from '../components/ui/PageHeaderBg';
 
+import { useAuth } from '../context/AuthContext';
 import { getSchoolWeekRange, formatDate, DAYS, DAYS_SHORT, MONTHS } from '../lib/dateUtils';
 
 export default function WeeklyMenuPage() {
+  const { userData } = useAuth();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
   const [nutriModal, setNutriModal] = useState(null);
