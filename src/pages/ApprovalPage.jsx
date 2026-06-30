@@ -80,8 +80,8 @@ export default function ApprovalPage() {
               pendingUsers.length === 0 ? (
                 <motion.div variants={stagger.item}>
                   <Card className="p-12 border-none shadow-xl shadow-black/5 bg-white/90 backdrop-blur-xl text-center">
-                    <div className="w-20 h-20 mx-auto rounded-full bg-success/10 flex items-center justify-center mb-6">
-                      <CheckCircle className="w-10 h-10 text-success" />
+                    <div className="w-20 h-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                      <ShieldCheck className="w-10 h-10 text-primary" />
                     </div>
                     <h2 className="text-2xl font-bold text-text-primary mb-2">Semua Bersih!</h2>
                     <p className="text-text-secondary text-lg">Tidak ada pendaftaran Dapur SPPG yang menunggu persetujuan saat ini.</p>
