@@ -211,6 +211,16 @@ export default function LoginPage() {
           <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-secondary/30 rounded-full blur-[120px] animate-pulse-glow" style={{ animationDelay: '2s' }} />
         </div>
         
+        {/* Gradients */}
+        <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-white/10 to-transparent pointer-events-none" />
+
+        {/* Neumorphic Shapes on Blue */}
+        <div className="absolute inset-0 pointer-events-none opacity-50 flex items-center justify-center">
+          <div className="absolute w-[600px] h-[600px] rounded-full border border-white/5 bg-primary shadow-[inset_10px_10px_30px_rgba(0,0,0,0.2),inset_-10px_-10px_30px_rgba(255,255,255,0.05),20px_20px_40px_rgba(0,0,0,0.2)]" />
+          <div className="absolute w-[300px] h-[300px] rounded-[60px] border border-white/5 bg-primary shadow-[inset_10px_10px_20px_rgba(0,0,0,0.2),inset_-10px_-10px_20px_rgba(255,255,255,0.05),15px_15px_30px_rgba(0,0,0,0.15)] rotate-12" />
+        </div>
+
         <div className="relative z-10 max-w-md mx-auto">
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
@@ -243,6 +253,7 @@ export default function LoginPage() {
       <div className="w-full lg:w-[55%] flex items-center justify-center p-6 sm:p-12 relative bg-surface overflow-hidden">
         
         {/* --- Neumorphic Background Elements --- */}
+        {/* Main Center-Right Object */}
         <div className="absolute top-1/2 right-0 -translate-y-1/2 pointer-events-none opacity-60 flex items-center justify-center translate-x-1/4 lg:translate-x-0">
           {/* Outer Squircle */}
           <div className="absolute w-[600px] h-[600px] sm:w-[800px] sm:h-[800px] rounded-[100px] sm:rounded-[150px] bg-surface shadow-[inset_10px_10px_30px_rgba(0,0,0,0.03),inset_-10px_-10px_30px_rgba(255,255,255,1),20px_20px_40px_rgba(0,0,0,0.03)] border border-white/50 rotate-45" />
@@ -250,6 +261,23 @@ export default function LoginPage() {
           {/* Inner Circle */}
           <div className="absolute w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full bg-surface shadow-[inset_15px_15px_40px_rgba(0,0,0,0.04),inset_-15px_-15px_40px_rgba(255,255,255,1),15px_15px_30px_rgba(0,0,0,0.02)] border border-white/60" />
         </div>
+
+        {/* Top Left Floating Object */}
+        <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 pointer-events-none opacity-50 flex items-center justify-center">
+          <div className="absolute w-[300px] h-[300px] rounded-full bg-surface shadow-[inset_10px_10px_20px_rgba(0,0,0,0.03),inset_-10px_-10px_20px_rgba(255,255,255,1),15px_15px_30px_rgba(0,0,0,0.02)] border border-white/50" />
+          <div className="absolute w-[150px] h-[150px] rounded-[30px] bg-surface shadow-[inset_5px_5px_15px_rgba(0,0,0,0.04),inset_-5px_-5px_15px_rgba(255,255,255,1),10px_10px_20px_rgba(0,0,0,0.02)] border border-white/60 rotate-12" />
+        </div>
+
+        {/* Bottom Left Floating Object */}
+        <div className="absolute bottom-0 left-20 translate-y-1/3 pointer-events-none opacity-40 flex items-center justify-center">
+          <div className="absolute w-[200px] h-[200px] rounded-[50px] bg-surface shadow-[inset_8px_8px_16px_rgba(0,0,0,0.03),inset_-8px_-8px_16px_rgba(255,255,255,1),12px_12px_24px_rgba(0,0,0,0.02)] border border-white/50 -rotate-12" />
+        </div>
+
+        {/* Top Right Floating Object (mobile only) */}
+        <div className="lg:hidden absolute top-10 right-[-50px] pointer-events-none opacity-40 flex items-center justify-center">
+          <div className="absolute w-[150px] h-[150px] rounded-full bg-surface shadow-[inset_5px_5px_15px_rgba(0,0,0,0.03),inset_-5px_-5px_15px_rgba(255,255,255,1),10px_10px_20px_rgba(0,0,0,0.02)] border border-white/50" />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
