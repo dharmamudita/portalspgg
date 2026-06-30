@@ -286,7 +286,7 @@ export default function LoginPage() {
 
               {/* === MODE: REGISTER === */}
               {mode === 'register' && (
-                <div className="min-h-[300px]">
+                <div className="flex flex-col h-full">
                   {/* Stepper Indicator */}
                   <div className="flex gap-2 mb-6">
                     {[1, 2, 3].map(step => (
@@ -294,8 +294,9 @@ export default function LoginPage() {
                     ))}
                   </div>
 
-                  <AnimatePresence mode="wait">
-                    {/* STEP 1: ROLE SELECTION */}
+                  <div className="min-h-[280px]">
+                    <AnimatePresence mode="wait">
+                      {/* STEP 1: ROLE SELECTION */}
                     {regStep === 1 && (
                       <motion.div key="step1" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-3">
                         <label className="block text-sm font-bold text-text-primary mb-3">Pilih Peran Anda:</label>
@@ -394,9 +395,10 @@ export default function LoginPage() {
                       </motion.div>
                     )}
                   </AnimatePresence>
+                  </div>
 
                   {/* Stepper Navigation */}
-                  <div className="flex gap-3 mt-8">
+                  <div className="flex gap-3 mt-auto pt-8">
                     {regStep > 1 && (
                       <button type="button" onClick={handlePrevStep} className="px-5 py-3 rounded-xl border border-black/10 hover:bg-black/5 text-text-secondary font-bold transition-colors flex items-center justify-center shrink-0 cursor-pointer">
                         <ChevronLeft className="w-5 h-5" />
